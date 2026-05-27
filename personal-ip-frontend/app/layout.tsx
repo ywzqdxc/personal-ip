@@ -29,10 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <body className="font-sans antialiased bg-black text-white">
+      <body className="font-sans antialiased bg-[#FDF6EE] text-[#2E1A0E]">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <LenisProvider>
-            <ClickSpark sparkColor="#AFFF00" sparkCount={8} sparkRadius={20}>
+            <ClickSpark sparkColor="#E8855A" sparkCount={8} sparkRadius={20}>
               <Navigation />
               <BackgroundAnimations />
               <PixarCharacter />

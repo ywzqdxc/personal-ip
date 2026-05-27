@@ -84,7 +84,7 @@ export function BackgroundAnimations() {
     // Draw functions
     const drawStars = () => {
       starsRef.current.forEach((star) => {
-        ctx.fillStyle = `rgba(139, 154, 126, ${star.opacity})`
+        ctx.fillStyle = `rgba(184, 133, 90, ${star.opacity})` // warm gold
         ctx.beginPath()
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2)
         ctx.fill()
@@ -119,8 +119,8 @@ export function BackgroundAnimations() {
           comet.x - Math.cos(comet.angle) * comet.length,
           comet.y - Math.sin(comet.angle) * comet.length,
         )
-        gradient.addColorStop(0, `rgba(139, 154, 126, ${comet.opacity})`)
-        gradient.addColorStop(1, "rgba(139, 154, 126, 0)")
+        gradient.addColorStop(0, `rgba(184, 133, 90, ${comet.opacity})`) // warm gold
+        gradient.addColorStop(1, "rgba(184, 133, 90, 0)")
 
         ctx.strokeStyle = gradient
         ctx.lineWidth = 2
@@ -154,7 +154,8 @@ export function BackgroundAnimations() {
           const green = Math.floor(100 + plantHealth * 120)
           const alpha = plantHealth * 0.6
 
-          ctx.strokeStyle = `rgba(${50 + plantHealth * 40}, ${green}, ${50 + plantHealth * 30}, ${alpha})`
+          // warm plant greens
+          ctx.strokeStyle = `rgba(${80 + plantHealth * 30}, ${120 + plantHealth * 40}, ${40 + plantHealth * 20}, ${alpha})`
           ctx.lineWidth = 2
           ctx.lineCap = "round"
 

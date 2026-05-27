@@ -15,6 +15,12 @@ public interface ErrorCodeConstants {
     // ========== 旅行日记 1-100-002-000 ==========
     ErrorCode TRAVEL_DIARY_NOT_EXISTS = new ErrorCode(1_100_002_000, "旅行日记不存在");
 
+    // ========== 旅行行程 1-100-006-000 ==========
+    ErrorCode TRAVEL_TRIP_NOT_EXISTS = new ErrorCode(1_100_006_000, "旅行行程不存在");
+
+    // ========== 旅行章节 1-100-007-000 ==========
+    ErrorCode TRAVEL_CHAPTER_NOT_EXISTS = new ErrorCode(1_100_007_000, "旅行章节不存在");
+
     // ========== 随想碎片 1-100-003-000 ==========
     ErrorCode THOUGHT_NOT_EXISTS = new ErrorCode(1_100_003_000, "随想碎片不存在");
 

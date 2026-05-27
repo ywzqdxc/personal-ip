@@ -78,3 +78,29 @@ VALUES
 (5042, '团队成员新增', 'ip:team-member:create', 3, 2, 5040, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
 (5043, '团队成员修改', 'ip:team-member:update', 3, 3, 5040, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
 (5044, '团队成员删除', 'ip:team-member:delete', 3, 4, 5040, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0);
+
+-- -------------------------------------------------------
+-- 二级菜单：旅行行程  (type=2, parent_id=5000)
+-- -------------------------------------------------------
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES (5050, '旅行行程', '', 2, 6, 5000, 'travel-trip', 'ep:map-location', 'ip/travel/trip/index', 'IpTravelTrip', 0, 1, 1, 0, 'admin', NOW(), 'admin', NOW(), 0);
+
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES
+(5051, '旅行行程查询', 'ip:travel-trip:query',  3, 1, 5050, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
+(5052, '旅行行程新增', 'ip:travel-trip:create', 3, 2, 5050, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
+(5053, '旅行行程修改', 'ip:travel-trip:update', 3, 3, 5050, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
+(5054, '旅行行程删除', 'ip:travel-trip:delete', 3, 4, 5050, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0);
+
+-- -------------------------------------------------------
+-- 二级菜单：旅行章节  (type=2, parent_id=5000)
+-- -------------------------------------------------------
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES (5060, '旅行章节', '', 2, 7, 5000, 'travel-chapter', 'ep:notebook', 'ip/travel/chapter/index', 'IpTravelChapter', 0, 1, 1, 0, 'admin', NOW(), 'admin', NOW(), 0);
+
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES
+(5061, '旅行章节查询', 'ip:travel-chapter:query',  3, 1, 5060, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
+(5062, '旅行章节新增', 'ip:travel-chapter:create', 3, 2, 5060, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
+(5063, '旅行章节修改', 'ip:travel-chapter:update', 3, 3, 5060, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0),
+(5064, '旅行章节删除', 'ip:travel-chapter:delete', 3, 4, 5060, '', '', '', '', 0, 1, 0, 0, 'admin', NOW(), 'admin', NOW(), 0);

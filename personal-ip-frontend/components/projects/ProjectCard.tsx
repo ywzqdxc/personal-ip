@@ -17,7 +17,7 @@ export function ProjectCard({ project }: Props) {
 
   return (
     <div
-      className="relative border-b border-white/10 py-6 group cursor-pointer"
+      className="relative border-b border-[#E8C9B0]/60 py-6 group cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
@@ -25,24 +25,24 @@ export function ProjectCard({ project }: Props) {
       <Link href={`/projects/${project.slug}`}>
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-white group-hover:text-[#AFFF00] transition-colors">
+            <h3 className="text-xl font-bold text-[#2E1A0E] group-hover:text-[#C45A30] transition-colors">
               {project.name}
             </h3>
             {project.description && (
-              <p className="text-gray-400 mt-1 text-sm">{project.description}</p>
+              <p className="text-[#B07050] mt-1 text-sm">{project.description}</p>
             )}
             <div className="flex flex-wrap gap-2 mt-2">
               {techList.map((tech) => (
                 <span
                   key={tech}
-                  className="text-xs px-2 py-0.5 rounded border border-white/20 text-gray-300 font-mono"
+                  className="text-xs px-2 py-0.5 rounded border border-[#E8C9B0] text-[#2E1A0E] font-mono"
                 >
                   {tech.trim()}
                 </span>
               ))}
             </div>
           </div>
-          <span className="text-gray-500 group-hover:text-white transition-colors ml-4">→</span>
+          <span className="text-[#B07050] group-hover:text-[#C45A30] transition-colors ml-4">→</span>
         </div>
       </Link>
 

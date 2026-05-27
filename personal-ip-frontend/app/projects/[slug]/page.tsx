@@ -30,7 +30,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   const techList = project.techStack ? project.techStack.split(',') : []
 
   return (
-    <main className="min-h-screen bg-black pt-24 pb-20 px-6">
+    <main className="min-h-screen bg-[#FDF6EE] pt-24 pb-20 px-6">
       <div className="max-w-3xl mx-auto">
         {/* 封面图 */}
         {project.coverUrl && (
@@ -40,13 +40,13 @@ export default async function ProjectDetailPage({ params }: Props) {
         )}
 
         {/* 标题 */}
-        <h1 className="text-5xl font-bold text-white mb-4" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+        <h1 className="text-5xl font-bold text-[#2E1A0E] mb-4" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
           {project.name}
         </h1>
 
         {/* 描述 */}
         {project.description && (
-          <p className="text-gray-300 text-lg mb-6">{project.description}</p>
+          <p className="text-[#2E1A0E] text-lg mb-6">{project.description}</p>
         )}
 
         {/* 技术栈徽章 */}
@@ -54,7 +54,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           {techList.map((tech) => (
             <span
               key={tech}
-              className="text-sm px-3 py-1 rounded-full bg-white/10 text-[#AFFF00] font-mono border border-[#AFFF00]/30"
+              className="text-sm px-3 py-1 rounded-full bg-[#2E1A0E]/10 text-[#E8855A] font-mono border border-[#E8855A]/30"
             >
               {tech.trim()}
             </span>
@@ -65,13 +65,13 @@ export default async function ProjectDetailPage({ params }: Props) {
         <div className="flex gap-4 mb-10">
           {project.githubUrl && (
             <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-               className="px-4 py-2 rounded border border-white/20 text-white hover:border-[#AFFF00] transition-colors text-sm">
+               className="px-4 py-2 rounded border border-[#E8C9B0] text-[#2E1A0E] hover:border-[#E8855A] transition-colors text-sm">
               GitHub →
             </a>
           )}
           {project.demoUrl && (
             <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
-               className="px-4 py-2 rounded bg-[#AFFF00] text-black font-bold text-sm hover:bg-white transition-colors">
+               className="px-4 py-2 rounded bg-[#E8855A] text-[#FDF6EE] font-bold text-sm hover:bg-[#C45A30] transition-colors">
               Live Demo →
             </a>
           )}
@@ -79,8 +79,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
         {/* Markdown 正文 */}
         {project.content && (
-          <div className="prose prose-invert max-w-none">
-            <pre className="whitespace-pre-wrap text-gray-300 text-sm leading-relaxed">
+          <div className="max-w-none">
+            <pre className="whitespace-pre-wrap text-[#2E1A0E] text-sm leading-relaxed">
               {project.content}
             </pre>
           </div>
