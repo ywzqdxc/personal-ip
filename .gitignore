@@ -1,0 +1,60 @@
+# ===========================
+# OS / IDE
+# ===========================
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+
+# ===========================
+# Java / Maven (personal-ip-backend)
+# ===========================
+personal-ip-backend/**/target/
+personal-ip-backend/**/*.class
+personal-ip-backend/**/*.jar
+personal-ip-backend/**/*.war
+
+# 敏感配置 — 本地环境变量、密码等
+personal-ip-backend/**/application-local.yml
+personal-ip-backend/**/application-local.yaml
+personal-ip-backend/**/.env
+
+# Maven wrapper cache
+personal-ip-backend/.mvn/wrapper/maven-wrapper.jar
+
+# ===========================
+# Node.js (frontend & admin)
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===========================
+# Next.js (personal-ip-frontend)
+# ===========================
+personal-ip-frontend/.next/
+personal-ip-frontend/out/
+personal-ip-frontend/build/
+personal-ip-frontend/.env*.local
+personal-ip-frontend/.env.production
+
+# ===========================
+# Vue / Vite (personal-ip-admin)
+# ===========================
+personal-ip-admin/dist/
+personal-ip-admin/dist-zip/
+personal-ip-admin/.env.local
+personal-ip-admin/.env.production
+
+# ===========================
+# 日志 & 临时文件
+# ===========================
+logs/
+*.log
+*.tmp
+*.cache

@@ -1,0 +1,151 @@
+[
+  {
+    "id": "role-1",
+    "period": "2025 - Present",
+    "title": "Growth and Marketing Manager",
+    "company": "The Ridge Environment Consultants",
+    "description": "Leading digital growth strategies, marketing campaigns, and innovative sustainability projects.",
+    "achievements": [
+      "Driving digital transformation and growth initiatives",
+      "Managing marketing campaigns for environmental solutions",
+      "Developing sustainable business strategies",
+      "Prototyping new products",
+      "Podcasting",
+      "Field Visits"
+    ],
+    "skills": [
+      "Product Management",
+      "Growth Marketing",
+      "Digital Strategy",
+      "Sustainability",
+      "WEB Development",
+      "Campaign Management"
+    ]
+  },
+  {
+    "id": "role-2",
+    "period": "2025 - 2025",
+    "title": "Career Counsellor",
+    "company": "Counselling Shortcuts",
+    "description": "Virtual student mentoring, outreach programs, research initiatives, and educational presentations.",
+    "achievements": [
+      "Mentored 100+ students in career planning",
+      "Conducted research on career development trends",
+      "Delivered engaging presentations and workshops"
+    ],
+    "skills": ["Mentoring", "Research", "Presentations", "Student Outreach"]
+  },
+  {
+    "id": "role-3",
+    "period": "2025",
+    "title": "Content & Social Media Marketing Intern",
+    "company": "Inamigos Foundation",
+    "description": "Managed social media presence, fundraising campaigns, and content creation including blogging.",
+    "achievements": [
+      "Increased social media engagement by 200%",
+      "Successfully managed multiple fundraising campaigns",
+      "Created compelling blog content and marketing materials"
+    ],
+    "skills": ["Social Media", "Content Marketing", "Fundraising", "Blogging"]
+  },
+  {
+    "id": "role-4",
+    "period": "2025",
+    "title": "Field Sales Specialist",
+    "company": "BharatPe",
+    "description": "QR code installations, brand management, and field marketing operations across territories.",
+    "achievements": [
+      "Successfully installed 500+ merchant QR codes",
+      "Managed brand presence in assigned territory",
+      "Exceeded sales targets consistently"
+    ],
+    "skills": ["Field Sales", "Brand Management", "Marketing", "Customer Relations"]
+  },
+  {
+    "id": "role-5",
+    "period": "2024 - 2025",
+    "title": "Horticulturist Intern",
+    "company": "Dr. YS Parmar University",
+    "description": "Managed apple, apricot, and guava plantations with advanced organic farming practices including Jeevamrit and Ghanjeevamrit.",
+    "achievements": [
+      "Managed large-scale fruit plantations",
+      "Implemented organic farming techniques",
+      "Planted 2000+ walnut seedlings with PhD scholars"
+    ],
+    "skills": ["Horticulture", "Organic Farming", "Plantation Management", "Research"]
+  },
+  {
+    "id": "role-6",
+    "period": "2021-2025",
+    "title": "Agriculture Food Engineering Intern",
+    "company": "Dr. YS Parmar University",
+    "description": "Led campaigns, produced and marketed food products, managed supply chains in apple industry.",
+    "achievements": [
+      "Produced and sold 40k worth of food products",
+      "Managed end-to-end supply chain operations",
+      "Led successful marketing campaigns"
+    ],
+    "skills": ["Food Engineering", "Supply Chain", "Product Marketing", "Campaign Management"]
+  },
+  {
+    "id": "role-7",
+    "period": "2020",
+    "title": "Web Development",
+    "company": "Freelance",
+    "description": "Built professional websites for local shop owners using Shopify and WordPress platforms.",
+    "achievements": [
+      "Delivered 10+ client websites successfully",
+      "Specialized in e-commerce solutions",
+      "Maintained 100% client satisfaction rate"
+    ],
+    "skills": ["Web Development", "Shopify", "WordPress", "Client Management"]
+  },
+  {
+    "id": "education-1",
+    "period": "2025-2026",
+    "title": "Product Management Diploma",
+    "company": "Internshala",
+    "description": "Comprehensive training in product management, user research, and agile methodologies.",
+    "achievements": [
+      "Completed advanced product management curriculum",
+      "Developed product strategy frameworks",
+      "Gained hands-on experience with PM tools"
+    ],
+    "skills": ["Product Management", "User Research", "Agile", "Strategy"]
+  },
+  {
+    "id": "education-2",
+    "period": "2021 - 2025",
+    "title": "B.Sc (Hons.) Horticulture",
+    "company": "Dr. YS Parmar University, Nauni",
+    "description": "Specialized in horticulture with focus on sustainable agriculture, post-harvest technology, and organic farming.",
+    "achievements": [
+      "Volunteer at NSS",
+      "Built TIME SAVERS (mini business) In University",
+      "Hands-on expertise in cultivation and food processing"
+    ],
+    "skills": ["Horticulture", "Organic Farming", "Post-Harvest Technology", "Food Processing"]
+  },
+  {
+    "id": "education-3",
+    "period": "2020 - 2021",
+    "title": "Blockchain Development",
+    "company": "Internshala",
+    "description": "Specialized in Blockchain with focus on Ethereum and real technology behind blockchain.",
+    "achievements": ["Built Supply chain thesis based on blockchain", "Bitcoin and mining", "Concept of ledger"],
+    "skills": ["Blockchain", "Programming", "Ethereum Based Products"]
+  },
+  {
+    "id": "program-1",
+    "period": "2024-2025",
+    "title": "RHWE Program",
+    "company": "UHF Nauni",
+    "description": "Selected participant in Rural Health, Water, and Environment initiative—empowering Agriculture communities through sustainable solutions.",
+    "achievements": [
+      "Selected for prestigious RHWE program",
+      "Focus on sustainable community development",
+      "Working on rural health and environmental projects"
+    ],
+    "skills": ["Community Development", "Sustainability", "Rural Health", "Water Management"]
+  }
+]

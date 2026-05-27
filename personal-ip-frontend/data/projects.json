@@ -1,0 +1,122 @@
+[
+  {
+    "id": "project-1",
+    "title": "3D Vertical Farm Model",
+    "subtitle": "Agricultural Innovation & 3D Modeling",
+    "description": "Designed and modeled a comprehensive 3D vertical farm using Google SketchUp, showcasing sustainable agriculture practices and innovative farming techniques for urban environments.",
+    "image": "/placeholder.svg?height=600&width=800",
+    "tags": ["3D Modeling", "SketchUp", "Agriculture", "Sustainability"],
+    "featured": true,
+    "link": ""
+  },
+  {
+    "id": "project-2",
+    "title": "Food Processing & Supply Chain",
+    "subtitle": "Agriculture & Food Engineering",
+    "description": "Led complete farm-to-market supply chain for apple industry. Produced jams, jellies, and squashes from pulp extraction to bottling. Successfully sold ₹40,000 worth of products in a single day through strategic marketing and distribution.",
+    "image": "/placeholder.svg?height=600&width=800",
+    "tags": ["Supply Chain", "Food Processing", "Marketing", "Agriculture"],
+    "featured": true,
+    "link": ""
+  },
+  {
+    "id": "project-3",
+    "title": "Horticulture Farm Development",
+    "subtitle": "Sustainable Farming Practices",
+    "description": "Built and maintained large-scale farms from scratch. Grafted and planted 2000 apple seedlings, 1200 apricot seedlings, and 200 guava seedlings. Prepared and applied organic fertilizers (JEEVAMRIT, GHANJIVAMRIT) and managed complete crop lifecycle.",
+    "image": "/placeholder.svg?height=600&width=800",
+    "tags": ["Horticulture", "Organic Farming", "Grafting", "Sustainability"],
+    "featured": true,
+    "link": ""
+  },
+  {
+    "id": "project-4",
+    "title": "E-Commerce Websites for Local Businesses",
+    "subtitle": "Web Development & Digital Presence",
+    "description": "Built professional websites for local shop owners to establish their online presence. Developed Shopify and WordPress-based e-commerce solutions with custom designs, payment integration, and inventory management.",
+    "image": "/placeholder.svg?height=600&width=800",
+    "tags": ["WordPress", "Shopify", "E-Commerce", "Web Development"],
+    "featured": true,
+    "link": ""
+  },
+  {
+    "id": "project-5",
+    "title": "Grammarly Clone",
+    "subtitle": "Text Editor & Grammar Checker",
+    "description": "Developed a functional Grammarly clone using HTML, CSS, and JavaScript with real-time text analysis, grammar checking capabilities, and an intuitive user interface for content editing.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["HTML", "CSS", "JavaScript", "Text Analysis"],
+    "featured": false,
+    "link": "https://stackblitz.com/edit/web-platform-tww2qc?file=index.html"
+  },
+  {
+    "id": "project-6",
+    "title": "React Logo with Speed Control",
+    "subtitle": "Interactive Animation",
+    "description": "Created an animated React logo using pure HTML, CSS, and JavaScript featuring dynamic speed controls and engaging hover effects for interactive user experience.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["JavaScript", "CSS Animations", "Interactive"],
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-7",
+    "title": "Facebook Login Clone",
+    "subtitle": "UI/UX Design & Development",
+    "description": "Recreated Facebook's login page using Tailwind CSS with pixel-perfect design accuracy. Converted frontend into fully functional backend with authentication system.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Tailwind CSS", "UI Design", "Authentication", "Frontend"],
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-8",
+    "title": "Interactive Game Suite",
+    "subtitle": "Web-Based Gaming Applications",
+    "description": "Built collection of interactive games including Tic Tac Toe, Dinosaur Game, Calculator, and To-Do List using HTML, CSS, and JavaScript with responsive design and smooth gameplay.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["JavaScript", "Game Development", "Interactive", "CSS"],
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-9",
+    "title": "Client Blogging Platform",
+    "subtitle": "WordPress Content Management",
+    "description": "Developed and managed a custom WordPress blogging website for client with SEO optimization, content management system, custom themes, and responsive design for optimal user experience.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["WordPress", "Blogging", "CMS", "SEO"],
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-10",
+    "title": "Social Media Marketing Campaigns",
+    "subtitle": "Content Creation & Fundraising",
+    "description": "Led social media marketing and fundraising campaigns for Inamigos Foundation. Created engaging content, managed multiple platforms, and drove successful awareness and donation campaigns.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Social Media", "Content Marketing", "Fundraising", "Digital Strategy"],
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-11",
+    "title": "Horror Comedy Story",
+    "subtitle": "Creative Writing & Storytelling",
+    "description": "Authored an engaging horror comedy story that won district-level story writing competition, blending suspenseful horror elements with comedic timing for unique narrative experience.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Creative Writing", "Storytelling", "Award Winning"],
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-12",
+    "title": "BharatPe Field Sales Initiative",
+    "subtitle": "Brand Management & Sales",
+    "description": "Managed field sales operations for BharatPe, focusing on QR code applications and sound box distribution to retail and manufacturing workers. Executed brand management and marketing strategies.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Sales", "Brand Management", "Fintech", "Marketing"],
+    "featured": false,
+    "link": ""
+  }
+]
