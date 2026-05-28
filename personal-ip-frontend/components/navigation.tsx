@@ -8,7 +8,7 @@ import { useSound } from "@/hooks/use-sound"
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
+  
   { label: "Projects", href: "/projects" },
   { label: "Travel", href: "/travel" },
   { label: "Blog", href: "/blog" },
@@ -39,7 +39,7 @@ export function Navigation() {
           !isScrolled ? "backdrop-blur-lg" : "-translate-y-full"
         }`}
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8" style={{ margin: '0 auto' }}>
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link
               href="/"
@@ -63,7 +63,7 @@ export function Navigation() {
               ))}
               <Button asChild size="sm" className="ml-4">
                 <Link href="/about" onClick={handleNavClick}>
-                  Get in Touch
+                  About
                 </Link>
               </Button>
             </div>
@@ -108,7 +108,7 @@ export function Navigation() {
                   setIsMobileMenuOpen(false)
                 }}
               >
-                Get in Touch
+                About
               </Link>
             </Button>
           </div>
