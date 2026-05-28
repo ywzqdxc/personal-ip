@@ -45,7 +45,7 @@ const HOBBIES = [
   { num: '01', title: 'Running', subtitle: 'Every mile is a meditation. The road teaches patience and grit.', img: 'photo-1461896836934-ffe607ba8211', href: '/about/hobby/running' },
   { num: '02', title: 'Coder', subtitle: 'Building things from nothing. Logic as a creative language.', img: 'photo-1498050108023-c5249f4df085', href: '/about/hobby/coder' },
   { num: '03', title: 'Reading', subtitle: 'Living a thousand lives before the first one ends.', img: 'photo-1524578271613-d550eacf6090', href: null },
-  { num: '04', title: 'Music', subtitle: 'Sound as memory. Every song, a different version of time.', img: 'photo-1478737270239-2f02b77fc618', href: null },
+  { num: '04', title: 'Music', subtitle: 'Sound as memory. Every song, a different version of time.', img: 'photo-1478737270239-2f02b77fc618', href: '/about/hobby/music' },
   { num: '05', title: 'T. Tennis', subtitle: 'Split-second decisions. The fastest sport on two feet.', img: 'photo-1611251135345-18c56206b863', href: '/about/hobby/table-tennis' },
 ]
 
