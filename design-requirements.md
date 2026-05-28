@@ -1,7 +1,7 @@
 # 个人 IP 网站 — 前端设计需求文档
 
 > 文档路径：`D:\UserData\idea\personal-ip\design-requirements.md`
-> 最后更新：2026-05-27（AI 交接版，含最新进度）
+> 最后更新：2026-05-28（新增 GitHub Calendar，同步最新代码状态）
 > GitHub：https://github.com/ywzqdxc/personal-ip
 
 ---
@@ -20,7 +20,7 @@
 
 ### 当前进度一句话
 
-前台 Travel（旅行日记）+ About（关于我 Hub + Hobby）已完成 UI 和 mock 数据；后端 IP 模块 5 张表已建、CRUD 已写；下一步是 Travel 后端实现 + 前后端 API 对接 + 全站暖色系统一。
+前台 Travel（旅行日记）+ About（关于我 Hub + Hobby + GitHub Calendar）已完成 UI 和 mock 数据；后端 IP 模块 Travel 三张表 + CRUD 已实现；全站暖色系 CSS vars 已统一；全局特效已全部接入 layout.tsx。下一步是 About 子页（Story/Tech/Career）+ Projects + Blog/Thoughts 页面实现。
 
 ### 必须知道的 5 件事
 
@@ -30,9 +30,9 @@
 
 3. **数据层设计**：`lib/travel/api.ts` 是接口层，`lib/travel/mock-data.ts` 是 mock 兜底。当前 API 返回 `{code:0, data:null}` 时自动 fallback 到 mock。后端上线后只需改 api.ts 的 fetch URL 即可切到真实数据。
 
-4. **后端 IP 模块**（`yudao-module-ip`）已有 5 张表：`ip_article`、`ip_travel_diary`、`ip_thought`、`ip_project`、`ip_team_member`。Travel 还需要新建 3 张表（trip/chapter/photo），详见 `personal-ip-frontend/HANDOFF.md`。
+4. **后端 IP 模块**（`yudao-module-ip`）已有 8 张表：`ip_article`、`ip_travel_diary`、`ip_travel_trip`、`ip_travel_chapter`、`ip_travel_photo`、`ip_thought`、`ip_project`、`ip_team_member`。Travel 模块（trip/chapter/photo）DO/Controller/Service/VO 已全部实现，SQL 在 `personal-ip-backend/sql/travel_tables.sql`。
 
-5. **全局特效组件已写好未接入**：`click-spark.tsx`、`lenis-provider.tsx`、`background-animations.tsx`、`pixar-character.tsx` 都在 `components/` 下，只需在 `app/layout.tsx` 引入。
+5. **全局特效组件已全部接入**：`click-spark.tsx`、`lenis-provider.tsx`、`background-animations.tsx`、`pixar-character.tsx` 已在 `app/layout.tsx` 中引入，全局生效。
 
 ### 关键文件索引
 
@@ -42,7 +42,7 @@
 📄 环境搭建说明.md                  ← 协作者环境配置指南
 📁 personal-ip-frontend/app/travel/ ← Travel 3 个页面
 📁 personal-ip-frontend/lib/travel/ ← 类型/API/mock 数据
-📁 personal-ip-frontend/components/ ← 全局组件（部分未接入）
+📁 personal-ip-frontend/components/ ← 全局组件（已全部接入 layout.tsx）
 📁 personal-ip-backend/yudao-module-ip/ ← 后端 IP 业务模块
 📁 personal-ip-backend/sql/        ← 数据库脚本
 📁 personal-ip-admin/src/views/ip/ ← 管理后台 IP 管理页面
@@ -66,7 +66,7 @@
 
 ```
 /                      首页（Hero + 简介摘要入口）
-/about                 关于我（Bento Grid 入口页） ✅ 已实现
+/about                 关于我（Bento Grid + GitHub Calendar） ✅ 已实现
 /about/hobby           Hobby 子页（运动·代码·阅读·音乐） ✅ 已实现
 /about/hobby/running      Running 详情页（视频Hero+数据） ✅ 已实现
 /about/hobby/table-tennis Table Tennis 详情页（深绿对抗风） ✅ 已实现
@@ -149,7 +149,7 @@
 
 ### 3.4 `/about` — About Hub（Bento Grid）
 
-**文件：** `app/about/page.tsx`（约 370 行）
+**文件：** `app/about/page.tsx`（约 490 行，含 GitHub Calendar）
 
 **配色：** 暖米色系（`#FDF6EE` 背景，`#2E1A0E` 深棕，`#C45A30` 橙红）
 
@@ -157,16 +157,17 @@
 - 左：标签 + H1（Barlow Condensed 64px）+ bio + social chips
 - 右：渐变圆形头像（橙色渐变 + "R" 初始字）
 
-**Bento Grid（3列2行）：**
+**Bento Grid（3列3行）：**
 
 | 卡片 | 占位 | 配色 | 内容 |
 |------|------|------|------|
-| Story | 1-3列 / 行1 | 深棕 `#2E1A0E` | 标题 + mini 时间线（3个里程碑带彩色点） |
+| Story | 1-2列 / 行1 | 深棕 `#2E1A0E` | 标题 + mini 时间线（3个里程碑带彩色点） |
 | Hobby | 列3 / 行1-2 | 纯黑 `#141414` | Beyond Work. + 4个迷你 hobby 格 |
 | Tech | 列1 / 行2 | 蓝白 `#EEF4FF` | Tech Stack + 技术标签 |
 | Career | 列2 / 行2 | 暖白 `#FFF8F0` | Career + 3条经历列表 |
+| **GitHub** | **1-3列 / 行3** | **深棕 `#2E1A0E`** | **GitHub Contribution Graph（react-github-calendar，用户 ywzqdxc，暖色系自定义主题）** |
 
-所有卡片点击跳转对应子页面。
+前 4 张卡片点击跳转对应子页面。GitHub 卡片右上角 pill 按钮可跳转到 github.com/ywzqdxc。
 
 ---
 
@@ -311,19 +312,22 @@ getTravelTrip(year, tripId): Promise<TravelTrip | null>
 
 ---
 
-## 六、全局交互特效（规划，未实现）
+## 六、全局交互特效（已实现 ✅）
 
 ### 6.1 鼠标点击烟花 ✦
-`components/click-spark.tsx` 已存在，需集成到 `app/layout.tsx`
+`components/click-spark.tsx` — 已在 `app/layout.tsx` 接入，暖色火花 `#E8855A`
 
-### 6.2 Hover 音效 + 点击音效
-纯 Web Audio API，无外部依赖。实现在 `hooks/use-sound.ts`（待创建）
+### 6.2 Lenis 平滑滚动
+`components/lenis-provider.tsx` — 已在 `app/layout.tsx` 接入，全局平滑滚动
 
-### 6.3 Lenis 平滑滚动
-`components/lenis-provider.tsx` 已存在，需集成到 `app/layout.tsx`
+### 6.3 背景动画
+`components/background-animations.tsx` — 已在 `app/layout.tsx` 接入
 
-### 6.4 底部生长小树（背景动画）
-`components/background-animations.tsx` 已存在，可选接入
+### 6.4 右下角 Pixar 风格吉祥物
+`components/pixar-character.tsx` — 已在 `app/layout.tsx` 接入
+
+### 6.5 Hover 音效 + 点击音效
+纯 Web Audio API，`hooks/use-sound.ts` — 导航栏已调用
 
 ---
 
@@ -354,22 +358,26 @@ getTravelTrip(year, tripId): Promise<TravelTrip | null>
 
 ## 八、RuoYi 后端模块（已实现）
 
-`yudao-module-ip` 模块已创建，包含：
+`yudao-module-ip` 模块已创建，包含 8 张表：
 - `ip_article` — 文章
-- `ip_travel_diary` — 旅行日记
+- `ip_travel_diary` — 旅行日记（旧版）
+- `ip_travel_trip` + `ip_travel_chapter` + `ip_travel_photo` — 旅行行程/章节/照片（新版，DO/Controller/Service/VO 已完整实现）
 - `ip_thought` — 随想
 - `ip_project` — 项目
 - `ip_team_member` — 团队成员
 
-公开 API 端点前缀：`/app-api/ip/`
+> Travel 三张表 SQL：`personal-ip-backend/sql/travel_tables.sql`
+> 菜单 SQL：`personal-ip-backend/sql/system_menu_ip.sql`（ID 5000-5049）
 
-管理后台入口：系统管理 → IP 内容管理（已创建菜单）
+公开 API 端点前缀：`/app-api/ip/`（前台）/ `/ip/`（管理后台）
+
+管理后台入口：系统管理 → IP 内容管理（已创建菜单，含 trip + chapter 子管理页）
 
 ---
 
 ## 九、开发进度
 
-> 最后更新：2026-05-27。优先顺序：Phase 2 补齐 → Phase 4 Travel 后端 → Phase 3 特效接入。
+> 最后更新：2026-05-28。优先顺序：About 子页 → Projects/Blog/Thoughts → 前后端 API 对接。
 
 ```
 Phase 1（基础）：
@@ -421,7 +429,7 @@ Phase 6（AI 集成）：
 
 1. **About 子页（Story / Tech / Career）** — 路由存在，点击会 404，需实现页面内容
 2. **后端 Travel API 对接** — `lib/travel/api.ts` 已有 fallback 逻辑，后端 API 上线后直接生效
-3. **全局特效组件** — `click-spark.tsx`、`lenis-provider.tsx`、`background-animations.tsx` 均已写好，只需在 `app/layout.tsx` 中引入
+3. **全局特效组件** — 已全部在 `app/layout.tsx` 中引入，无需额外操作
 4. **About 页 hobby-dot CSS 类** 已定义但 JSX 中未使用，可清理
 5. **旅行 mock-data** 只有 bali2026，后续新增旅行需在 `mock-data.ts` 添加数据
 

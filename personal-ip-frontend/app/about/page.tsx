@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { GitHubCalendar } from 'react-github-calendar'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 
 const NAV_H = 80
 
@@ -42,10 +44,16 @@ const BENTO_CARDS = [
 ]
 
 const SOCIAL = [
-  { label: 'GitHub',   href: '#' },
+  { label: 'GitHub',   href: 'https://github.com/ywzqdxc' },
   { label: 'LinkedIn', href: '#' },
   { label: 'Email',    href: '#' },
 ]
+
+// 暖色系 Contribution Graph 主题
+const warmContribTheme = {
+  light: ['#F0E6DB', '#E8C9B0', '#C45A30', '#A04020', '#2E1A0E'],
+  dark:  ['#2E1A0E', '#5A3A2A', '#8B5E3C', '#C45A30', '#E8855A'],
+}
 
 const CSS_LINES = [
   "@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800&family=Barlow:wght@300;400;500&family=Caveat:wght@400;600;700&display=swap');",
@@ -54,11 +62,19 @@ const CSS_LINES = [
   '.about-card-dark:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.4); }',
   '.about-card-blue:hover { box-shadow: 0 16px 48px rgba(43,58,94,0.2); }',
   '.about-card-warm:hover { box-shadow: 0 16px 48px rgba(196,90,48,0.15); }',
+  '.github-card:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.35) !important; transform: translateY(-2px); }',
   '.social-chip { transition: background 0.2s, color 0.2s; }',
   '.social-chip:hover { background: #2E1A0E !important; color: #FDF6EE !important; }',
   '@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }',
   '.fade-up { animation: fadeUp 0.6s ease both; }',
   '.hobby-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#E8855A; margin-right:6px; vertical-align:middle; }',
+  // GitHub Calendar 样式覆盖
+  '.github-card .react-github-calendar { width:100% !important; }',
+  '.github-card .react-github-calendar svg { width:100% !important; height:auto !important; }',
+  '.github-card .react-github-calendar text { fill:#B07050 !important; font-size:9px !important; }',
+  '.github-card .contrib-legend { display:flex; align-items:center; gap:4px; justify-content:flex-end; margin-top:8px; }',
+  '.github-card .contrib-legend span { font-size:9px; color:#8A6A50; }',
+  '.github-card .contrib-legend .legend-block { width:10px; height:10px; border-radius:2px; }',
 ]
 const pageCss = CSS_LINES.join('\n')
 
@@ -116,6 +132,8 @@ export default function AboutPage() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
             {SOCIAL.map(s => (
               <a key={s.label} href={s.href}
+                target={s.label === 'GitHub' ? '_blank' : undefined}
+                rel={s.label === 'GitHub' ? 'noopener noreferrer' : undefined}
                 className="social-chip"
                 style={{
                   fontSize: 11, color: '#7A5A40',
@@ -141,20 +159,21 @@ export default function AboutPage() {
         }}>R</div>
       </section>
 
-      {/* Bento Grid */}
+      {/* Bento Grid — 3 cols × 3 rows */}
       <section style={{ padding: '24px 60px 60px' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr',
-          gridTemplateRows: '220px 180px',
+          gridTemplateRows: '200px 160px auto',
           gap: 12,
         }}>
 
-          {/* Story — wide dark card */}
+          {/* Story — wide dark card (row 1, col 1-2) */}
           <div
             className="about-card about-card-dark"
             style={{
               gridColumn: '1 / 3',
+              gridRow: '1',
               background: '#2E1A0E',
               borderRadius: 16,
               padding: '28px 32px',
@@ -217,7 +236,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Hobby — right column spanning both rows */}
+          {/* Hobby — right column spanning rows 1-2 */}
           <div
             className="about-card"
             style={{
@@ -282,10 +301,12 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* Tech Stack */}
+          {/* Tech Stack (row 2, col 1) */}
           <div
             className="about-card about-card-blue"
             style={{
+              gridColumn: '1',
+              gridRow: '2',
               background: '#EEF4FF',
               borderRadius: 16,
               padding: '22px 24px',
@@ -318,10 +339,12 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Career */}
+          {/* Career (row 2, col 2) */}
           <div
             className="about-card about-card-warm"
             style={{
+              gridColumn: '2',
+              gridRow: '2',
               background: '#FFF8F0',
               border: '0.5px solid #E8C9B0',
               borderRadius: 16,
@@ -361,9 +384,112 @@ export default function AboutPage() {
             </div>
           </div>
 
+          {/* ── GitHub Contribution Graph (row 3, col 1-3) ── */}
+          <div
+            className="github-card"
+            style={{
+              gridColumn: '1 / 4',
+              gridRow: '3',
+              background: '#2E1A0E',
+              borderRadius: 16,
+              padding: '28px 36px 24px',
+              display: 'flex',
+              flexDirection: 'column' as const,
+              gap: 16,
+              transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+            }}
+          >
+            {/* Header row */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                {/* GitHub icon */}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8855A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                  <path d="M9 18c-4.51 2-5-2-7-2" />
+                </svg>
+                <div>
+                  <div style={{
+                    fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase' as const,
+                    color: '#E8855A', marginBottom: 2,
+                  }}>Open Source</div>
+                  <h2 style={{
+                    fontFamily: 'Barlow Condensed, sans-serif',
+                    fontSize: 22, fontWeight: 800, color: '#FDF6EE',
+                    lineHeight: 1.1, margin: 0,
+                    letterSpacing: '-0.02em',
+                  }}>Contribution Graph</h2>
+                </div>
+              </div>
+
+              <a
+                href="https://github.com/ywzqdxc"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 11, color: '#E8855A',
+                  textDecoration: 'none',
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  border: '0.5px solid rgba(232,133,90,0.3)',
+                  borderRadius: 99, padding: '5px 14px',
+                  transition: 'background 0.2s, color 0.2s',
+                }}
+                className="social-chip"
+              >
+                github.com/ywzqdxc
+                <span style={{ fontSize: 13 }}>↗</span>
+              </a>
+            </div>
+
+            {/* Calendar */}
+            <div style={{
+              background: 'rgba(20,14,10,0.5)',
+              borderRadius: 12,
+              padding: '18px 20px 14px',
+            }}>
+              <GitHubCalendar
+                username="ywzqdxc"
+                theme={warmContribTheme}
+                colorScheme="dark"
+                blockSize={13}
+                blockMargin={5}
+                fontSize={13}
+                hideColorLegend
+                hideTotalCount
+              />
+            </div>
+
+            {/* Legend row */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <p style={{
+                fontSize: 10, color: '#8A6A50', margin: 0,
+                lineHeight: 1.5,
+              }}>
+                GitHub contributions over the last year. Every square is a day of building, learning, or collaborating.
+              </p>
+              <div className="contrib-legend">
+                <span>Less</span>
+                <div className="legend-block" style={{ background: '#2E1A0E' }} />
+                <div className="legend-block" style={{ background: '#5A3A2A' }} />
+                <div className="legend-block" style={{ background: '#8B5E3C' }} />
+                <div className="legend-block" style={{ background: '#C45A30' }} />
+                <div className="legend-block" style={{ background: '#E8855A' }} />
+                <span>More</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
+      <ReactTooltip id="react-tooltip" />
       <style>{pageCss}</style>
     </main>
   )
