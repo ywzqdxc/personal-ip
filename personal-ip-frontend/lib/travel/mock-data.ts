@@ -235,6 +235,67 @@ const JAPAN_2025: TravelTrip = {
   ],
 }
 
+/* ── Thailand 2023 ─────────────────────────────────────────── */
+const THAILAND_2023: TravelTrip = {
+  id: 'thailand-2023',
+  year: 2023,
+  title: 'THAILAND',
+  titleYear: '2023',
+  subtitle: 'TRAVEL JOURNAL',
+  chinese: '泰 国 · 二 〇 二 三',
+  tagline: 'golden temples and\nmidnight street food —',
+  filmLabel: 'ROLL 01 · FUJIFILM SUPERIA 400 · 02 EXP\nA PHOTOGRAPHIC JOURNAL · BANGKOK · CHIANG MAI',
+  filmHeader: 'THAI-23-R1 · FUJIFILM SUPERIA 400 · 02 OF 22',
+  devCredit: 'DEV 08.15.2023 · BANGKOK FILM LAB',
+  sideText: 'THAILAND · ROL · FUJI-SUPERIA-400 · 02/22 EXP · DEV BKK-LAB',
+  coverImg: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=800&q=70',
+  accentColor: '#c89230',
+  chapters: [
+    {
+      id: 'bangkok', num: '01', name: 'BANGKOK', chinese: '曼 谷',
+      region: 'CENTRAL THAILAND', country: 'THAILAND', area: 'BANGKOK',
+      bg: '#1a0e04', textColor: '#f0e4d0', accent: '#e8b840',
+      pageNum: '03',
+      tags: 'grand palace · wat pho · street food',
+      spots: ['01  07:30 · 大皇宫', '02  11:00 · 卧佛寺', '03  18:45 · 考山路'],
+      quote: '"A city that burns incense\nand engine oil at once —\nchaos and calm folded\ninto the same street."',
+      caption: 'grand palace, dawn', time: '07:30', coords: '13.752, 100.493',
+      locationCn: '大皇宫', totalExp: '16', contactSheet: '01',
+      dateLabel: '08.08',
+      photos: [
+        'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=1400&q=80',
+        'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1400&q=80',
+        'https://images.unsplash.com/photo-1596641708435-3df76f9e5203?w=1400&q=80',
+        'https://images.unsplash.com/photo-1528181304800-259b08848526?w=1400&q=80',
+      ],
+      coverGrad: 'linear-gradient(160deg,#d4a040,#8a4a20,#1a0c04)',
+      coverImg: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=800&q=70',
+      tintColor: 'rgba(200,146,48,0.22)',
+    },
+    {
+      id: 'chiang-mai', num: '02', name: 'CHIANG MAI', chinese: '清 迈',
+      region: 'NORTHERN THAILAND', country: 'THAILAND', area: 'CHIANG MAI',
+      bg: '#142018', textColor: '#d8e8d0', accent: '#78b868',
+      pageNum: '05',
+      tags: 'doi suthep · old city · night bazaar',
+      spots: ['01  05:45 · 素贴山日出', '02  10:00 · 古城寺庙', '03  19:30 · 夜市'],
+      quote: '"The mountains here\nhold the mist like a secret,\nand the monks walk\nbefore the sun does."',
+      caption: 'doi suthep, sunrise', time: '05:45', coords: '18.803, 98.921',
+      locationCn: '素贴山', totalExp: '14', contactSheet: '02',
+      dateLabel: '08.12',
+      photos: [
+        'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1400&q=80',
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1400&q=80',
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1400&q=80',
+        'https://images.unsplash.com/photo-1518509562904-e7ef99cd86cc?w=1400&q=80',
+      ],
+      coverGrad: 'linear-gradient(160deg,#4a7a48,#1a3e18,#080f08)',
+      coverImg: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=70',
+      tintColor: 'rgba(74,122,72,0.28)',
+    },
+  ],
+}
+
 /* ── Europe 2024 ─────────────────────────────────────────── */
 const EUROPE_2024: TravelTrip = {
   id: 'europe-2024',
@@ -296,6 +357,12 @@ const EUROPE_2024: TravelTrip = {
 
 /* ── Year index ─────────────────────────────────────────── */
 export const TRAVEL_YEARS: TravelYear[] = [
+  {
+    year: 2023,
+    coverImg: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=800&q=70',
+    label: 'Bangkok · Chiang Mai',
+    trips: [THAILAND_2023],
+  },
   {
     year: 2024,
     coverImg: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=70',
