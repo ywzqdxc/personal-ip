@@ -13,11 +13,12 @@ interface CardData {
   coverImg: string
   color: string
   rot: number
-  left: string
-  top: string
+  cardLeft: string
+  cardTop: string
+  floatIdx: number
 }
 
-const YEAR_COLORS: Record<string, string> = {
+const YEAR_COLORS: { [key: string]: string } = {
   '2022': '#E8855A',
   '2023': '#4A9B8E',
   '2024': '#C45A30',
@@ -26,16 +27,16 @@ const YEAR_COLORS: Record<string, string> = {
 }
 
 const CARD_SLOTS = [
-  { rot: -6,  left: '4%',  top: '6%'  },
-  { rot:  4,  left: '46%', top: '4%'  },
-  { rot: -3,  left: '24%', top: '46%' },
-  { rot:  5,  left: '60%', top: '38%' },
-  { rot: -4,  left: '10%', top: '68%' },
+  { rot: -6,  cardLeft: '4%',  cardTop: '6%'  },
+  { rot:  4,  cardLeft: '46%', cardTop: '4%'  },
+  { rot: -3,  cardLeft: '24%', cardTop: '46%' },
+  { rot:  5,  cardLeft: '60%', cardTop: '38%' },
+  { rot: -4,  cardLeft: '10%', cardTop: '68%' },
 ]
 
-const pageCss = [
+const CSS_LINES = [
   "@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700;800&family=Barlow:wght@300;400;500&family=Caveat:wght@400;600;700&display=swap');",
-  '.year-card { cursor:pointer; will-change:transform,box-shadow; }',
+  '.year-card { cursor:pointer; will-change:transform,box-shadow; transition: box-shadow 0.3s; }',
   '.year-card:hover { z-index:20 !important; box-shadow:0 24px 64px rgba(0,0,0,0.22) !important; }',
   '.cta-btn { transition:background 0.25s,transform 0.2s; }',
   '.cta-btn:hover { background:#1a2a4a !important; transform:translateX(4px); }',
@@ -53,10 +54,10 @@ const pageCss = [
   '.card-float-2 { animation:floatCard2 8s ease-in-out 1s infinite; }',
   '.card-float-3 { animation:floatCard3 6.5s ease-in-out 1.5s infinite; }',
   '.card-float-4 { animation:floatCard4 7.5s ease-in-out 0.8s infinite; }',
-  '.year-card:hover .card-float-0,.year-card:hover .card-float-1,.year-card:hover .card-float-2,.year-card:hover .card-float-3,.year-card:hover .card-float-4 { animation-play-state:paused; }',
-  '.left-content { animation:fadeInUp 0.7s ease both; }',
-  '.left-content > * { animation:fadeInUp 0.7s ease both; }',
-].join('\n')
+  '.anim-child { animation:fadeInUp 0.6s ease both; }',
+]
+
+const pageCss = CSS_LINES.join('\n')
 
 export default function TravelPage() {
   const router = useRouter()
@@ -80,10 +81,13 @@ export default function TravelPage() {
       coverImg: img,
       color: YEAR_COLORS[String(y.year)] || '#E8855A',
       rot: slot.rot,
-      left: slot.left,
-      top: slot.top,
+      cardLeft: slot.cardLeft,
+      cardTop: slot.cardTop,
+      floatIdx: i % 5,
     }
   })
+
+  const goToYear = (year: number) => { router.push('/travel/' + year) }
 
   return (
     <div style={{
@@ -91,133 +95,132 @@ export default function TravelPage() {
       paddingTop: NAV_H,
       background: 'linear-gradient(135deg, #FDE8D0 0%, #F5EEF8 55%, #D4E8F5 100%)',
       overflow: 'hidden',
-      fontFamily: "'Barlow', sans-serif",
     }}>
 
-      {/* ── Leaf decoration ── */}
+      {/* Leaf decoration top-left */}
       <svg
-        style={{ position: 'absolute', top: NAV_H, left: 0, width: 140, height: 140, opacity: 0.25, pointerEvents: 'none', zIndex: 5 }}
+        style={{ position: 'absolute', top: NAV_H, left: 0, width: 140, height: 140, opacity: 0.22, pointerEvents: 'none', zIndex: 5 }}
         viewBox="0 0 140 140"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M12 128 Q 25 45, 105 18 Q 70 68, 12 128Z" fill="#7A9B50" />
-        <path d="M12 128 Q 35 80, 80 32" stroke="#5A7B30" strokeWidth="1.5" fill="none" />
-        <path d="M12 128 Q 28 92, 55 65" stroke="#5A7B30" strokeWidth="1" fill="none" opacity="0.6" />
+        <path d="M12 128 Q 25 45 105 18 Q 70 68 12 128Z" fill="#7A9B50" />
+        <path d="M12 128 Q 35 80 80 32" stroke="#5A7B30" strokeWidth="1.5" fill="none" />
+        <path d="M12 128 Q 28 92 55 65" stroke="#5A7B30" strokeWidth="1" fill="none" opacity="0.6" />
       </svg>
 
-      {/* ── Bird silhouette ── */}
-      <svg
-        style={{ position: 'absolute', top: NAV_H + 32, right: 80, width: 48, height: 24, opacity: 0.18, pointerEvents: 'none', zIndex: 5 }}
-        viewBox="0 0 48 24"
-        fill="none"
-      >
-        <path d="M24 12 C18 4, 4 2, 0 8 C8 6, 16 10, 24 12Z" fill="#4A6090" />
-        <path d="M24 12 C30 4, 44 2, 48 8 C40 6, 32 10, 24 12Z" fill="#4A6090" />
-      </svg>
-
-      {/* ── Main two-column layout ── */}
+      {/* Main two-column layout */}
       <div style={{ display: 'flex', height: 'calc(100% - 56px)', position: 'relative' }}>
 
-        {/* ── LEFT PANEL ── */}
+        {/* LEFT PANEL */}
         <div style={{
-          width: '42%', flexShrink: 0,
-          display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          width: '42%',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
           padding: '0 40px 40px 60px',
-          position: 'relative', zIndex: 10,
+          position: 'relative',
+          zIndex: 10,
         }}>
-          <div className="left-content">
-            {/* Hello label */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 22, animationDelay: '0.1s' }}>
-              <div style={{ width: 28, height: 1.5, background: '#B07050', borderRadius: 1 }} />
-              <span style={{
-                fontSize: 11, letterSpacing: '0.26em', textTransform: 'uppercase',
-                color: '#B07050', fontFamily: "'Barlow', sans-serif", fontWeight: 500,
-              }}>Hello, I&apos;m</span>
-            </div>
 
-            {/* Main heading */}
-            <h1 style={{
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontSize: 76, fontWeight: 800, lineHeight: 0.92,
-              letterSpacing: '-0.03em', color: '#2E1A0E',
-              margin: '0 0 22px', animationDelay: '0.15s',
-            }}>
-              Collecting<br />
-              <span style={{ color: '#C45A30' }}>Moments.</span>
-            </h1>
+          {/* Hello label */}
+          <div className="anim-child" style={{
+            display: 'flex', alignItems: 'center', gap: 12, marginBottom: 22,
+            animationDelay: '0.1s',
+          }}>
+            <div style={{ width: 28, height: 1.5, background: '#B07050', borderRadius: 1 }} />
+            <span style={{
+              fontSize: 11, letterSpacing: '0.26em', textTransform: 'uppercase' as const,
+              color: '#B07050', fontFamily: 'Barlow, sans-serif', fontWeight: 500,
+            }}>Hello, I am</span>
+          </div>
 
-            {/* Caveat subtitle */}
-            <p style={{
-              fontFamily: "'Caveat', cursive",
-              fontSize: 23, color: '#5A4030', marginBottom: 18,
-              fontWeight: 600, lineHeight: 1.4, animationDelay: '0.22s',
-            }}>
-              Exploring the world, one story at a time.
-            </p>
+          {/* Main heading */}
+          <h1 className="anim-child" style={{
+            fontFamily: 'Barlow Condensed, sans-serif',
+            fontSize: 76, fontWeight: 800, lineHeight: 0.92,
+            letterSpacing: '-0.03em', color: '#2E1A0E',
+            margin: '0 0 22px',
+            animationDelay: '0.15s',
+          }}>
+            Collecting<br />
+            <span style={{ color: '#C45A30' }}>Moments.</span>
+          </h1>
 
-            {/* Chinese description */}
-            <p style={{
-              fontSize: 13, color: '#7A5A40', lineHeight: 1.8,
-              fontFamily: "'Barlow', sans-serif",
-              marginBottom: 38, maxWidth: 310, animationDelay: '0.28s',
-            }}>
-              记录每一段旅途，留存那些触动心灵的瞬间。
-              <br />
-              <span style={{ color: '#9A7A60', fontSize: 11.5, letterSpacing: '0.02em' }}>
-                Each journey is a chapter. Each photo, a memory.
-              </span>
-            </p>
+          {/* Caveat subtitle */}
+          <p className="anim-child" style={{
+            fontFamily: 'Caveat, cursive',
+            fontSize: 23, color: '#5A4030', marginBottom: 18,
+            fontWeight: 600, lineHeight: 1.4,
+            animationDelay: '0.22s',
+          }}>
+            Exploring the world, one story at a time.
+          </p>
 
-            {/* CTA button */}
+          {/* Chinese description */}
+          <div className="anim-child" style={{
+            fontSize: 13, color: '#7A5A40', lineHeight: 1.8,
+            fontFamily: 'Barlow, sans-serif',
+            marginBottom: 38, maxWidth: 310,
+            animationDelay: '0.28s',
+          }}>
+            <span>记录每一段旅途，留存那些触动心灵的瞬间。</span>
+            <br />
+            <span style={{ color: '#9A7A60', fontSize: 11.5, letterSpacing: '0.02em' }}>
+              Each journey is a chapter. Each photo, a memory.
+            </span>
+          </div>
+
+          {/* CTA button */}
+          <div className="anim-child" style={{ animationDelay: '0.34s' }}>
             <button
               className="cta-btn"
-              onClick={() => { if (activeYear) router.push('/travel/' + activeYear) }}
+              onClick={() => { if (activeYear) goToYear(activeYear) }}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 10,
                 background: '#2B3A5E', color: '#FDF6EE',
                 border: 'none', borderRadius: 50,
                 padding: '14px 34px',
-                fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase',
-                fontFamily: "'Barlow', sans-serif", fontWeight: 500,
+                fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase' as const,
+                fontFamily: 'Barlow, sans-serif', fontWeight: 500,
                 cursor: 'pointer', width: 'fit-content',
                 boxShadow: '0 4px 20px rgba(43,58,94,0.25)',
-                animationDelay: '0.34s',
               }}
             >
               Explore My Journey
-              <span style={{ fontSize: 15 }}>→</span>
+              <span style={{ fontSize: 15 }}>&#8594;</span>
             </button>
           </div>
         </div>
 
-        {/* ── RIGHT PANEL — floating photo cards ── */}
+        {/* RIGHT PANEL — floating photo cards */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
 
-          {/* Dotted connecting lines (SVG overlay) */}
+          {/* Dotted connecting lines */}
           {cards.length >= 2 && (
             <svg
               style={{
-                position: 'absolute', inset: 0,
+                position: 'absolute', top: 0, left: 0,
                 width: '100%', height: '100%',
                 pointerEvents: 'none', zIndex: 1,
               }}
-              preserveAspectRatio="none"
             >
-              {cards.slice(0, -1).map((card, i) => {
+              {cards.slice(0, cards.length - 1).map((card, i) => {
                 const next = cards[i + 1]
-                const panelW = 700
-                const panelH = 700
-                const x1 = parseFloat(card.left) / 100 * panelW + 95
-                const y1 = parseFloat(card.top)  / 100 * panelH + 130
-                const x2 = parseFloat(next.left) / 100 * panelW + 95
-                const y2 = parseFloat(next.top)  / 100 * panelH + 130
+                const pw = 700
+                const ph = 700
+                const x1 = parseFloat(card.cardLeft) / 100 * pw + 94
+                const y1 = parseFloat(card.cardTop)  / 100 * ph + 130
+                const x2 = parseFloat(next.cardLeft) / 100 * pw + 94
+                const y2 = parseFloat(next.cardTop)  / 100 * ph + 130
                 const mx = (x1 + x2) / 2
                 const my = (y1 + y2) / 2 - 30
+                const dPath = 'M ' + x1 + ' ' + y1 + ' Q ' + mx + ' ' + my + ' ' + x2 + ' ' + y2
                 return (
                   <path
                     key={i}
-                    d={'M ' + x1 + ' ' + y1 + ' Q ' + mx + ' ' + my + ' ' + x2 + ' ' + y2}
+                    d={dPath}
                     stroke="#C8A898"
                     strokeWidth="1.5"
                     strokeDasharray="5 7"
@@ -230,77 +233,77 @@ export default function TravelPage() {
           )}
 
           {/* Photo cards */}
-          {cards.map((card, i) => (
-            <div
-              key={card.year}
-              className={'year-card card-float-' + i}
-              onClick={() => router.push('/travel/' + card.year)}
-              onMouseEnter={() => setHovered(card.year)}
-              onMouseLeave={() => setHovered(null)}
-              style={{
-                position: 'absolute',
-                left: card.left,
-                top: card.top,
-                width: 188,
-                borderRadius: 14,
-                overflow: 'hidden',
-                background: '#FFFAF6',
-                boxShadow: hovered === card.year
-                  ? '0 24px 64px rgba(0,0,0,0.22)'
-                  : '0 8px 36px rgba(0,0,0,0.13)',
-                zIndex: hovered === card.year ? 20 : 10,
-                transition: 'box-shadow 0.3s',
-              }}
-            >
-              {/* Photo */}
-              <div style={{
-                width: '100%', height: 238,
-                overflow: 'hidden', background: '#E8D0B8',
-                position: 'relative',
-              }}>
-                {card.coverImg && (
-                  <img
-                    src={card.coverImg}
-                    alt={card.label}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  />
-                )}
-                {/* Subtle gradient overlay */}
+          {cards.map((card) => {
+            const floatClass = 'year-card card-float-' + card.floatIdx
+            const cardShadow = hovered === card.year
+              ? '0 24px 64px rgba(0,0,0,0.22)'
+              : '0 8px 36px rgba(0,0,0,0.13)'
+            const dotGlow = card.color + '80'
+            return (
+              <div
+                key={card.year}
+                className={floatClass}
+                onClick={() => goToYear(card.year)}
+                onMouseEnter={() => setHovered(card.year)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  position: 'absolute',
+                  left: card.cardLeft,
+                  top: card.cardTop,
+                  width: 188,
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  background: '#FFFAF6',
+                  boxShadow: cardShadow,
+                  zIndex: hovered === card.year ? 20 : 10,
+                }}
+              >
                 <div style={{
-                  position: 'absolute', inset: 0,
-                  background: 'linear-gradient(to bottom, transparent 55%, rgba(45,26,14,0.35) 100%)',
-                }} />
-              </div>
-
-              {/* Card footer */}
-              <div style={{
-                padding: '11px 14px 13px',
-                borderTop: '1px solid #EDD8C8',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
+                  width: '100%', height: 238,
+                  overflow: 'hidden', background: '#E8D0B8',
+                  position: 'relative',
+                }}>
+                  {card.coverImg && (
+                    <img
+                      src={card.coverImg}
+                      alt={card.label}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                  )}
                   <div style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: card.color, flexShrink: 0,
-                    boxShadow: '0 0 6px ' + card.color + '80',
+                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'linear-gradient(to bottom, transparent 55%, rgba(45,26,14,0.35) 100%)',
                   }} />
-                  <span style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 24, fontWeight: 800, color: '#2E1A0E',
-                    letterSpacing: '-0.02em', lineHeight: 1,
-                  }}>{card.year}</span>
                 </div>
-                <span style={{
-                  fontFamily: "'Barlow', sans-serif",
-                  fontSize: 10, color: '#B07050',
-                  letterSpacing: '0.12em', textTransform: 'uppercase',
-                }}>{card.label}</span>
+                <div style={{
+                  padding: '11px 14px 13px',
+                  borderTop: '1px solid #EDD8C8',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
+                    <div style={{
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: card.color, flexShrink: 0,
+                      boxShadow: '0 0 6px ' + dotGlow,
+                    }} />
+                    <span style={{
+                      fontFamily: 'Barlow Condensed, sans-serif',
+                      fontSize: 24, fontWeight: 800, color: '#2E1A0E',
+                      letterSpacing: '-0.02em', lineHeight: 1,
+                    }}>{card.year}</span>
+                  </div>
+                  <span style={{
+                    fontFamily: 'Barlow, sans-serif',
+                    fontSize: 10, color: '#B07050',
+                    letterSpacing: '0.12em', textTransform: 'uppercase' as const,
+                  }}>{card.label}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
-      {/* ── Bottom bar ── */}
+      {/* Bottom bar */}
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
         display: 'flex', alignItems: 'center',
@@ -311,33 +314,33 @@ export default function TravelPage() {
         borderTop: '1px solid rgba(232,201,176,0.45)',
         zIndex: 30,
       }}>
-        {/* Year pills */}
         <div style={{ display: 'flex', gap: 6, flex: 1, alignItems: 'center' }}>
-          {years.map(y => (
-            <button
-              key={y.year}
-              className={'y-pill' + (activeYear === y.year ? ' active' : '')}
-              onClick={() => { setActiveYear(y.year); router.push('/travel/' + y.year) }}
-              style={{
-                border: '1px solid rgba(176,112,80,0.28)',
-                borderRadius: 20,
-                padding: '5px 16px',
-                fontSize: 12, fontWeight: 500,
-                letterSpacing: '0.06em',
-                fontFamily: "'Barlow', sans-serif",
-                background: 'transparent',
-                color: '#7A5A40',
-                cursor: 'pointer',
-              }}
-            >
-              {y.year}
-            </button>
-          ))}
+          {years.map(y => {
+            const pillClass = 'y-pill' + (activeYear === y.year ? ' active' : '')
+            return (
+              <button
+                key={y.year}
+                className={pillClass}
+                onClick={() => { setActiveYear(y.year); goToYear(y.year) }}
+                style={{
+                  border: '1px solid rgba(176,112,80,0.28)',
+                  borderRadius: 20,
+                  padding: '5px 16px',
+                  fontSize: 12, fontWeight: 500,
+                  letterSpacing: '0.06em',
+                  fontFamily: 'Barlow, sans-serif',
+                  background: 'transparent',
+                  color: '#7A5A40',
+                  cursor: 'pointer',
+                }}
+              >
+                {y.year}
+              </button>
+            )
+          })}
         </div>
-
-        {/* Calendar icon */}
         <button
-          onClick={() => { if (activeYear) router.push('/travel/' + activeYear) }}
+          onClick={() => { if (activeYear) goToYear(activeYear) }}
           style={{
             background: 'none',
             border: '1px solid rgba(176,112,80,0.28)',
@@ -357,7 +360,7 @@ export default function TravelPage() {
         </button>
       </div>
 
-      {/* ── Bottom-left: Scroll indicator ── */}
+      {/* Bottom-left scroll indicator */}
       <div style={{
         position: 'absolute', bottom: 70, left: 52,
         display: 'flex', alignItems: 'center', gap: 8,
@@ -365,19 +368,18 @@ export default function TravelPage() {
       }}>
         <div style={{ width: 1, height: 22, background: '#B07050', opacity: 0.45 }} />
         <span style={{
-          fontSize: 9.5, letterSpacing: '0.22em', textTransform: 'uppercase',
-          color: '#B07050', fontFamily: "'Barlow', sans-serif",
-          opacity: 0.6,
+          fontSize: 9.5, letterSpacing: '0.22em', textTransform: 'uppercase' as const,
+          color: '#B07050', fontFamily: 'Barlow, sans-serif', opacity: 0.6,
         }}>Scroll to explore</span>
       </div>
 
-      {/* ── Bottom-right: Handwritten quote ── */}
+      {/* Bottom-right handwritten quote */}
       <div style={{
         position: 'absolute', bottom: 68, right: 52,
         pointerEvents: 'none', zIndex: 20,
       }}>
         <span style={{
-          fontFamily: "'Caveat', cursive",
+          fontFamily: 'Caveat, cursive',
           fontSize: 17, color: '#8A6850', opacity: 0.75,
         }}>Life is short, the world is wide.</span>
       </div>

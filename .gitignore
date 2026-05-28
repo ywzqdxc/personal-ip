@@ -63,3 +63,9 @@ logs/
 *.log
 *.tmp
 *.cache
+# 忽略 Redis 二进制文件和数据库快照
+Redis/
+*.rdb
+*.exe
+*.pdb
+*.dll

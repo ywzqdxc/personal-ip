@@ -101,6 +101,7 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
     setPIdx(0)
     setTwText('')
     setKbVis(false)
+    setHovIdx(null)
   }, [TOTAL, clearTimers])
 
   // ── Keyboard navigation ───────────────────────────────────
@@ -269,7 +270,7 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
         fontSize: 8, letterSpacing: '0.16em', color: '#666',
         textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8,
         zIndex: 300, pointerEvents: 'none',
-        opacity: hovIdx !== null ? 1 : 0, transition: 'opacity 0.3s',
+        opacity: pg === 0 && hovIdx !== null ? 1 : 0, transition: 'opacity 0.3s',
       }}>
         <span className="nh-dot" />
         <span>NOW HOVERING · {hovCh?.name ?? ''}</span>

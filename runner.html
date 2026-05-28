@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MOMENTUM · 跑步日志</title>
+    <!-- Google Fonts & 基础样式 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fefaf5;   /* 柔和米白基底，像纸张质感 */
+            color: #1a1e24;
+            line-height: 1.4;
+            scroll-behavior: smooth;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e8e0d5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bc9a6c;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 1.75rem 0 1rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #2b2b2b 0%, #7a5a3a 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            list-style: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .nav-links li a {
+            text-decoration: none;
+            color: #2c2c2c;
+            transition: color 0.2s ease;
+            letter-spacing: -0.2px;
+        }
+        .nav-links li a:hover {
+            color: #b87c4a;
+        }
+
+        /* hero 区域 */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin: 3rem 0 4rem 0;
+            border-bottom: 1px solid #ece2d8;
+            padding-bottom: 3rem;
+        }
+        .hero-left {
+            flex: 2;
+        }
+        .hero-left h1 {
+            font-size: 5.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(130deg, #1e1e24 0%, #5d3a1f 80%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .quote-en {
+            font-size: 1.5rem;
+            font-weight: 400;
+            font-style: italic;
+            color: #3c2a23;
+            border-left: 4px solid #d6ad7a;
+            padding-left: 1.2rem;
+            margin: 1rem 0;
+        }
+        .quote-zh {
+            font-size: 1rem;
+            color: #5b4b3c;
+            margin-top: 0.5rem;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+        .hero-right {
+            flex: 1;
+            text-align: right;
+        }
+        .hero-meta {
+            background: rgba(219, 198, 168, 0.25);
+            backdrop-filter: blur(2px);
+            padding: 1rem 1.5rem;
+            border-radius: 32px;
+            display: inline-block;
+        }
+        .city-time {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.01em;
+        }
+        .temp {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6e4f2e;
+            margin-top: 6px;
+        }
+        .scroll-hint {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #896e4b;
+            letter-spacing: 0.5px;
+        }
+        .scroll-hint i {
+            animation: bounce 1.8s infinite;
+        }
+        @keyframes bounce {
+            0%,100%{ transform: translateY(0);}
+            50%{ transform: translateY(6px);}
+        }
+
+        /* 通用section */
+        section {
+            margin: 5rem 0;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #b48b5a;
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e4d9cf;
+            padding-bottom: 0.75rem;
+        }
+
+        /* 数据 + why 双栏布局 */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .two-col-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* 数字卡片组 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.6rem 1.2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s ease;
+            border: 1px solid #f0e6de;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: #e2cfbc;
+        }
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #2b211b;
+            line-height: 1.1;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #9b7a5a;
+            letter-spacing: 1px;
+            margin: 0.5rem 0 0.2rem;
+        }
+        .stat-note {
+            font-size: 0.75rem;
+            color: #a88868;
+            margin-top: 0.35rem;
+        }
+        .big-distance-note {
+            grid-column: span 2;
+            background: #fff6ef;
+            border-radius: 28px;
+            padding: 1rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6a4a2a;
+            text-align: center;
+            border: 1px solid #f0e0d0;
+        }
+        .why-list {
+            background: #fdf9f4;
+            border-radius: 28px;
+            padding: 2rem 1.8rem;
+            height: fit-content;
+        }
+        .why-list h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .why-list p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #3d2e22;
+            margin-bottom: 1.6rem;
+        }
+        .why-bullets {
+            list-style: none;
+            margin-top: 1.2rem;
+        }
+        .why-bullets li {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 500;
+        }
+        .why-bullets li i {
+            color: #c28a5c;
+            width: 24px;
+            font-size: 1.2rem;
+        }
+        .meditation-quote {
+            margin-top: 2rem;
+            font-style: italic;
+            border-top: 1px dashed #e2cfbc;
+            padding-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #5f4a34;
+        }
+
+        /* 城市跑步区块 */
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0;
+        }
+        .city-card {
+            background: white;
+            border-radius: 32px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #eee3d8;
+            transition: all 0.2s;
+        }
+        .city-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+        .city-time {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #be8a5c;
+            margin: 0.5rem 0;
+        }
+        .city-location {
+            font-size: 0.85rem;
+            color: #8c7157;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        /* 音乐区块 类似播放列表 */
+        .soundtrack-list {
+            background: #fffbf7;
+            border-radius: 36px;
+            padding: 2rem;
+            border: 1px solid #efe2d6;
+        }
+        .track-item {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0e2d6;
+        }
+        .track-item:last-child {
+            border-bottom: none;
+        }
+        .artist {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .album {
+            font-size: 0.85rem;
+            color: #ad8865;
+            font-family: monospace;
+            letter-spacing: -0.2px;
+        }
+        .track-icon {
+            color: #bb8a60;
+            font-size: 0.9rem;
+        }
+        .sub-sound {
+            margin-top: 1rem;
+            text-align: right;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #b99a7a;
+        }
+
+        /* 底部金句 */
+        .footer-quote {
+            text-align: center;
+            margin: 4rem 0 2rem;
+            padding: 2rem;
+            background: #f5ede4;
+            border-radius: 64px;
+        }
+        .footer-quote p {
+            font-size: 1.5rem;
+            font-weight: 500;
+            font-style: italic;
+            color: #2c241e;
+        }
+        .footer-quote small {
+            display: block;
+            margin-top: 0.5rem;
+            color: #a4815b;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            font-size: 0.75rem;
+            color: #b49a7c;
+            border-top: 1px solid #ece0d4;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                padding: 0 1.2rem;
+            }
+            .hero-left h1 {
+                font-size: 3.5rem;
+            }
+            .quote-en {
+                font-size: 1.2rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .big-distance-note {
+                grid-column: span 1;
+            }
+            .nav-links {
+                gap: 1rem;
+                margin-top: 0.5rem;
+            }
+            .navbar {
+                flex-direction: column;
+                align-items: start;
+            }
+        }
+
+        /* 强调元素 */
+        .highlight-text {
+            font-weight: 600;
+            color: #b97742;
+        }
+        i.fa, i.far, i.fas {
+            margin-right: 4px;
+        }
+        a {
+            cursor: default;
+        }
+        .city-card:hover, .track-item:hover {
+            background: #fefaf5;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="logo">MOMENTUM</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">Travel</a></li>
+            <li><a href="#">Hobby</a></li>
+            <li><a href="#">Thoughts</a></li>
+            <li><a href="#">Get in Touch</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero 区域 -->
+    <div class="hero">
+        <div class="hero-left">
+            <h1>MOMENTUM</h1>
+            <div class="quote-en">Running teaches us how to stay alone.</div>
+            <div class="quote-zh">长距离跑步最迷人的地方，是它会让人重新听见自己的呼吸。</div>
+        </div>
+        <div class="hero-right">
+            <div class="hero-meta">
+                <div class="city-time">Tokyo <span style="font-weight: 600;">6:01AM</span></div>
+                <div class="temp">🌡️ 12℃ · 晨间清冽</div>
+                <div class="scroll-hint">
+                    <i class="fas fa-mouse-pointer"></i> Scroll to explore
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 核心数据区：THE NUMBERS + THE WHY 双栏 -->
+    <div class="two-col-grid">
+        <!-- 左侧: THE NUMBERS + 2024 in Motion 数据 -->
+        <div>
+            <div class="section-title">THE NUMBERS</div>
+            <div style="margin-bottom: 1rem;">
+                <span style="font-size: 1.6rem; font-weight: 700;">2024 in Motion</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1287 <span style="font-size: 1.2rem;">km</span></div>
+                    <div class="stat-label">总里程</div>
+                    <div class="stat-note">相当于从东京跑到魔儿岛的距离</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">162</div>
+                    <div class="stat-label">RUNS</div>
+                    <div class="stat-note">奔跑次数 · 平均每周3.1次</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">9'12<span style="font-size: 1.2rem;">"</span></div>
+                    <div class="stat-label">AVG PACE</div>
+                    <div class="stat-note">每公里配速 · 从容巡航</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">118</div>
+                    <div class="stat-label">HOURS</div>
+                    <div class="stat-note">总时长 · 近5个日夜</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12,450 <span style="font-size: 1.2rem;">m</span></div>
+                    <div class="stat-label">ELEV GAIN</div>
+                    <div class="stat-note">累计爬升 · 超越1.4个珠峰</div>
+                </div>
+                <div class="big-distance-note">
+                    🏃‍♂️ 1287km · 从东京到魔儿岛，用双脚丈量自律与自由
+                </div>
+            </div>
+            <!-- 补充meditation句子 -->
+            <div class="meditation-quote">
+                <i class="fas fa-feather-alt"></i> Running is my moving meditation.<br>
+                It clears the noise and makes space.
+            </div>
+        </div>
+
+        <!-- 右侧: THE WHY 内核 -->
+        <div>
+            <div class="section-title">THE WHY</div>
+            <div class="why-list">
+                <h3>不是为了更快，<br>而是为了：</h3>
+                <ul class="why-bullets">
+                    <li><i class="fas fa-water"></i> 让情绪沉下来</li>
+                    <li><i class="fas fa-chalkboard-user"></i> 重新建立秩序</li>
+                    <li><i class="fas fa-dove"></i> 在混乱里保持稳定</li>
+                    <li><i class="fas fa-hand-sparkles"></i> 与自己建立更深的连接</li>
+                </ul>
+                <p style="margin-top: 1.4rem; font-weight: 500; color:#5b3e28;">每一步都是内在的仪式，呼吸成为唯一的节奏。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CITY RUNS 区域 -->
+    <section>
+        <div class="section-header">
+            <div class="section-title">CITY RUNS · 城市足迹</div>
+            <i class="fas fa-map-pin" style="color:#c28a5c;"></i>
+        </div>
+        <div class="city-grid">
+            <!-- Tokyo -->
+            <div class="city-card">
+                <div class="city-name">Tokyo</div>
+                <div class="city-time">5:42 AM</div>
+                <div class="city-location"><i class="fas fa-location-dot"></i> Shibuya · 夜灯未熄，晨光初现</div>
+            </div>
+            <!-- Kyoto -->
+            <div class="city-card">
+                <div class="city-name">Kyoto</div>
+                <div class="city-time">6:11 AM</div>
+                <div class="city-location"><i class="fas fa-tree"></i> Kamo River · 鸭川畔，与白鹭同醒</div>
+            </div>
+            <!-- Shanghai -->
+            <div class="city-card">
+                <div class="city-name">Shanghai</div>
+                <div class="city-time">11:36 PM</div>
+                <div class="city-location"><i class="fas fa-city"></i> The Bund · 深夜外滩，灯火流动</div>
+            </div>
+            <!-- Singapore -->
+            <div class="city-card">
+                <div class="city-name">Singapore</div>
+                <div class="city-time">6:23 AM</div>
+                <div class="city-location"><i class="fas fa-water"></i> Marina Bay · 晨雾中的未来感</div>
+            </div>
+        </div>
+        <div style="font-size: 0.7rem; text-align: right; margin-top: 0.5rem; color:#b48b62;">
+            <i class="fas fa-route"></i> 世界各地的节奏，同一双跑鞋
+        </div>
+    </section>
+
+    <!-- SOUNDTRACK 听觉清单 -->
+    <section>
+        <div class="section-header">
+            <div class="section-title">SOUNDTRACK · 流动频率</div>
+            <i class="fas fa-headphones"></i>
+        </div>
+        <div class="soundtrack-list">
+            <div class="track-item">
+                <div><span class="artist">Miles Davis</span> <span class="album">· Kind of Blue</span></div>
+                <div class="track-icon"><i class="fas fa-jazz"></i> modal meditation</div>
+            </div>
+            <div class="track-item">
+                <div><span class="artist">Nujabes</span> <span class="album">· Reflection Eternal</span></div>
+                <div class="track-icon"><i class="fas fa-record-vinyl"></i> lofi hiphop soul</div>
+            </div>
+            <div class="track-item">
+                <div><span class="artist">Rain&Thunder</span> <span class="album">· Ambient</span></div>
+                <div class="track-icon"><i class="fas fa-cloud-rain"></i> 雨声与环境融合</div>
+            </div>
+            <div class="track-item">
+                <div><span class="artist">Joe Hisaishi</span> <span class="album">· Summer</span></div>
+                <div class="track-icon"><i class="fas fa-film"></i> 久石让 · 夏日琴音</div>
+            </div>
+            <div class="track-item">
+                <div><span class="artist">Nothing</span> <span class="album">· Just My Breath</span></div>
+                <div class="track-icon"><i class="fas fa-wind"></i> 纯粹呼吸 · 无声胜有声</div>
+            </div>
+            <div class="sub-sound">
+                <i class="fas fa-play-circle"></i> What I listen to while running · 每段配速皆有对应旋律
+            </div>
+        </div>
+    </section>
+
+    <!-- 最终金句及额外文字 “The body moves, the mind follows.” -->
+    <div class="footer-quote">
+        <p>“The body moves,<br> the mind follows.”</p>
+        <small>— 每一步都是移动的冥想</small>
+    </div>
+
+    <!-- 底部联系以及版权 -->
+    <div class="footer-bottom">
+        <span><i class="far fa-compass"></i> MOMENTUM · 奔跑中重构秩序</span><br>
+        <span style="font-size:0.7rem;">© 2024 · Get in Touch — 跑者无界</span>
+    </div>
+</div>
+
+<!-- 简单数字滚动增强（轻量动画，保持静态数值到可视区域时增加视觉效果） -->
+<script>
+    // 优雅滚动指示: 监听数字区域，滚动时添加强调效果，但保留原数值，无需复杂 直接增加一个计数动画是可选但更愉悦
+    // 这里让数字卡片滚动出现时轻微浮动
+    const statNumbers = document.querySelectorAll('.stat-number');
+    const animateNumber = (el, target) => {
+        if (!el.getAttribute('data-observed')) {
+            el.setAttribute('data-observed', 'true');
+            let current = 0;
+            const raw = el.innerText;
+            let numericMatch = raw.match(/([\d,]+)(?:\.?\d*)?/);
+            if (!numericMatch) return;
+            let finalVal = parseFloat(numericMatch[1].replace(/,/g, ''));
+            if (isNaN(finalVal)) return;
+            const suffix = raw.replace(numericMatch[1], '');
+            const step = Math.ceil(finalVal / 50);
+            let interval = setInterval(() => {
+                current += step;
+                if (current >= finalVal) {
+                    current = finalVal;
+                    el.innerText = current + suffix;
+                    clearInterval(interval);
+                } else {
+                    el.innerText = current + suffix;
+                }
+            }, 18);
+        }
+    };
+    // 仅对数值做一次滚动触发动效（简单增加节奏感，但为了避免覆盖原本单位），我们监控stat-card，但为了谨慎，只触发整数数字
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const numberDiv = target.querySelector('.stat-number');
+                if (numberDiv && !numberDiv.classList.contains('animated-done')) {
+                    numberDiv.classList.add('animated-done');
+                    // 提取原始文本做简单动画（不影响单位）
+                    const originalText = numberDiv.innerText;
+                    const numberMatch = originalText.match(/\d{1,}(?:[,.]?\d+)?/);
+                    if (numberMatch) {
+                        let targetNum = parseFloat(numberMatch[0].replace(/,/g, ''));
+                        if (!isNaN(targetNum)) {
+                            let start = 0;
+                            const stepVal = Math.ceil(targetNum / 45);
+                            const suffixPart = originalText.replace(numberMatch[0], '');
+                            let currentVal = 0;
+                            const timer = setInterval(() => {
+                                currentVal += stepVal;
+                                if (currentVal >= targetNum) {
+                                    currentVal = targetNum;
+                                    numberDiv.innerText = currentVal + suffixPart;
+                                    clearInterval(timer);
+                                } else {
+                                    numberDiv.innerText = currentVal + suffixPart;
+                                }
+                            }, 20);
+                        }
+                    }
+                }
+                observer.unobserve(target);
+            }
+        });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.stat-card').forEach(card => observer.observe(card));
+
+    // 额外加一点平滑滚动提示 + 鼠标移动小互动(仅装饰)
+    const scrollHint = document.querySelector('.scroll-hint');
+    if(scrollHint) {
+        scrollHint.style.cursor = 'pointer';
+        scrollHint.addEventListener('click', () => {
+            window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+        });
+    }
+    // 给hero区域加一点微动
+    console.log('MOMENTUM · 跑过一切情绪');
+</script>
+</body>
+</html>
