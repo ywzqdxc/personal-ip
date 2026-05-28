@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation'
 
 const CSS_LINES = [
   "@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;1,400;1,700&family=Barlow:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');",
-  '*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }',
   'html { scroll-behavior: smooth; }',
   ".hobby-root { font-family: 'Barlow', sans-serif; background: #0E0C0A; }",
   '.hero-section { position: relative; width: 100%; height: 100vh; overflow: hidden; }',
