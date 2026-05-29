@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { MenuIcon, XIcon } from "./simple-icons"
 import { Button } from "@/components/ui/button"
 import { useSound } from "@/hooks/use-sound"
 
 const navItems = [
   { label: "Home", href: "/" },
-  
   { label: "Projects", href: "/projects" },
   { label: "Travel", href: "/travel" },
   { label: "Blog", href: "/blog" },
@@ -16,9 +16,16 @@ const navItems = [
 ]
 
 export function Navigation() {
+  const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { playSound } = useSound()
+
+  // 深色全屏页面：导航透明浮动、始终可见、无 backdrop-blur
+  // 包含：旅行日记详情页 + 所有 Hobby 子详情页
+  const isTransparentNav =
+    /^\/travel\/[^/]+\/[^/]+/.test(pathname ?? '') ||
+    /^\/about\/hobby\/.+/.test(pathname ?? '')
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,13 +39,16 @@ export function Navigation() {
     playSound("pop", 0.3)
   }
 
+  // 透明浮动模式：始终可见，无背景，无 blur
+  const navClass = isTransparentNav
+    ? 'fixed top-0 left-0 right-0 z-50 transition-all duration-300'
+    : `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        !isScrolled ? 'backdrop-blur-lg' : '-translate-y-full'
+      }`
+
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          !isScrolled ? "backdrop-blur-lg" : "-translate-y-full"
-        }`}
-      >
+      <nav className={navClass}>
         <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8" style={{ margin: '0 auto' }}>
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link

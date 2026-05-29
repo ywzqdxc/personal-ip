@@ -4,8 +4,7 @@ import { use, useState, useEffect, useRef, useCallback } from 'react'
 import { getTravelTrip } from '@/lib/travel/api'
 import type { TravelTrip } from '@/lib/travel/types'
 
-const NAV_H = 80   // site nav height px
-const BAR_H = 42   // mini topbar height px
+
 
 // ── Wrapper: handles async data loading ────────────────────
 export default function TripPage({
@@ -44,11 +43,11 @@ export default function TripPage({
     )
   }
 
-  return <TripJournal trip={trip} />
+  return <TripJournal trip={trip} year={year} />
 }
 
 // ── Inner: all hooks live here — no conditional returns above them ──
-function TripJournal({ trip }: { trip: TravelTrip }) {
+function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
   const chs   = trip.chapters
   const TOTAL = chs.length + 1   // 0 = cover, 1..N = chapters
 
@@ -173,9 +172,7 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
 
   // ── Derived values ────────────────────────────────────────
   const ch    = pg > 0 ? chs[pg - 1] : null
-  const crumb = pg === 0
-    ? 'ROLL 01 · COVER'
-    : `CHAPTER ${chs[pg - 1].num} · ${chs[pg - 1].name}`
+
 
   // Film indicator groups  [[0], [1..4], [5..8], ...]
   const filmGroups: number[][] = [[0]]
@@ -196,73 +193,6 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
       fontFamily: "'Space Mono', monospace",
       background: '#111',
     }}>
-
-      {/* ══ Mini Topbar ══ */}
-      <header style={{
-        position: 'absolute', top: NAV_H, left: 0, right: 0, height: BAR_H,
-        background: '#111', borderBottom: '1px solid #1e1e1e',
-        display: 'grid', gridTemplateColumns: '1fr auto 1fr',
-        alignItems: 'center', padding: '0 18px', zIndex: 200, gap: 12,
-      }}>
-        {/* left — brand + crumb */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-          <span style={{
-            fontSize: 10, letterSpacing: '0.12em', color: '#d8d0c4',
-            textTransform: 'uppercase', whiteSpace: 'nowrap',
-          }}>
-            {trip.title} {trip.titleYear}{' '}
-            <span style={{ color: '#e04030' }}>★</span>{' '}
-            {trip.subtitle}
-          </span>
-          <span style={{
-            fontSize: 9, letterSpacing: '0.14em', color: '#555',
-            textTransform: 'uppercase', overflow: 'hidden',
-            textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>
-            {crumb}
-          </span>
-        </div>
-
-        {/* center — film indicators */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifySelf: 'center' }}>
-          {filmGroups.map((grp, gi) => (
-            <span key={gi} style={{ display: 'contents' }}>
-              {gi > 0 && (
-                <span style={{ fontSize: 10, color: '#333', margin: '0 2px' }}>/</span>
-              )}
-              {grp.map(i => (
-                <div
-                  key={i}
-                  onClick={() => goPage(i)}
-                  style={{
-                    width: 20, height: 14, borderRadius: 2,
-                    cursor: 'pointer', flexShrink: 0,
-                    background:
-                      i < pg  ? '#383838' :
-                      i === pg ? '#e8c040' :
-                                 '#252525',
-                    transition: 'background 0.3s',
-                  }}
-                />
-              ))}
-            </span>
-          ))}
-        </div>
-
-        {/* right — PREV / NEXT */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, justifySelf: 'end' }}>
-          <button
-            onClick={() => goPage(pg - 1)}
-            disabled={pg === 0}
-            className="travel-nav-btn"
-          >← PREV</button>
-          <button
-            onClick={() => goPage(pg + 1)}
-            disabled={pg >= TOTAL - 1}
-            className="travel-nav-btn"
-          >NEXT →</button>
-        </div>
-      </header>
 
       {/* ══ Now Hovering ══ */}
       <div style={{
@@ -308,7 +238,7 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
         key={pg}   /* remounts on chapter change → triggers all anim-* */
         style={{
           position: 'absolute',
-          top: NAV_H + BAR_H, left: 0, right: 0, bottom: 0,
+          top: 0, left: 0, right: 0, bottom: 0,
           display: 'flex',
           animation: 'pageEnter 0.35s ease both',
         }}
@@ -694,15 +624,6 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
                   </div>
                 </div>
 
-                {/* Timestamp */}
-                <div style={{
-                  position: 'absolute', top: 18, right: 18, zIndex: 10,
-                  fontSize: 10, letterSpacing: '0.1em',
-                  color: 'rgba(255,255,255,0.7)',
-                  textShadow: '0 1px 5px rgba(0,0,0,0.7)',
-                }}>
-                  ► {ch.time} {ch.name}
-                </div>
 
                 {/* Caption */}
                 <div style={{
@@ -820,17 +741,6 @@ function TripJournal({ trip }: { trip: TravelTrip }) {
 const journalCss = `
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600&family=Caveat:wght@400;600;700&family=Space+Mono:ital,wght@0,400;1,400&family=Noto+Serif+SC:wght@300;400&display=swap');
 
-        /* Nav buttons */
-        .travel-nav-btn {
-          background: none; border: none; cursor: pointer;
-          font-family: 'Space Mono', monospace;
-          font-size: 10px; letter-spacing: 0.12em;
-          text-transform: uppercase; color: #666;
-          transition: color 0.2s; white-space: nowrap;
-        }
-        .travel-nav-btn:hover:not(:disabled) { color: #d8d0c4; }
-        .travel-nav-btn:disabled { color: #2a2a2a; cursor: default; }
-
         /* Enter roll button */
         .enter-btn {
           border: 1px solid #444; background: none; color: #d8d0c4;
@@ -860,7 +770,7 @@ const journalCss = `
         /* Cover thumbnail strip */
         .cover-thumb {
           position: relative;
-          height: calc((100vh - ${NAV_H + BAR_H}px) / 7.2);
+          height: calc(100vh / 7.2);
           min-height: 68px;
           border-bottom: 1px solid #0a0a0a;
           cursor: pointer; overflow: hidden; transition: all 0.35s;
