@@ -29,7 +29,7 @@ export default function TripPage({
 
   if (isNotFound) {
     return (
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
         <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 18, color: '#666', letterSpacing: '0.1em' }}>TRIP NOT FOUND</p>
       </div>
     )
@@ -37,7 +37,7 @@ export default function TripPage({
 
   if (!loaded || !trip) {
     return (
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
         <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 24, color: '#555', letterSpacing: '0.1em' }}>LOADING…</p>
       </div>
     )
@@ -236,9 +236,10 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
       {/* ══ Page Wrapper ══ */}
       <div
         key={pg}   /* remounts on chapter change → triggers all anim-* */
+        className="page-wrap"
         style={{
           position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
+          left: 0, right: 0,
           display: 'flex',
           animation: 'pageEnter 0.35s ease both',
         }}
@@ -251,7 +252,7 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
             <div style={{
               width: '50%', padding: '28px 40px 22px',
               display: 'flex', flexDirection: 'column',
-              position: 'relative', overflow: 'hidden',
+              position: 'relative',
               borderRight: '1px solid #1a1a1a',
               background: '#111',
             }}>
@@ -312,6 +313,9 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                 <div style={{
                   flex: 1, display: 'flex', flexDirection: 'column',
                   borderTop: '1px solid #1e1e1e',
+                  overflowY: 'auto',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#333 transparent',
                 }}>
                   {chs.map((c, i) => (
                     <div
@@ -883,4 +887,8 @@ const journalCss = `
         .anim-footer  { animation: fadeIn         0.4s ease both;                          animation-delay: 0.95s; }
         .anim-stamp   { animation: stampAppear    0.8s cubic-bezier(0.34,1.56,0.64,1) both; animation-delay: 1.00s; }
         .anim-photo   { animation: photoReveal    1.0s ease both;                          animation-delay: 0.10s; }
+
+        /* Push content below fixed navigation (h-16 mobile / h-20 desktop) */
+        .page-wrap { top: 64px !important; height: calc(100% - 64px) !important; }
+        @media (min-width: 768px) { .page-wrap { top: 80px !important; height: calc(100% - 80px) !important; } }
 `
