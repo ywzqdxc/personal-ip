@@ -52,7 +52,7 @@
     "tags": ["HTML", "CSS", "JavaScript", "Text Analysis"],
     "category": "web",
     "featured": false,
-    "link": "https://stackblitz.com/edit/web-platform-tww2qc?file=index.html"
+    "link": ""
   },
   {
     "id": "project-6",
@@ -127,6 +127,28 @@
     "description": "Managed field sales operations for BharatPe, focusing on QR code applications and sound box distribution to retail and manufacturing workers.",
     "image": "https://picsum.photos/seed/bharatpe/800/600",
     "tags": ["Sales", "Brand Management", "Fintech", "Marketing"],
+    "category": "agriculture",
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-13",
+    "title": "Organic Fertilizer Production",
+    "subtitle": "JEEVAMRIT & GHANJIVAMRIT Manufacturing",
+    "description": "Developed and scaled organic fertilizer production using traditional Indian farming techniques. Produced JEEVAMRIT and GHANJIVAMRIT at scale for multiple farms, improving soil health and crop yield naturally.",
+    "image": "https://picsum.photos/seed/organicfert/800/600",
+    "tags": ["Organic Farming", "Soil Health", "Sustainable Agriculture", "Rural Development"],
+    "category": "agriculture",
+    "featured": false,
+    "link": ""
+  },
+  {
+    "id": "project-14",
+    "title": "Crop Diversification Initiative",
+    "subtitle": "Multi-Crop Farming Strategy",
+    "description": "Planned and executed crop diversification across 50+ acres, introducing apple, apricot, guava, and seasonal vegetables. Reduced risk through polyculture and increased annual farm revenue by 40%.",
+    "image": "https://picsum.photos/seed/cropdiverse/800/600",
+    "tags": ["Polyculture", "Farm Management", "Agriculture", "Crop Rotation"],
     "category": "agriculture",
     "featured": false,
     "link": ""

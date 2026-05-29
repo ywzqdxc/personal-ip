@@ -269,8 +269,8 @@ export default function ProjectsPage() {
       }}
     >
       {/* ════════════ HEADER ════════════ */}
-      <section style={{ padding: '56px 60px 0' }}>
-        <div className="anim-header" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+      <section style={{ padding: '56px 60px 0', textAlign: 'center' as const }}>
+        <div className="anim-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 18 }}>
           <div className="gold-line" />
           <span
             style={{
@@ -285,22 +285,7 @@ export default function ProjectsPage() {
           </span>
         </div>
 
-        <h1
-          className="anim-header"
-          style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: 72,
-            fontWeight: 800,
-            lineHeight: 0.92,
-            letterSpacing: '-0.03em',
-            color: '#2E1A0E',
-            margin: '0 0 14px',
-          }}
-        >
-          PROJECTS
-        </h1>
-
-        <p className="anim-desc" style={{ fontSize: 14, color: '#B07050', maxWidth: 440, lineHeight: 1.7 }}>
+        <p className="anim-desc" style={{ fontSize: 14, color: '#B07050', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' as const }}>
           Things I&apos;ve built — open source, side projects, client work, and experiments across different domains.
         </p>
       </section>
