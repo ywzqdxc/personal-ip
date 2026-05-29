@@ -148,15 +148,14 @@ export default function AboutPage() {
         </div>
 
         {/* Avatar */}
-        <div style={{
-          width: 96, height: 96, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #E8C9B0 0%, #C45A30 100%)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 32, fontWeight: 800, color: '#FDF6EE',
-          flexShrink: 0,
-          fontFamily: 'Barlow Condensed, sans-serif',
-          letterSpacing: '-0.02em',
-        }}>R</div>
+        <img
+          src="/images/cuixin.png"
+          alt="Reginamy"
+          style={{
+            height: 280,
+            flexShrink: 0,
+          }}
+        />
       </section>
 
       {/* Bento Grid — 3 cols × 3 rows */}

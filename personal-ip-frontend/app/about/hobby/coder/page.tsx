@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
+import { useLenis } from 'lenis/react'
 
 /* ── CSS (coder: terminal / dark blue-black / cyan accent — quiet, focused, builder) ── */
 const CSS_LINES = [
@@ -99,11 +100,19 @@ export default function CoderPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
+  const lenis = useLenis()
+
   useEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
+
     const vid = videoRef.current
     if (!vid) return
     vid.playbackRate = 0.9
-  }, [])
+  }, [lenis])
 
   return (
     <div className="cr-root">

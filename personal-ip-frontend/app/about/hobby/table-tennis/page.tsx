@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
+import { useLenis } from 'lenis/react'
 
 /* ── CSS (table-tennis: green / white / red — fast, sharp, competitive) ── */
 const CSS_LINES = [
@@ -89,11 +90,20 @@ export default function TableTennisPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
+  const lenis = useLenis()
+
   useEffect(() => {
+    // scrollTo via Lenis instance（Lenis 接管了原生滚动，必须走 Lenis API）
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
+
     const vid = videoRef.current
     if (!vid) return
     vid.playbackRate = 1.0
-  }, [])
+  }, [lenis])
 
   return (
     <div className="tt-root">
