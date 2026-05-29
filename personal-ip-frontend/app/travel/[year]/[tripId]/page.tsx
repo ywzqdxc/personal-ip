@@ -267,16 +267,6 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                 flex: 1, display: 'flex', flexDirection: 'column',
               }}>
                 {/* meta top */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-                  <div style={{
-                    fontSize: '8.5px', letterSpacing: '0.15em', color: '#444',
-                    textTransform: 'uppercase', lineHeight: 1.9, whiteSpace: 'pre-line',
-                  }}>
-                    {trip.filmLabel}
-                  </div>
-                  <div style={{ fontSize: 10, color: '#333' }}>01</div>
-                </div>
-
                 {/* Big title */}
                 <div style={{
                   fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900,
@@ -336,11 +326,11 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                       onClick={() => goPage(i + 1)}
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: '22px 44px 1fr auto',
-                        alignItems: 'center', padding: '6px 0',
+                        gridTemplateColumns: '28px 52px 1fr auto',
+                        alignItems: 'center', padding: '9px 0',
                         borderBottom: '1px solid #1a1a1a',
-                        fontSize: '9px', letterSpacing: '0.1em',
-                        color: hovIdx === i ? '#d8d0c4' : '#555',
+                        fontSize: '12px', letterSpacing: '0.08em',
+                        color: hovIdx === i ? '#d8d0c4' : '#666',
                         textTransform: 'uppercase', cursor: 'pointer',
                         background: hovIdx === i ? 'rgba(255,255,255,0.03)' : 'transparent',
                         transition: 'color 0.3s, background 0.3s', gap: 8,
@@ -348,14 +338,14 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                     >
                       <span style={{
                         color: (hovIdx === i && hovCh) ? hovCh.accent : '#e04030',
-                        fontSize: '9px', transition: 'color 0.3s',
+                        fontSize: '12px', fontWeight: 600, transition: 'color 0.3s',
                       }}>{c.num}</span>
-                      <span style={{ color: '#3a3a3a' }}>{c.dateLabel}</span>
+                      <span style={{ color: '#4a4a4a' }}>{c.dateLabel}</span>
                       <span style={{
                         color: (hovIdx === i && hovCh) ? hovCh.accent : 'inherit',
                         transition: 'color 0.3s',
                       }}>{c.name}</span>
-                      <span style={{ color: '#3a3a3a', textAlign: 'right' }}>{c.area}</span>
+                      <span style={{ color: '#4a4a4a', textAlign: 'right' }}>{c.area}</span>
                     </div>
                   ))}
                 </div>
@@ -369,24 +359,9 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                     onClick={() => goPage(1)}
                     className="enter-btn"
                   >→ ENTER ROLL</button>
-                  <div style={{
-                    fontSize: '7.5px', letterSpacing: '0.12em',
-                    color: '#2a2a2a', textTransform: 'uppercase',
-                  }}>
-                    {trip.devCredit}
-                  </div>
                 </div>
               </div>
 
-              {/* Rotated side text */}
-              <div style={{
-                position: 'absolute', right: -36, top: '50%',
-                transform: 'translateY(-50%) rotate(90deg)',
-                fontSize: '7px', letterSpacing: '0.22em', color: '#222',
-                textTransform: 'uppercase', whiteSpace: 'nowrap', zIndex: 1,
-              }}>
-                {trip.sideText}
-              </div>
             </div>
 
             {/* ── Cover Right (film thumbnails) ── */}
@@ -394,14 +369,6 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
               className="cover-right-scroll"
               style={{ width: '50%', background: '#0d0d0d', overflowY: 'scroll' }}
             >
-              <div style={{
-                fontSize: '8px', letterSpacing: '0.2em', color: '#3a3a3a',
-                textTransform: 'uppercase', padding: '10px 14px',
-                borderBottom: '1px solid #181818',
-              }}>
-                {trip.filmHeader}
-              </div>
-
               {/* top perfs */}
               <div style={{
                 height: 18, background: '#0a0a0a',
