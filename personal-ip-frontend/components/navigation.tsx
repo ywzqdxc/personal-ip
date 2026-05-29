@@ -30,7 +30,8 @@ export function Navigation() {
   // 深色全屏页面：导航透明浮动、始终可见、无 backdrop-blur
   const isTransparentNav =
     /^\/travel\/[^/]+\/[^/]+/.test(pathname ?? '') ||
-    /^\/about\/hobby\/.+/.test(pathname ?? '')
+    /^\/about\/hobby\/.+/.test(pathname ?? '') ||
+    /^\/projects\/.+/.test(pathname ?? '')
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)

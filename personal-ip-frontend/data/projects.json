@@ -1,5 +1,44 @@
 [
   {
+    "id": "hydra",
+    "title": "智水先知",
+    "subtitle": "城市内涝智能感知预警与协同服务平台",
+    "description": "融合物联网监测、无人机巡检、YOLO 视觉算法与大语言模型，解决城市内涝预警滞后与数据孤岛问题，实现政企民协同防汛预警闭环。",
+    "image": "/images/hydra_logo.png",
+    "video": "/videos/hydra.mp4",
+    "tags": ["IoT", "YOLO v12", "大语言模型", "GIS", "React", "城市安全"],
+    "category": "tech",
+    "featured": true,
+    "link": "",
+    "visitUrl": "http://47.95.8.224:9001/login",
+    "stats": [
+      { "value": "62%", "label": "中国城市曾发生内涝" },
+      { "value": "96%+", "label": "高危车辆识别率" },
+      { "value": "94.7%", "label": "YOLO 检测精度" }
+    ],
+    "painPoints": [
+      { "icon": "📡", "title": "数据孤岛与预警滞后", "desc": "缺乏实时多源数据协同，传统预警信息传递链路长、响应缓慢，难以在险情发生前有效干预。" },
+      { "icon": "⚠️", "title": "分级响应不足", "desc": "多基于固定阈值，缺乏动态调整能力，车辆避险转移不及时，引发巨额财产与生命安全损失。" },
+      { "icon": "👥", "title": "公众参与缺失", "desc": "缺乏公众信息实时交互渠道，一线险情数据无法及时补充，形成感知盲区。" }
+    ],
+    "features": [
+      { "icon": "🌊", "title": "风险测度预警", "desc": "采用 SCS-CN 模型构建 E/S/C 三维指标体系，实现内涝风险分级预警并辅助路径规划。" },
+      { "icon": "🚁", "title": "空地协同监测", "desc": "无人机区域巡检实时感知，结合 YOLO 算法识别车辆吃水深度并进行危险分级预警。" },
+      { "icon": "🗺️", "title": "GIS 可视化平台", "desc": "GIS 引擎可视化内涝监测全态势，一屏整合气象、监测、预警、预测等多源数据。" },
+      { "icon": "🤖", "title": "AI 大模型协同", "desc": "基于 DeepSeek-V4 微调的防汛大模型智能分析态势，同时打通公众一键上报险情闭环。" }
+    ],
+    "techHighlights": [
+      { "metric": "SCS-CN", "label": "动态产流模型", "desc": "E/S/C 三维解构内涝风险，权重扰动与 Bootstrap 双重检验验证稳定性。" },
+      { "metric": "YOLO v12", "label": "自主训练视觉模型", "desc": "团队自主标注训练，高危车辆识别率 >96%，检测精度 94.7%。" },
+      { "metric": "DeepSeek", "label": "防汛领域大模型", "desc": "构建防汛知识大数据仓库，SFT 监督微调，支持自然语言防汛问答。" },
+      { "metric": "React + GIS", "label": "现代化前端架构", "desc": "Tailwind CSS 响应式设计，集成交互式 GIS 地图与实时数据大屏。" }
+    ],
+    "products": [
+      { "platform": "Web 管理端", "target": "政府 & 行业客户", "icon": "🖥️", "features": ["设备全生命周期管理", "区域风险精准监测", "预警类型 & 时间分布统计", "多维数据分析大屏"] },
+      { "platform": "微信小程序", "target": "市民 & 网格员", "icon": "📱", "features": ["精准定位预警推送", "红 / 黄色预警秒级到达", "周边积水点实时查看", "拍照 + 定位 + 描述一键上报"] }
+    ]
+  },
+  {
     "id": "project-1",
     "title": "3D 垂直农场模型",
     "subtitle": "农业创新与 3D 建模",
