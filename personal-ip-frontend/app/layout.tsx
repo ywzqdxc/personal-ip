@@ -8,6 +8,7 @@ import { ClickSpark } from "@/components/click-spark"
 import { Navigation } from "@/components/navigation"
 import { BackgroundAnimations } from "@/components/background-animations"
 import { PixarCharacter } from "@/components/pixar-character"
+import { WelcomeAudio } from "@/components/welcome-audio"
 
 export const metadata: Metadata = {
   title: "Personal IP — Portfolio & Travel",
@@ -36,6 +37,7 @@ export default function RootLayout({
               <Navigation />
               <BackgroundAnimations />
               <PixarCharacter />
+              <WelcomeAudio />
               {children}
             </ClickSpark>
           </LenisProvider>

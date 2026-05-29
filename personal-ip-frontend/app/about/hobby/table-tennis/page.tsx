@@ -59,26 +59,6 @@ const CSS_LINES = [
   ".tt-philo-quote em { font-family: 'Barlow Condensed', sans-serif; font-style: normal; color: #E53935; }",
   ".tt-philo-body { font-family: 'Noto Serif SC', serif; font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.38); line-height: 2.1; }",
 
-  /* ── Legends ── */
-  '.tt-legends { background: #040B05; }',
-  '.tt-legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }',
-  '.tt-legend-card { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; }',
-  '.tt-legend-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }',
-  '.tt-legend-card:hover .tt-legend-img { transform: scale(1.04); }',
-  '.tt-legend-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,11,5,0.92) 25%, rgba(4,11,5,0.15) 70%); }',
-  '.tt-legend-info { position: absolute; bottom: 22px; left: 22px; right: 22px; }',
-  ".tt-legend-name { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.02em; }",
-  ".tt-legend-title { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 500; color: #E53935; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4px; }",
-  ".tt-legend-quote { font-family: 'Noto Serif SC', serif; font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 8px; line-height: 1.6; }",
-
-  /* ── Gallery ── */
-  '.tt-gallery { background: #040B05; }',
-  '.tt-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }',
-  '.tt-gallery-item { position: relative; border-radius: 6px; overflow: hidden; aspect-ratio: 3/4; }',
-  '.tt-gallery-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; }',
-  '.tt-gallery-item:hover .tt-gallery-img { transform: scale(1.05); }',
-  '.tt-gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,11,5,0.7) 20%, transparent 60%); }',
-  ".tt-gallery-caption { position: absolute; bottom: 14px; left: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; color: #fff; letter-spacing: 0.06em; }",
 
   /* ── Closing ── */
   '.tt-closing { background: #060F08; padding: 80px 64px 120px; display: flex; justify-content: center; }',
@@ -91,35 +71,10 @@ const CSS_LINES = [
   '  .tt-stat-value { font-size: 38px; }',
   '  .tt-section { padding: 64px 28px; }',
   '  .tt-philo-grid { grid-template-columns: 1fr; gap: 28px; }',
-  '  .tt-legend-grid { grid-template-columns: 1fr; }',
-  '  .tt-gallery-grid { grid-template-columns: 1fr; }',
   '  .tt-back { top: 88px; left: 16px; }',
   '}',
 ]
 const pageCss = CSS_LINES.join('\n')
-
-/* ── Table tennis Unsplash photos ── */
-const GALLERY = [
-  { url: 'photo-1611251135345-18c56206b863', caption: 'Paddle & Ball' },
-  { url: 'photo-1534158914592-062992fbe900', caption: 'Match Point' },
-  { url: 'photo-1517646631660-5b6abe6aeb0c', caption: 'Training Hall' },
-]
-
-/* ── Legend cards ── */
-const LEGENDS = [
-  {
-    name: 'Zhang Jike',
-    title: 'Grand Slam Champion · 445 Days',
-    quote: '藏獒精神——不是不输，是永远敢拼。最快大满贯，只用 445 天。',
-    img: 'photo-1583454110671-5a7c0c8b0a33',
-  },
-  {
-    name: 'Ma Long',
-    title: 'The Dragon · GOAT',
-    quote: '龙队——用时间证明，真正的统治力来自极致的自律。双圈大满贯，历史第一人。',
-    img: 'photo-1541535650810-10d26f5c2ab3',
-  },
-]
 
 /* ── Stats ── */
 const STATS = [
@@ -237,47 +192,6 @@ export default function TableTennisPage() {
         </div>
       </section>
 
-      {/* ── Legends ── */}
-      <section className="tt-section tt-legends">
-        <div className="tt-section-label">Inspiration</div>
-        <div className="tt-legend-grid">
-          {LEGENDS.map((l) => (
-            <div className="tt-legend-card" key={l.name}>
-              <img
-                className="tt-legend-img"
-                src={'https://images.unsplash.com/' + l.img + '?auto=format&fit=crop&w=1200&q=80'}
-                alt={l.name}
-                loading="lazy"
-              />
-              <div className="tt-legend-overlay" />
-              <div className="tt-legend-info">
-                <div className="tt-legend-name">{l.name}</div>
-                <div className="tt-legend-title">{l.title}</div>
-                <div className="tt-legend-quote">{l.quote}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Gallery ── */}
-      <section className="tt-section tt-gallery">
-        <div className="tt-section-label">Snapshots</div>
-        <div className="tt-gallery-grid">
-          {GALLERY.map((g) => (
-            <div className="tt-gallery-item" key={g.url}>
-              <img
-                className="tt-gallery-img"
-                src={'https://images.unsplash.com/' + g.url + '?auto=format&fit=crop&w=800&q=80'}
-                alt={g.caption}
-                loading="lazy"
-              />
-              <div className="tt-gallery-overlay" />
-              <div className="tt-gallery-caption">{g.caption}</div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ── Closing ── */}
       <section className="tt-closing">

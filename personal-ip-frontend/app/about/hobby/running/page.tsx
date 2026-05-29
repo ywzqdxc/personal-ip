@@ -49,15 +49,6 @@ const CSS_LINES = [
   ".r-philo-quote { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(28px, 3.5vw, 42px); font-weight: 400; color: #C9A96E; line-height: 1.35; }",
   ".r-philo-body { font-family: 'Noto Serif SC', serif; font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.42); line-height: 2.1; }",
 
-  /* ── Gallery ── */
-  '.r-gallery { background: #060504; }',
-  '.r-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }',
-  '.r-gallery-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/5; cursor: pointer; }',
-  '.r-gallery-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }',
-  '.r-gallery-item:hover .r-gallery-img { transform: scale(1.06); }',
-  '.r-gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,3,2,0.75) 20%, transparent 60%); }',
-  ".r-gallery-caption { position: absolute; bottom: 18px; left: 18px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600; color: #fff; letter-spacing: 0.08em; }",
-
   /* ── Closing ── */
   '.r-closing { background: #080605; padding: 80px 64px 120px; display: flex; justify-content: center; }',
   ".r-closing-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; color: rgba(255,255,255,0.25); max-width: 520px; text-align: center; line-height: 1.9; }",
@@ -69,18 +60,10 @@ const CSS_LINES = [
   '  .r-stat-value { font-size: 40px; }',
   '  .r-section { padding: 64px 28px; }',
   '  .r-philo-grid { grid-template-columns: 1fr; gap: 32px; }',
-  '  .r-gallery-grid { grid-template-columns: 1fr; }',
   '  .r-back { top: 88px; left: 16px; }',
   '}',
 ]
 const pageCss = CSS_LINES.join('\n')
-
-/* ── Unsplash running photos ── */
-const GALLERY = [
-  { url: 'photo-1552674605-db6ffd4facb5', caption: 'Trail, 6:12 AM' },
-  { url: 'photo-1461896836934-ffe607ba8211', caption: 'Marathon, KM 32' },
-  { url: 'photo-1476480862126-209bfaa8edc8', caption: 'City, Dusk' },
-]
 
 /* ── Stats (placeholder) ── */
 const STATS = [
@@ -180,25 +163,6 @@ export default function RunningPage() {
             <br /><br />
             从 5 公里到全马，每一次突破都不只是身体上的，更是心理上的重建。路永远在那里，我需要做的只是迈出第一步。
           </div>
-        </div>
-      </section>
-
-      {/* ── Gallery ── */}
-      <section className="r-section r-gallery">
-        <div className="r-section-label">Moments on the Road</div>
-        <div className="r-gallery-grid">
-          {GALLERY.map((g) => (
-            <div className="r-gallery-item" key={g.url}>
-              <img
-                className="r-gallery-img"
-                src={'https://images.unsplash.com/' + g.url + '?auto=format&fit=crop&w=800&q=80'}
-                alt={g.caption}
-                loading="lazy"
-              />
-              <div className="r-gallery-overlay" />
-              <div className="r-gallery-caption">{g.caption}</div>
-            </div>
-          ))}
         </div>
       </section>
 
