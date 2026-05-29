@@ -67,11 +67,46 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
   const carRef     = useRef<ReturnType<typeof setInterval>  | null>(null)
   const twTRef     = useRef<ReturnType<typeof setTimeout>   | null>(null)
   const twIRef     = useRef<ReturnType<typeof setInterval>  | null>(null)
-  const hovTRef    = useRef<ReturnType<typeof setTimeout>   | null>(null)
+  const hovTRef      = useRef<ReturnType<typeof setTimeout>   | null>(null)
   const filmStripRef = useRef<HTMLDivElement>(null)
+  const tracklistRef  = useRef<HTMLDivElement>(null)   // 左侧 tracklist 容器
+  const coverRightRef = useRef<HTMLDivElement>(null)   // 右侧缩略图容器
+  // 双向独立锁：syncRtoL=右→左同步进行中(左的 handler 忽略)，syncLtoR 反之
+  const syncRtoLRef = useRef(false)
+  const syncLtoRRef = useRef(false)
 
   pgRef.current   = pg
   pIdxRef.current = pIdx
+
+  // ── 联动滚动辅助（hover 触发版）────────────────────────────
+  const scrollRightToItem = useCallback((i: number) => {
+    const container = coverRightRef.current
+    if (!container) return
+    const items = container.querySelectorAll<HTMLElement>('.cover-thumb')
+    const item = items[i]
+    if (!item) return
+    // 滚右侧时，标记「左→右 in progress」以阻止右侧 scroll 事件反向同步左
+    syncLtoRRef.current = true
+    container.scrollTo({
+      top: item.offsetTop - container.clientHeight / 2 + item.clientHeight / 2,
+      behavior: 'smooth',
+    })
+    setTimeout(() => { syncLtoRRef.current = false }, 700)
+  }, [])
+
+  const scrollLeftToItem = useCallback((i: number) => {
+    const container = tracklistRef.current
+    if (!container) return
+    const items = container.querySelectorAll<HTMLElement>('.tracklist-item')
+    const item = items[i]
+    if (!item) return
+    syncRtoLRef.current = true
+    container.scrollTo({
+      top: item.offsetTop - container.clientHeight / 2 + item.clientHeight / 2,
+      behavior: 'smooth',
+    })
+    setTimeout(() => { syncRtoLRef.current = false }, 700)
+  }, [])
 
   // ── Helpers ───────────────────────────────────────────────
   const clearTimers = useCallback(() => {
@@ -102,6 +137,38 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
     setKbVis(false)
     setHovIdx(null)
   }, [TOTAL, clearTimers])
+
+  // ── 滚轮联动：左右按比例同步（双向独立锁）────────────────────
+  useEffect(() => {
+    if (pg !== 0) return   // 只在封面页生效
+
+    const left  = tracklistRef.current
+    const right = coverRightRef.current
+    if (!left || !right) return
+
+    const onLeftScroll = () => {
+      if (syncRtoLRef.current) return   // 右→左同步触发的，忽略
+      const ratio = left.scrollTop / Math.max(1, left.scrollHeight - left.clientHeight)
+      syncLtoRRef.current = true
+      right.scrollTop = ratio * Math.max(0, right.scrollHeight - right.clientHeight)
+      requestAnimationFrame(() => { syncLtoRRef.current = false })
+    }
+
+    const onRightScroll = () => {
+      if (syncLtoRRef.current) return   // 左→右同步触发的，忽略
+      const ratio = right.scrollTop / Math.max(1, right.scrollHeight - right.clientHeight)
+      syncRtoLRef.current = true
+      left.scrollTop = ratio * Math.max(0, left.scrollHeight - left.clientHeight)
+      requestAnimationFrame(() => { syncRtoLRef.current = false })
+    }
+
+    left.addEventListener('scroll',  onLeftScroll,  { passive: true })
+    right.addEventListener('scroll', onRightScroll, { passive: true })
+    return () => {
+      left.removeEventListener('scroll',  onLeftScroll)
+      right.removeEventListener('scroll', onRightScroll)
+    }
+  }, [pg])
 
   // ── Keyboard navigation ───────────────────────────────────
   useEffect(() => {
@@ -310,19 +377,26 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                 </div>
 
                 {/* Tracklist */}
-                <div style={{
-                  flex: 1, display: 'flex', flexDirection: 'column',
-                  borderTop: '1px solid #1e1e1e',
-                  overflowY: 'auto',
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#333 transparent',
-                }}>
+                <div
+                  ref={tracklistRef}
+                  data-lenis-prevent
+                  data-lenis-prevent-wheel
+                  style={{
+                    flex: 1, display: 'flex', flexDirection: 'column',
+                    borderTop: '1px solid #1e1e1e',
+                    overflowY: 'auto',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: '#333 transparent',
+                  }}
+                >
                   {chs.map((c, i) => (
                     <div
                       key={c.id}
+                      className="tracklist-item"
                       onMouseEnter={() => {
                         if (hovTRef.current) clearTimeout(hovTRef.current)
                         setHovIdx(i)
+                        scrollRightToItem(i)   // 联动右侧滚动
                       }}
                       onMouseLeave={() => {
                         hovTRef.current = setTimeout(() => setHovIdx(null), 250)
@@ -370,7 +444,10 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
 
             {/* ── Cover Right (film thumbnails) ── */}
             <div
+              ref={coverRightRef}
               className="cover-right-scroll"
+              data-lenis-prevent
+              data-lenis-prevent-wheel
               style={{ width: '50%', background: '#0d0d0d', overflowY: 'scroll' }}
             >
               {/* top perfs */}
@@ -393,6 +470,7 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                   onMouseEnter={() => {
                     if (hovTRef.current) clearTimeout(hovTRef.current)
                     setHovIdx(i)
+                    scrollLeftToItem(i)    // 联动左侧 tracklist 滚动
                   }}
                   onMouseLeave={() => {
                     hovTRef.current = setTimeout(() => setHovIdx(null), 250)

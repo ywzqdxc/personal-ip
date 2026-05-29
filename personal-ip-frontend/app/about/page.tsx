@@ -45,7 +45,7 @@ const BENTO_CARDS = [
 
 const SOCIAL = [
   { label: 'LinkedIn', href: '#' },
-  { label: 'Email',    href: 'mailto:19270859916@163.com' },
+  { label: '19270859916@163.com', href: null },
 ]
 
 // 浅色透明版（嵌入 hero）
@@ -127,16 +127,29 @@ export default function AboutPage() {
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const, marginBottom: 20 }}>
             {SOCIAL.map(s => (
-              <a key={s.label} href={s.href}
-                className="social-chip"
-                style={{
-                  fontSize: 11, color: '#7A5A40',
-                  border: '0.5px solid #E8C9B0',
-                  borderRadius: 99, padding: '5px 14px',
-                  textDecoration: 'none', letterSpacing: '0.06em',
-                  background: 'transparent',
-                }}
-              >{s.label}</a>
+              s.href ? (
+                <a key={s.label} href={s.href}
+                  className="social-chip"
+                  style={{
+                    fontSize: 11, color: '#7A5A40',
+                    border: '0.5px solid #E8C9B0',
+                    borderRadius: 99, padding: '5px 14px',
+                    textDecoration: 'none', letterSpacing: '0.06em',
+                    background: 'transparent',
+                  }}
+                >{s.label}</a>
+              ) : (
+                <span key={s.label}
+                  style={{
+                    fontSize: 11, color: '#7A5A40',
+                    border: '0.5px solid #E8C9B0',
+                    borderRadius: 99, padding: '5px 14px',
+                    letterSpacing: '0.06em',
+                    background: 'transparent',
+                    userSelect: 'all' as const,
+                  }}
+                >{s.label}</span>
+              )
             ))}
           </div>
 
