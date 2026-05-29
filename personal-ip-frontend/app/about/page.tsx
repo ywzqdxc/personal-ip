@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { GitHubCalendar } from 'react-github-calendar'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
+import { useLenis } from 'lenis/react'
 
 const NAV_H = 80
 
@@ -73,6 +74,111 @@ const CSS_LINES = [
   'canvas.pointer-events-none { display:none !important; }',
 ]
 const pageCss = CSS_LINES.join('\n')
+
+/* ── 荣誉展示区：滚轮驱动扇形展开动画 ─────────────────────────── */
+
+function lerp(a: number, b: number, t: number) { return a + (b - a) * t }
+function easeInOutCubic(t: number) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+}
+
+// 根据卡片数量动态计算聚拢/展开位置
+function buildPositions(count: number) {
+  const gap = 340
+  const gathered: { x: number; y: number; rot: number }[] = []
+  const spread:   { x: number; y: number; rot: number }[] = []
+  const center = (count - 1) / 2
+  for (let i = 0; i < count; i++) {
+    const off = i - center
+    const a = count <= 5 ? 1 : off / (center || 1)
+    gathered.push({ x: a * 8, y: 0, rot: a * 18 })
+    spread.push({
+      x: off * gap,
+      y: Math.abs(off) * 18 + (count <= 5 ? 0 : Math.abs(off) * 4),
+      rot: a * 14,
+    })
+  }
+  return { gathered, spread }
+}
+
+function RewardSection() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const cardRefs     = useRef<(HTMLDivElement | null)[]>([])
+  const [cards, setCards] = useState<string[]>([])
+  const positionsRef = useRef<{ gathered: {x:number;y:number;rot:number}[], spread: {x:number;y:number;rot:number}[] } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/rewards')
+      .then(r => r.json())
+      .then(d => {
+        setCards(d.images || [])
+        positionsRef.current = buildPositions(d.images?.length || 0)
+      })
+      .catch(() => setCards([]))
+  }, [])
+
+  useLenis(() => {
+    const el = containerRef.current
+    const pos = positionsRef.current
+    if (!el || !pos || pos.gathered.length === 0) return
+    const rect      = el.getBoundingClientRect()
+    const scrollable = el.offsetHeight - window.innerHeight
+    if (scrollable <= 0) return
+    const raw = Math.max(0, Math.min(1, -rect.top / scrollable))
+    const t   = easeInOutCubic(raw)
+    cardRefs.current.forEach((card, i) => {
+      if (!card || !pos.gathered[i] || !pos.spread[i]) return
+      const x   = lerp(pos.gathered[i].x, pos.spread[i].x, t)
+      const y   = lerp(pos.gathered[i].y, pos.spread[i].y, t)
+      const rot = lerp(pos.gathered[i].rot, pos.spread[i].rot, t)
+      card.style.transform = `translateX(${x}px) translateY(${y}px) rotate(${rot}deg)`
+    })
+  })
+
+  if (cards.length === 0) return null
+
+  const centerIdx = Math.floor(cards.length / 2)
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative', height: '200vh', marginTop: 16 }}>
+      <div style={{
+        position: 'sticky', top: NAV_H,
+        height: `calc(100vh - ${NAV_H}px)`,
+        background: '#FDF6EE',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden',
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
+            <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
+            <span style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase' as const, color: '#B07050', fontWeight: 500 }}>Honors & Awards</span>
+            <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
+          </div>
+          <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 36, fontWeight: 800, color: '#2E1A0E', letterSpacing: '-0.02em', margin: 0 }}>Recognition</h2>
+        </div>
+        <div style={{ position: 'relative', width: '100%', height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {cards.map((src, i) => {
+            const pos = positionsRef.current
+            const g = pos?.gathered[i]
+            return (
+              <div key={i} ref={el => { cardRefs.current[i] = el }} style={{ position: 'absolute', transform: g ? `translateX(${g.x}px) rotate(${g.rot}deg)` : undefined, zIndex: i === centerIdx ? 10 : (10 - Math.abs(i - centerIdx) * 2), willChange: 'transform' } as React.CSSProperties}>
+                <img src={src} alt={`Award ${i + 1}`} style={{ width: 340, height: 220, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 28px rgba(46,26,14,0.16)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none', draggable: false } as React.CSSProperties} draggable={false} />
+              </div>
+            )
+          })}
+        </div>
+        <div style={{ position: 'absolute', bottom: 24, display: 'flex', alignItems: 'center', gap: 10, fontSize: 10, letterSpacing: '0.18em', color: 'rgba(176,112,80,0.55)', textTransform: 'uppercase' as const }}>
+          <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
+          Scroll to explore
+          <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 
 export default function AboutPage() {
   const router = useRouter()
@@ -433,6 +539,9 @@ export default function AboutPage() {
 
         </div>
       </section>
+
+      {/* 荣誉展示滚动动画区 */}
+      <RewardSection />
 
       <ReactTooltip id="react-tooltip" />
       <style>{pageCss}</style>
