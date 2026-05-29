@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
 import { useLenis } from 'lenis/react'
+import BackButton from '@/components/travel/BackButton'
 
 /* ── CSS (music: vinyl bonfire — deep brown-black + warm amber gold + ember red) ── */
 const CSS_LINES = [
@@ -31,9 +31,6 @@ const CSS_LINES = [
   '.mu-scroll-line { width: 1px; height: 48px; background: rgba(212,165,74,0.15); margin: 0 auto 8px; }',
   ".mu-scroll-text { font-family: 'Barlow', sans-serif; font-size: 9px; letter-spacing: 0.25em; color: rgba(212,165,74,0.3); text-transform: uppercase; writing-mode: vertical-rl; }",
 
-  /* ── Back button ── */
-  ".mu-back { position: fixed; top: 92px; left: 36px; z-index: 100; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; }",
-  '.mu-back:hover { color: #D4A54A; }',
 
   /* ── Stats strip ── */
   '.mu-stats { background: #0E0907; padding: 80px 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; border-top: 1px solid rgba(212,165,74,0.06); border-bottom: 1px solid rgba(212,165,74,0.06); }',
@@ -59,15 +56,6 @@ const CSS_LINES = [
   ".mu-genre-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.04em; padding: 12px 24px; border-radius: 3px; border: 1px solid rgba(212,165,74,0.1); color: rgba(255,255,255,0.55); background: rgba(212,165,74,0.02); transition: all 0.3s; text-transform: uppercase; }",
   '.mu-genre-tag:hover { background: rgba(139,55,55,0.12); border-color: rgba(139,55,55,0.4); color: #8B3737; transform: translateY(-1px); }',
 
-  /* ── Gallery ── */
-  '.mu-gallery { background: #0E0907; }',
-  '.mu-gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }',
-  '.mu-gallery-item { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 4/3; transition: transform 0.4s ease; }',
-  '.mu-gallery-item:hover { transform: scale(1.05); }',
-  '.mu-gallery-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.85) sepia(0.15); transition: filter 0.4s; }',
-  '.mu-gallery-item:hover .mu-gallery-img { filter: brightness(1) sepia(0); }',
-  '.mu-gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,5,3,0.85) 15%, transparent 50%); }',
-  ".mu-gallery-caption { position: absolute; bottom: 14px; left: 16px; font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: rgba(212,165,74,0.7); }",
 ]
 
 const pageCss = CSS_LINES.join('\n')
@@ -87,16 +75,9 @@ const GENRES = [
 ]
 
 const PHOTOS = [
-  { url: 'photo-1478737270239-2f02b77fc618', caption: 'Late Night Listening' },
-  { url: 'photo-1511671782779-c97d3d27a1d4', caption: 'Needle Drop' },
-  { url: 'photo-1507838153414-b4b713384a76', caption: 'Vinyl Collection' },
-  { url: 'photo-1514320296556-c3c98a2f1bf2', caption: 'Amber Glow' },
-  { url: 'photo-1493225457124-a3eb161ffa5f', caption: 'Live Session' },
-  { url: 'photo-1525362081669-2b476bb628c4', caption: 'After Midnight' },
 ]
 
 export default function MusicPage() {
-  const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
@@ -118,13 +99,7 @@ export default function MusicPage() {
     <div className="mu-root">
       <style>{pageCss}</style>
 
-      {/* Back */}
-      <button className="mu-back" onClick={() => router.push('/about/hobby')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M10 3L5 8l5 5"/>
-        </svg>
-        Hobby
-      </button>
+      <BackButton />
 
       {/* ── Hero ── */}
       <section className="mu-hero">
@@ -214,24 +189,6 @@ export default function MusicPage() {
         </div>
       </section>
 
-      {/* ── Gallery ── */}
-      <section className="mu-section mu-gallery">
-        <div className="mu-section-label">film strip</div>
-        <div className="mu-gallery-grid">
-          {PHOTOS.map((g) => (
-            <div className="mu-gallery-item" key={g.url}>
-              <img
-                className="mu-gallery-img"
-                src={'https://images.unsplash.com/' + g.url + '?auto=format&fit=crop&w=800&q=80'}
-                alt={g.caption}
-                loading="lazy"
-              />
-              <div className="mu-gallery-overlay" />
-              <div className="mu-gallery-caption">{g.caption}</div>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }

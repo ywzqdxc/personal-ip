@@ -6,6 +6,7 @@ export interface Thought {
   mood: string | null
   tags: string | null
   imageUrl: string | null
+  videoUrl?: string | null
   createTime: string
 }
 

@@ -7,6 +7,24 @@ import { getPublishedThoughts, type Thought } from '@/lib/api/thoughts'
 
 const MOCK_THOUGHTS: Thought[] = [
   {
+    id: 0,
+    content: '果然深情的人喝不醉',
+    mood: '微醺',
+    tags: '深夜,情绪',
+    imageUrl: null,
+    videoUrl: '/videos/thoughts/1.mp4',
+    createTime: '2026-05-28T01:30:00',
+  },
+  {
+    id: -1,
+    content: '雏菊的花语是：纯洁与深藏的爱#',
+    mood: '温柔',
+    tags: '花语,深夜',
+    imageUrl: null,
+    videoUrl: '/videos/thoughts/2.mp4',
+    createTime: '2026-05-28T02:15:00',
+  },
+  {
     id: 1,
     content: '今天的光线很好，随手拍了几张。相机永远是最好的记忆装置。',
     mood: '平静',
@@ -110,7 +128,7 @@ function fakeComments(id: number): number {
 }
 
 function getCardType(thought: Thought): 'photo' | 'code' | 'essay' | 'standard' {
-  if (thought.imageUrl) return 'photo'
+  if (thought.imageUrl || thought.videoUrl) return 'photo'
   if (thought.content.includes('```')) return 'code'
   if (thought.content.length > 120) return 'essay'
   return 'standard'
@@ -235,7 +253,20 @@ function PhotoCard({
         overflow: 'hidden',
       }}
     >
-      {thought.imageUrl && (
+      {thought.videoUrl && (
+        <video
+          src={thought.videoUrl}
+          autoPlay loop muted playsInline
+          style={{
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+            borderRadius: '12px 12px 0 0',
+            objectFit: 'cover',
+          }}
+        />
+      )}
+      {!thought.videoUrl && thought.imageUrl && (
         <img
           src={thought.imageUrl}
           alt=""

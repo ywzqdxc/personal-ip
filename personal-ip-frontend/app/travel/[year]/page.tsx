@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { getTravelYear } from '@/lib/travel/api'
 import { notFound } from 'next/navigation'
+import BackButton from '@/components/travel/BackButton'
 
 const C = {
   bg:    '#FDF6EE',
@@ -29,16 +29,7 @@ export default async function YearPage({ params }: { params: Promise<{ year: str
       fontFamily: "'Barlow Condensed', sans-serif",
       paddingTop: 100,   /* 80px nav + 20px breathing room */
     }}>
-      {/* back */}
-      <div style={{ padding: '24px 48px 0' }}>
-        <Link href="/travel" style={{
-          fontSize: 11, letterSpacing: '0.16em',
-          textTransform: 'uppercase', color: C.muted,
-          textDecoration: 'none', fontFamily: "'Barlow', sans-serif",
-        }}>
-          ← All Years
-        </Link>
-      </div>
+      <BackButton />
 
       {/* header */}
       <div style={{ padding: '40px 48px 48px' }}>

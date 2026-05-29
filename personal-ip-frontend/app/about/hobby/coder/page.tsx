@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
 import { useLenis } from 'lenis/react'
+import BackButton from '@/components/travel/BackButton'
 
 /* ── CSS (coder: terminal / dark blue-black / cyan accent — quiet, focused, builder) ── */
 const CSS_LINES = [
@@ -32,9 +32,6 @@ const CSS_LINES = [
   '.cr-scroll-line { width: 1px; height: 48px; background: rgba(100,255,218,0.15); margin: 0 auto 8px; }',
   ".cr-scroll-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.25em; color: rgba(100,255,218,0.3); text-transform: uppercase; writing-mode: vertical-rl; }",
 
-  /* ── Back button ── */
-  ".cr-back { position: fixed; top: 92px; left: 36px; z-index: 100; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; }",
-  '.cr-back:hover { color: #64FFDA; }',
 
   /* ── Stats strip ── */
   '.cr-stats { background: #0C111A; padding: 80px 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; border-top: 1px solid rgba(100,255,218,0.06); border-bottom: 1px solid rgba(100,255,218,0.06); }',
@@ -96,7 +93,6 @@ const PHOTOS = [
 ]
 
 export default function CoderPage() {
-  const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
@@ -118,13 +114,7 @@ export default function CoderPage() {
     <div className="cr-root">
       <style>{pageCss}</style>
 
-      {/* Back */}
-      <button className="cr-back" onClick={() => router.push('/about/hobby')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M10 3L5 8l5 5"/>
-        </svg>
-        Hobby
-      </button>
+      <BackButton />
 
       {/* ── Hero ── */}
       <section className="cr-hero">

@@ -75,81 +75,113 @@ const CSS_LINES = [
 ]
 const pageCss = CSS_LINES.join('\n')
 
-/* ── 荣誉展示区：滚轮驱动扇形展开动画 ─────────────────────────── */
+/* ── 荣誉展示区：自动展开 + 滚轮驱动转盘轮转 ───────────────────── */
+
+// 证书对应的文字标签
+const AWARD_LABELS = [
+  'Excellence in Innovation',
+  'Outstanding Achievement',
+  'Leadership Award',
+  'Creative Vision',
+  'Impact & Growth',
+  'Quality Excellence',
+  'Team Collaboration',
+  'Rising Star',
+  'Distinguished Honor',
+]
 
 function lerp(a: number, b: number, t: number) { return a + (b - a) * t }
-function easeInOutCubic(t: number) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-}
 
-// 根据卡片数量动态计算聚拢/展开位置
-function buildPositions(count: number) {
-  const gap = 340
-  const gathered: { x: number; y: number; rot: number }[] = []
-  const spread:   { x: number; y: number; rot: number }[] = []
+function buildSpread(count: number, gap: number) {
+  const positions: { x: number; y: number; rot: number }[] = []
   const center = (count - 1) / 2
   for (let i = 0; i < count; i++) {
     const off = i - center
-    const a = count <= 5 ? 1 : off / (center || 1)
-    gathered.push({ x: a * 8, y: 0, rot: a * 18 })
-    spread.push({
-      x: off * gap,
-      y: Math.abs(off) * 18 + (count <= 5 ? 0 : Math.abs(off) * 4),
-      rot: a * 14,
-    })
+    const a = off / (center || 1)
+    positions.push({ x: off * gap, y: Math.abs(off) * 16 + (count <= 5 ? 0 : Math.abs(off) * 4), rot: a * 12 })
   }
-  return { gathered, spread }
+  return positions
 }
 
 function RewardSection() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const cardRefs     = useRef<(HTMLDivElement | null)[]>([])
+  const stickyRef     = useRef<HTMLDivElement>(null)
+  const cardRefs      = useRef<(HTMLDivElement | null)[]>([])
+  const labelRefs     = useRef<(HTMLDivElement | null)[]>([])
   const [cards, setCards] = useState<string[]>([])
-  const positionsRef = useRef<{ gathered: {x:number;y:number;rot:number}[], spread: {x:number;y:number;rot:number}[] } | null>(null)
+  const [expanded, setExpanded] = useState(false)
+  const spreadRef = useRef<{x:number;y:number;rot:number}[]>([])
 
   useEffect(() => {
     fetch('/api/rewards')
       .then(r => r.json())
       .then(d => {
-        setCards(d.images || [])
-        positionsRef.current = buildPositions(d.images?.length || 0)
+        const list = d.images || []
+        setCards(list)
+        spreadRef.current = buildSpread(list.length, 340)
       })
       .catch(() => setCards([]))
   }, [])
 
+  useEffect(() => {
+    const el = stickyRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        const t = setTimeout(() => setExpanded(true), 200)
+        obs.disconnect()
+        return () => clearTimeout(t)
+      }
+    }, { threshold: 0.3 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [cards.length])
+
   useLenis(() => {
-    const el = containerRef.current
-    const pos = positionsRef.current
-    if (!el || !pos || pos.gathered.length === 0) return
-    const rect      = el.getBoundingClientRect()
-    const scrollable = el.offsetHeight - window.innerHeight
+    const container = containerRef.current
+    const spread = spreadRef.current
+    if (!expanded || !container || spread.length === 0) return
+    const rect = container.getBoundingClientRect()
+    const scrollable = container.offsetHeight - window.innerHeight
     if (scrollable <= 0) return
     const raw = Math.max(0, Math.min(1, -rect.top / scrollable))
-    const t   = easeInOutCubic(raw)
+    const N = cards.length
+    const offsetF = raw * N
+    const centerIdx = Math.floor(N / 2)
+    const visibleHalf = N <= 5 ? 2.5 : 3
+
     cardRefs.current.forEach((card, i) => {
-      if (!card || !pos.gathered[i] || !pos.spread[i]) return
-      const x   = lerp(pos.gathered[i].x, pos.spread[i].x, t)
-      const y   = lerp(pos.gathered[i].y, pos.spread[i].y, t)
-      const rot = lerp(pos.gathered[i].rot, pos.spread[i].rot, t)
+      if (!card) return
+      const posF = ((i + offsetF) % N + N) % N
+      const idxA = Math.floor(posF)
+      const idxB = (idxA + 1) % N
+      const frac = posF - idxA
+
+      const a = spread[idxA], b = spread[idxB]
+      if (!a || !b) return
+      const x   = a.x + (b.x - a.x) * frac
+      const y   = a.y + (b.y - a.y) * frac
+      const rot = a.rot + (b.rot - a.rot) * frac
       card.style.transform = `translateX(${x}px) translateY(${y}px) rotate(${rot}deg)`
+    })
+
+    labelRefs.current.forEach((label, i) => {
+      if (!label) return
+      const posF = ((i + offsetF) % N + N) % N
+      const dist = Math.abs(posF - centerIdx)
+      const opacity = Math.max(0, Math.min(1, 1 - (dist - visibleHalf) / 1.2))
+      label.style.opacity = String(opacity)
     })
   })
 
   if (cards.length === 0) return null
-
   const centerIdx = Math.floor(cards.length / 2)
+  const spread = spreadRef.current
 
   return (
     <div ref={containerRef} style={{ position: 'relative', height: '200vh', marginTop: 16 }}>
-      <div style={{
-        position: 'sticky', top: NAV_H,
-        height: `calc(100vh - ${NAV_H}px)`,
-        background: '#FDF6EE',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        overflow: 'hidden',
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+      <div ref={stickyRef} style={{ position: 'sticky', top: NAV_H, height: `calc(100vh - ${NAV_H}px)`, background: '#FDF6EE', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
             <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
             <span style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase' as const, color: '#B07050', fontWeight: 500 }}>Honors & Awards</span>
@@ -157,28 +189,23 @@ function RewardSection() {
           </div>
           <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 36, fontWeight: 800, color: '#2E1A0E', letterSpacing: '-0.02em', margin: 0 }}>Recognition</h2>
         </div>
-        <div style={{ position: 'relative', width: '100%', height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {cards.map((src, i) => {
-            const pos = positionsRef.current
-            const g = pos?.gathered[i]
-            return (
-              <div key={i} ref={el => { cardRefs.current[i] = el }} style={{ position: 'absolute', transform: g ? `translateX(${g.x}px) rotate(${g.rot}deg)` : undefined, zIndex: i === centerIdx ? 10 : (10 - Math.abs(i - centerIdx) * 2), willChange: 'transform' } as React.CSSProperties}>
-                <img src={src} alt={`Award ${i + 1}`} style={{ width: 340, height: 220, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 28px rgba(46,26,14,0.16)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none', draggable: false } as React.CSSProperties} draggable={false} />
-              </div>
-            )
-          })}
+        <div style={{ position: 'relative', width: '100%', height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {cards.map((src, i) => (
+            <div key={i} ref={el => { cardRefs.current[i] = el }} style={{ position: 'absolute', transition: expanded ? 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none', transform: expanded && spread[i] ? `translateX(${spread[i].x}px) translateY(${spread[i].y}px) rotate(${spread[i].rot}deg)` : `translateX(${(i - centerIdx) * 6}px) rotate(${(i - centerIdx) * 14}deg)`, zIndex: i === centerIdx ? 10 : (10 - Math.abs(i - centerIdx) * 2) } as React.CSSProperties}>
+              <img src={src} alt={`Award ${i + 1}`} style={{ width: 340, height: 220, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 28px rgba(46,26,14,0.16)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none', draggable: false } as React.CSSProperties} draggable={false} />
+              <div ref={el => { labelRefs.current[i] = el }} style={{ textAlign: 'center', marginTop: 8, fontSize: 12, fontFamily: 'Caveat, cursive', fontStyle: 'italic', color: '#B07050', opacity: expanded ? (i === centerIdx ? 1 : 0.5) : 0, transition: 'opacity 0.5s ease', whiteSpace: 'nowrap' }}>{AWARD_LABELS[i] || `Honor ${i + 1}`}</div>
+            </div>
+          ))}
         </div>
-        <div style={{ position: 'absolute', bottom: 24, display: 'flex', alignItems: 'center', gap: 10, fontSize: 10, letterSpacing: '0.18em', color: 'rgba(176,112,80,0.55)', textTransform: 'uppercase' as const }}>
+        <div style={{ position: 'absolute', bottom: 24, display: 'flex', alignItems: 'center', gap: 10, fontSize: 10, letterSpacing: '0.18em', color: 'rgba(176,112,80,0.55)', textTransform: 'uppercase' as const, opacity: expanded ? 1 : 0, transition: 'opacity 0.5s ease 0.5s' }}>
           <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
-          Scroll to explore
+          Scroll to rotate
           <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
         </div>
       </div>
     </div>
   )
 }
-
-
 
 export default function AboutPage() {
   const router = useRouter()

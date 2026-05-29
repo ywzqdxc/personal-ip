@@ -1,5 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import BackButton from '@/components/travel/BackButton'
 
 const CSS_LINES = [
   "@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;1,400;1,700&family=Barlow:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');",
@@ -51,8 +52,6 @@ const CSS_LINES = [
   ".quote-attr { font-family: 'Barlow', sans-serif; font-size: 11px; color: rgba(255,255,255,0.22); letter-spacing: 0.1em; margin-top: 10px; text-align: right; }",
 
   /* Back button */
-  ".back-btn { position: fixed; top: 92px; left: 36px; z-index: 100; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; }",
-  '.back-btn:hover { color: rgba(255,255,255,0.95); }',
 ]
 const pageCss = CSS_LINES.join('\n')
 
@@ -114,12 +113,7 @@ export default function HobbyPage() {
     <div className="hobby-root">
       <style>{pageCss}</style>
 
-      <button className="back-btn" onClick={() => router.push('/about')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M10 3L5 8l5 5"/>
-        </svg>
-        About
-      </button>
+      <BackButton />
 
       {/* Hero */}
       <section className="hero-section">

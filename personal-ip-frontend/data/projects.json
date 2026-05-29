@@ -5,7 +5,12 @@
     "subtitle": "农业创新与 3D 建模",
     "description": "使用 Google SketchUp 设计并建造了一个完整的 3D 垂直农场，展示了可持续农业实践以及城市环境下的创新农业技术。",
     "image": "https://picsum.photos/seed/verticalfarm/800/600",
-    "tags": ["3D 建模", "SketchUp", "农业", "可持续发展"],
+    "tags": [
+      "3D 建模",
+      "SketchUp",
+      "农业",
+      "可持续发展"
+    ],
     "category": "agriculture",
     "featured": true,
     "link": ""
@@ -16,7 +21,12 @@
     "subtitle": "农业与食品工程",
     "description": "主导苹果产业从农场到市场的完整供应链。从果肉提取到装瓶，生产果酱、果冻、果汁，通过精准营销与分销实现单日销售额 ₹40,000。",
     "image": "https://picsum.photos/seed/foodchain/800/600",
-    "tags": ["供应链", "食品加工", "市场营销", "农业"],
+    "tags": [
+      "供应链",
+      "食品加工",
+      "市场营销",
+      "农业"
+    ],
     "category": "agriculture",
     "featured": true,
     "link": ""
@@ -27,7 +37,12 @@
     "subtitle": "可持续农业实践",
     "description": "从零开始建设并维护大型农场。嫁接种植 2000 株苹果苗、1200 株杏苗、200 株番石榴苗。制备有机肥料（JEEVAMRIT、GHANJIVAMRIT）并管理完整作物生命周期。",
     "image": "https://picsum.photos/seed/horticulture/800/600",
-    "tags": ["园艺", "有机种植", "嫁接技术", "可持续发展"],
+    "tags": [
+      "园艺",
+      "有机种植",
+      "嫁接技术",
+      "可持续发展"
+    ],
     "category": "agriculture",
     "featured": true,
     "link": ""
@@ -38,7 +53,12 @@
     "subtitle": "Web 开发与数字平台",
     "description": "为本地店主搭建专业的电商网站，帮助他们建立线上存在。使用 Shopify 和 WordPress 开发电商解决方案，包含定制设计、支付集成和库存管理。",
     "image": "https://picsum.photos/seed/ecommerce/800/600",
-    "tags": ["WordPress", "Shopify", "电商", "Web 开发"],
+    "tags": [
+      "WordPress",
+      "Shopify",
+      "电商",
+      "Web 开发"
+    ],
     "category": "web",
     "featured": true,
     "link": ""
@@ -49,7 +69,12 @@
     "subtitle": "文本编辑器与语法检查",
     "description": "使用 HTML、CSS、JavaScript 开发了一个功能完整的 Grammarly 克隆版，具备实时文本分析、语法检查能力和简洁直观的用户界面。",
     "image": "https://picsum.photos/seed/grammarly/800/600",
-    "tags": ["HTML", "CSS", "JavaScript", "文本分析"],
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "文本分析"
+    ],
     "category": "web",
     "featured": false,
     "link": ""
@@ -60,7 +85,11 @@
     "subtitle": "交互动画",
     "description": "使用纯 HTML、CSS、JavaScript 创建了一个可动 React Logo，具备动态速度控制和丰富的悬停效果，提供交互式的用户体验。",
     "image": "https://picsum.photos/seed/reactlogo/800/600",
-    "tags": ["JavaScript", "CSS 动画", "交互"],
+    "tags": [
+      "JavaScript",
+      "CSS 动画",
+      "交互"
+    ],
     "category": "creative",
     "featured": false,
     "link": ""
@@ -71,7 +100,12 @@
     "subtitle": "UI/UX 设计与开发",
     "description": "使用 Tailwind CSS 高精度还原了 Facebook 登录页面。将前端转换为带有完整认证系统的全功能后端。",
     "image": "https://picsum.photos/seed/fblogin/800/600",
-    "tags": ["Tailwind CSS", "UI 设计", "认证", "前端"],
+    "tags": [
+      "Tailwind CSS",
+      "UI 设计",
+      "认证",
+      "前端"
+    ],
     "category": "web",
     "featured": false,
     "link": ""
@@ -82,7 +116,12 @@
     "subtitle": "Web 游戏应用",
     "description": "使用 HTML、CSS、JavaScript 构建了一组互动游戏，包括井字棋、恐龙游戏、计算器和待办事项清单，具备响应式设计和流畅的游戏体验。",
     "image": "https://picsum.photos/seed/gamesuite/800/600",
-    "tags": ["JavaScript", "游戏开发", "交互", "CSS"],
+    "tags": [
+      "JavaScript",
+      "游戏开发",
+      "交互",
+      "CSS"
+    ],
     "category": "creative",
     "featured": false,
     "link": ""
@@ -93,7 +132,12 @@
     "subtitle": "WordPress 内容管理",
     "description": "为客户开发并管理了一个定制 WordPress 博客网站，包含 SEO 优化、内容管理系统、自定义主题和响应式设计。",
     "image": "https://picsum.photos/seed/blogging/800/600",
-    "tags": ["WordPress", "博客", "CMS", "SEO"],
+    "tags": [
+      "WordPress",
+      "博客",
+      "CMS",
+      "SEO"
+    ],
     "category": "web",
     "featured": false,
     "link": ""
@@ -104,18 +148,12 @@
     "subtitle": "内容创作与筹款",
     "description": "主导 Inamigos 基金会的社交媒体营销和筹款活动。创作优质内容，多平台运营管理，成功推动品牌曝光与捐赠增长。",
     "image": "https://picsum.photos/seed/socialmedia/800/600",
-    "tags": ["社交媒体", "内容营销", "筹款", "数字策略"],
-    "category": "creative",
-    "featured": false,
-    "link": ""
-  },
-  {
-    "id": "project-11",
-    "title": "恐怖喜剧 — 获奖短篇故事",
-    "subtitle": "创意写作与叙事",
-    "description": "撰写了一篇引人入胜的恐怖喜剧短篇故事，荣获区级写作比赛大奖——将悬疑的恐怖元素与幽默的节奏巧妙融合，带来独特的阅读体验。",
-    "image": "https://picsum.photos/seed/horrorstory/800/600",
-    "tags": ["创意写作", "叙事", "获奖作品"],
+    "tags": [
+      "社交媒体",
+      "内容营销",
+      "筹款",
+      "数字策略"
+    ],
     "category": "creative",
     "featured": false,
     "link": ""
@@ -126,7 +164,12 @@
     "subtitle": "品牌管理与销售",
     "description": "负责 BharatPe 的线下销售业务，专注于向零售和制造业客户推广二维码支付与收款语音播报设备。主导品牌管理和市场营销策略的执行。",
     "image": "https://picsum.photos/seed/bharatpe/800/600",
-    "tags": ["销售", "品牌管理", "金融科技", "市场营销"],
+    "tags": [
+      "销售",
+      "品牌管理",
+      "金融科技",
+      "市场营销"
+    ],
     "category": "agriculture",
     "featured": false,
     "link": ""
@@ -137,7 +180,12 @@
     "subtitle": "JEEVAMRIT 与 GHANJIVAMRIT 制造",
     "description": "运用印度传统农业技术，规模化生产和推广有机肥料 JEEVAMRIT 和 GHANJIVAMRIT，为多个农场改善土壤健康，自然提升作物产量。",
     "image": "https://picsum.photos/seed/organicfert/800/600",
-    "tags": ["有机种植", "土壤健康", "可持续农业", "乡村振兴"],
+    "tags": [
+      "有机种植",
+      "土壤健康",
+      "可持续农业",
+      "乡村振兴"
+    ],
     "category": "agriculture",
     "featured": false,
     "link": ""
@@ -148,7 +196,12 @@
     "subtitle": "多品种农业策略",
     "description": "在 50 多英亩土地上规划并实施作物多样化种植，引入苹果、杏、番石榴和季节性蔬菜。通过混作降低风险，年农场收入提升 40%。",
     "image": "https://picsum.photos/seed/cropdiverse/800/600",
-    "tags": ["混作种植", "农场管理", "农业", "轮作"],
+    "tags": [
+      "混作种植",
+      "农场管理",
+      "农业",
+      "轮作"
+    ],
     "category": "agriculture",
     "featured": false,
     "link": ""

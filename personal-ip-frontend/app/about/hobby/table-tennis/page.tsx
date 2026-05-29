@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
 import { useLenis } from 'lenis/react'
+import BackButton from '@/components/travel/BackButton'
 
 /* ── CSS (table-tennis: green / white / red — fast, sharp, competitive) ── */
 const CSS_LINES = [
@@ -32,9 +32,6 @@ const CSS_LINES = [
   '.tt-scroll-line { width: 1px; height: 40px; background: rgba(255,255,255,0.25); }',
   ".tt-scroll-text { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 0.25em; color: rgba(255,255,255,0.35); text-transform: uppercase; writing-mode: vertical-rl; }",
 
-  /* ── Back button ── */
-  ".tt-back { position: fixed; top: 92px; left: 36px; z-index: 100; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; }",
-  '.tt-back:hover { color: #E53935; }',
 
   /* ── Table divider ── */
   '.tt-divider { background: #050D06; padding: 0 64px; display: flex; align-items: center; }',
@@ -72,7 +69,6 @@ const CSS_LINES = [
   '  .tt-stat-value { font-size: 38px; }',
   '  .tt-section { padding: 64px 28px; }',
   '  .tt-philo-grid { grid-template-columns: 1fr; gap: 28px; }',
-  '  .tt-back { top: 88px; left: 16px; }',
   '}',
 ]
 const pageCss = CSS_LINES.join('\n')
@@ -86,7 +82,6 @@ const STATS = [
 ]
 
 export default function TableTennisPage() {
-  const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
@@ -110,12 +105,7 @@ export default function TableTennisPage() {
       <style>{pageCss}</style>
 
       {/* Back */}
-      <button className="tt-back" onClick={() => router.push('/about/hobby')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M10 3L5 8l5 5"/>
-        </svg>
-        Hobby
-      </button>
+      <BackButton />
 
       {/* ── Hero ── */}
       <section className="tt-hero">

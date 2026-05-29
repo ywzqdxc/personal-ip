@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
 import { useLenis } from 'lenis/react'
+import BackButton from '@/components/travel/BackButton'
 
 /* ── CSS (cooking: hearth fire — deep charcoal + warm flame orange + cream steam) ── */
 const CSS_LINES = [
@@ -28,8 +28,6 @@ const CSS_LINES = [
   '.ck-scroll-line { width: 1px; height: 48px; background: rgba(232,122,74,0.15); margin: 0 auto 8px; }',
   ".ck-scroll-text { font-family: 'Lora', serif; font-size: 9px; font-style: italic; letter-spacing: 0.2em; color: rgba(232,122,74,0.3); text-transform: uppercase; writing-mode: vertical-rl; }",
 
-  ".ck-back { position: fixed; top: 92px; left: 36px; z-index: 100; display: flex; align-items: center; gap: 8px; color: rgba(245,232,216,0.6); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; }",
-  '.ck-back:hover { color: #E87A4A; }',
 
   '.ck-stats { background: #1C100A; padding: 80px 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; border-top: 1px solid rgba(232,122,74,0.06); border-bottom: 1px solid rgba(232,122,74,0.06); }',
   ".ck-stat-value { font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 800; color: #E87A4A; line-height: 1; }",
@@ -92,7 +90,6 @@ const PHOTOS = [
 ]
 
 export default function CookingPage() {
-  const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
@@ -113,12 +110,7 @@ export default function CookingPage() {
     <div className="ck-root">
       <style>{pageCss}</style>
 
-      <button className="ck-back" onClick={() => router.push('/about/hobby')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M10 3L5 8l5 5"/>
-        </svg>
-        Hobby
-      </button>
+      <BackButton />
 
       <section className="ck-hero">
         {!videoError ? (

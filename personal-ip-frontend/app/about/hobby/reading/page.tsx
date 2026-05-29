@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
 import { useLenis } from 'lenis/react'
+import BackButton from '@/components/travel/BackButton'
 
 /* ── CSS (reading: library nook — deep brown + gilded gold + parchment cream) ── */
 const CSS_LINES = [
@@ -29,9 +29,6 @@ const CSS_LINES = [
   '.rd-scroll-line { width: 1px; height: 48px; background: rgba(201,169,110,0.15); margin: 0 auto 8px; }',
   ".rd-scroll-text { font-family: 'Libre Baskerville', serif; font-size: 9px; font-style: italic; letter-spacing: 0.2em; color: rgba(201,169,110,0.3); text-transform: uppercase; writing-mode: vertical-rl; }",
 
-  /* ── Back button ── */
-  ".rd-back { position: fixed; top: 92px; left: 36px; z-index: 100; display: flex; align-items: center; gap: 8px; color: rgba(240,232,220,0.6); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; }",
-  '.rd-back:hover { color: #C9A96E; }',
 
   /* ── Stats strip ── */
   '.rd-stats { background: #1E1812; padding: 80px 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; border-top: 1px solid rgba(201,169,110,0.06); border-bottom: 1px solid rgba(201,169,110,0.06); }',
@@ -101,7 +98,6 @@ const PHOTOS = [
 ]
 
 export default function ReadingPage() {
-  const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoError, setVideoError] = useState(false)
 
@@ -122,12 +118,7 @@ export default function ReadingPage() {
     <div className="rd-root">
       <style>{pageCss}</style>
 
-      <button className="rd-back" onClick={() => router.push('/about/hobby')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M10 3L5 8l5 5"/>
-        </svg>
-        Hobby
-      </button>
+      <BackButton />
 
       <section className="rd-hero">
         {!videoError ? (

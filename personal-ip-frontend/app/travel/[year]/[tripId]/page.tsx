@@ -1,8 +1,11 @@
 'use client'
 
 import { use, useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
+import { useRouter } from 'next/navigation'
 import { getTravelTrip } from '@/lib/travel/api'
 import type { TravelTrip } from '@/lib/travel/types'
+import BackButton from '@/components/travel/BackButton'
 
 
 
@@ -50,6 +53,7 @@ export default function TripPage({
 function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
   const chs   = trip.chapters
   const TOTAL = chs.length + 1   // 0 = cover, 1..N = chapters
+  const router = useRouter()
 
   // ── State ────────────────────────────────────────────────
   const [pg,      setPg]     = useState(0)
@@ -260,6 +264,12 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
       fontFamily: "'Space Mono', monospace",
       background: '#111',
     }}>
+
+      {/* ══ Back Button（portal 脱离 stacking context，感知 pg 状态）══ */}
+      {typeof document !== 'undefined' && createPortal(
+        <BackButton onClick={pg > 0 ? () => goPage(0) : () => router.back()} />,
+        document.body
+      )}
 
       {/* ══ Now Hovering ══ */}
       <div style={{
