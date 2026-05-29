@@ -668,18 +668,6 @@ export default function ThoughtsPage() {
     >
       {/* Header */}
       <div style={{ padding: '0 60px 48px' }}>
-        <h1
-          style={{
-            fontFamily: 'Barlow Condensed, sans-serif',
-            fontSize: 72,
-            fontWeight: 800,
-            color: '#2E1A0E',
-            margin: '0 0 8px',
-            letterSpacing: '-0.03em',
-          }}
-        >
-          THOUGHTS
-        </h1>
         <div
           style={{
             display: 'flex',
