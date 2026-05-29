@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MenuIcon, XIcon } from "./simple-icons"
-import { Button } from "@/components/ui/button"
 import { useSound } from "@/hooks/use-sound"
 
 const navItems = [
@@ -71,11 +70,22 @@ export function Navigation() {
                   {item.label}
                 </Link>
               ))}
-              <Button asChild size="sm" className="ml-4">
-                <Link href="/about" onClick={handleNavClick}>
-                  About
-                </Link>
-              </Button>
+              <Link
+                href="/about"
+                onClick={handleNavClick}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '6px 14px', borderRadius: '8px',
+                  background: '#C45A30', color: '#fff',
+                  fontSize: '13px', fontWeight: 600, textDecoration: 'none',
+                  marginLeft: '16px', lineHeight: 1,
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#A8491E')}
+                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#C45A30')}
+              >
+                About
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -110,17 +120,19 @@ export function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <Button asChild size="lg" className="mt-4">
-              <Link
-                href="/about"
-                onClick={() => {
-                  handleNavClick()
-                  setIsMobileMenuOpen(false)
-                }}
-              >
-                About
-              </Link>
-            </Button>
+            <Link
+              href="/about"
+              onClick={() => { handleNavClick(); setIsMobileMenuOpen(false) }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                padding: '10px 28px', borderRadius: '8px',
+                background: '#C45A30', color: '#fff',
+                fontSize: '15px', fontWeight: 600, textDecoration: 'none',
+                marginTop: '16px', lineHeight: 1,
+              }}
+            >
+              About
+            </Link>
           </div>
         </div>
       )}
