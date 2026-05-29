@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import projectsData from '@/data/projects.json'
@@ -28,32 +28,11 @@ const CATEGORY_CONFIG: Record<string, { emoji: string; label: string; color: str
   creative: { emoji: '🎨', label: 'Creative & More', color: '#8B6BB1' },
 }
 
-// Featured cards use different gradient backgrounds
-const FEATURED_THEMES = [
-  { bg: 'linear-gradient(135deg, #2E1A0E 0%, #4A2A1A 100%)', accent: '#E8855A', text: '#FDF6EE', sub: '#B09080', tagBg: 'rgba(232,133,90,0.18)', tagText: '#E8C9B0' },
-  { bg: 'linear-gradient(135deg, #C45A30 0%, #E8855A 100%)', accent: '#FFF8F0', text: '#FFF', sub: 'rgba(255,255,255,0.8)', tagBg: 'rgba(255,255,255,0.18)', tagText: '#FFF8F0' },
-  { bg: 'linear-gradient(135deg, #2B3A5E 0%, #4A7090 100%)', accent: '#A0C8E8', text: '#E8EEFF', sub: 'rgba(232,238,255,0.7)', tagBg: 'rgba(160,200,232,0.15)', tagText: '#C8DDF0' },
-  { bg: 'linear-gradient(135deg, #1A3A2A 0%, #2E6A4E 100%)', accent: '#8ED8A0', text: '#E8F8EC', sub: 'rgba(232,248,236,0.7)', tagBg: 'rgba(142,216,160,0.15)', tagText: '#B8E8C4' },
-]
-
 // ─────────────── CSS (inline style sheet) ───────────────
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800&family=Barlow:wght@300;400;500;600&display=swap');
 
 .gold-line { width: 28px; height: 1.5px; background: #B07050; border-radius: 1px; }
-
-.featured-card {
-  cursor: pointer;
-  will-change: transform, box-shadow;
-  transition: box-shadow 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.featured-card:hover {
-  box-shadow: 0 24px 64px rgba(0,0,0,0.25) !important;
-  z-index: 20 !important;
-}
-.featured-card:not(:hover) {
-  z-index: auto;
-}
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -63,175 +42,183 @@ const CSS = `
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+@keyframes cinemaZoomOut {
+  from { opacity: 0; transform: scale(1.12); }
+  to   { opacity: 1; transform: scale(1); }
+}
 
-.anim-header  { animation: fadeUp 0.6s ease both;                         animation-delay: 0.05s; }
-.anim-desc   { animation: fadeUp 0.6s ease both;                         animation-delay: 0.12s; }
-.anim-ft1    { animation: fadeUp 0.5s ease both;                         animation-delay: 0.20s; }
-.anim-ft2    { animation: fadeUp 0.5s ease both;                         animation-delay: 0.30s; }
-.anim-ft3    { animation: fadeUp 0.5s ease both;                         animation-delay: 0.40s; }
+.anim-header  { animation: fadeUp 0.6s ease both;           animation-delay: 0.05s; }
+.anim-desc   { animation: fadeUp 0.6s ease both;            animation-delay: 0.12s; }
 .anim-cat    { animation: fadeUp 0.5s ease both; }
 
 .category-header:hover .cat-line {
   transform: scaleX(1.03);
   background: #E8855A !important;
 }
+
+.cinema-slide { animation: cinemaZoomOut 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+.dot-btn { transition: all 0.25s; }
+.dot-btn:hover { background: #E8855A !important; }
 `
 
-// ─────────────── Featured Card Component ───────────────
-function FeaturedCard({
-  project,
-  theme,
-  tiltOffset,
-  index,
-  onClick,
-}: {
-  project: Project
-  theme: typeof FEATURED_THEMES[number]
-  tiltOffset: number
-  index: number
-  onClick: () => void
-}) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0 })
-  const [isHovered, setIsHovered] = useState(false)
+// ─────────────── Cinema Carousel ───────────────
+const AUTO_INTERVAL = 5000
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const cx = rect.width / 2
-    const cy = rect.height / 2
-    const maxTilt = 10
-    setTilt({
-      rx: -((y - cy) / cy) * maxTilt,
-      ry: ((x - cx) / cx) * maxTilt,
-    })
-  }, [])
+function CinemaCarousel({ projects, onProjectClick }: { projects: Project[]; onProjectClick: (p: Project) => void }) {
+  const [current, setCurrent] = useState(0)
+  const [prevSlide, setPrevSlide] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const handleMouseLeave = useCallback(() => {
-    setTilt({ rx: 0, ry: 0 })
-    setIsHovered(false)
-  }, [])
+  const goTo = useCallback((idx: number) => {
+    setPrevSlide(current)
+    setCurrent(idx)
+  }, [current])
 
-  const animClass = `anim-ft${index + 1}`
+  // Auto-rotate
+  useEffect(() => {
+    if (isPaused || projects.length <= 1) return
+    timerRef.current = setInterval(() => {
+      setPrevSlide(s => s)
+      setCurrent(s => (s + 1) % projects.length)
+    }, AUTO_INTERVAL)
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [isPaused, projects.length])
+
+  const project = projects[current]
+  if (!project) return null
 
   return (
-    <div
-      ref={cardRef}
-      className={`featured-card ${animClass}`}
-      onClick={onClick}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        position: 'absolute',
-        left: `${tiltOffset * 38}px`,
-        top: `${tiltOffset * 22}px`,
-        width: 'calc(90% - 20px)',
-        height: 220,
-        borderRadius: 18,
-        padding: '24px 28px',
-        display: 'flex',
-        gap: 20,
-        alignItems: 'flex-end',
-        background: theme.bg,
-        transform: isHovered
-          ? `perspective(1000px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) translateY(-6px) scale(1.03)`
-          : 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)',
-        zIndex: isHovered ? 20 : 10 - tiltOffset,
-        boxShadow: isHovered
-          ? '0 24px 64px rgba(0,0,0,0.25)'
-          : '0 4px 16px rgba(0,0,0,0.1)',
-      }}
-    >
-      {/* Image thumbnail */}
+    <section style={{ padding: '14px 60px 0' }}>
       <div
-        className="flex-shrink-0 rounded-xl overflow-hidden"
-        style={{ width: 100, height: 100 }}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '52vh',
+          minHeight: 360,
+          maxHeight: 520,
+          borderRadius: 20,
+          overflow: 'hidden',
+          cursor: 'pointer',
+        }}
+        onClick={() => onProjectClick(project)}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
-        <img
-          src={project.image}
-          alt={project.title}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          loading="lazy"
-        />
-      </div>
-
-      {/* Text content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: 10,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase' as const,
-            color: theme.accent,
-            marginBottom: 4,
-          }}
-        >
-          ⭐ Featured
-        </div>
-        <h3
-          style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: 22,
-            fontWeight: 800,
-            color: theme.text,
-            lineHeight: 1.1,
-            margin: '0 0 4px',
-            letterSpacing: '-0.02em',
-          }}
-        >
-          {project.title}
-        </h3>
-        <p
-          style={{
-            fontSize: 12,
-            color: theme.sub,
-            lineHeight: 1.5,
-            margin: '0 0 10px',
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          } as React.CSSProperties}
-        >
-          {project.description}
-        </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-          {project.tags.slice(0, 4).map(tag => (
-            <span
-              key={tag}
+        {/* Slide images */}
+        {projects.map((p, i) => {
+          const isActive = i === current
+          const isLeaving = i === prevSlide && i !== current
+          return (
+            <div
+              key={p.id}
               style={{
-                fontSize: 10,
-                padding: '1px 8px',
-                borderRadius: 99,
-                background: theme.tagBg,
-                color: theme.tagText,
+                position: 'absolute', inset: 0,
+                opacity: isActive ? 1 : 0,
+                transform: isActive ? 'scale(1)' : isLeaving ? 'scale(1.08)' : 'scale(1.12)',
+                transition: 'opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                zIndex: isActive ? 1 : 0,
               }}
             >
-              {tag}
-            </span>
+              <img
+                src={p.image}
+                alt={p.title}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+          )
+        })}
+
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.25) 100%)',
+          zIndex: 2, pointerEvents: 'none',
+        }} />
+
+        {/* Center text */}
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 3,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none',
+        }}>
+          <div
+            key={current}
+            className="cinema-slide"
+            style={{ textAlign: 'center', padding: '0 40px' }}
+          >
+            <div style={{
+              fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const,
+              color: 'rgba(255,255,255,0.7)', marginBottom: 12,
+            }}>
+              ⭐ 精选
+            </div>
+            <h2 style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 'clamp(28px, 4.5vw, 52px)',
+              fontWeight: 800,
+              color: '#FFF',
+              lineHeight: 1.1,
+              letterSpacing: '-0.02em',
+              margin: '0 0 10px',
+              textShadow: '0 2px 16px rgba(0,0,0,0.4)',
+            }}>
+              {project.title}
+            </h2>
+            <p style={{
+              fontSize: 'clamp(12px, 1.2vw, 15px)',
+              color: 'rgba(255,255,255,0.85)',
+              maxWidth: 560,
+              margin: '0 auto 16px',
+              lineHeight: 1.6,
+              textShadow: '0 1px 8px rgba(0,0,0,0.5)',
+            }}>
+              {project.description}
+            </p>
+            <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
+              {project.tags.slice(0, 5).map(tag => (
+                <span key={tag} style={{
+                  fontSize: 11, padding: '4px 12px', borderRadius: 99,
+                  background: 'rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(4px)',
+                  color: 'rgba(255,255,255,0.9)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Dot indicators */}
+        <div style={{
+          position: 'absolute', bottom: 20, left: '50%',
+          transform: 'translateX(-50%)', zIndex: 4,
+          display: 'flex', gap: 8,
+        }}>
+          {projects.map((_, i) => (
+            <button
+              key={i}
+              className="dot-btn"
+              onClick={e => { e.stopPropagation(); goTo(i) }}
+              style={{
+                width: i === current ? 24 : 8,
+                height: 8,
+                borderRadius: 4,
+                border: 'none',
+                background: i === current ? '#E8855A' : 'rgba(255,255,255,0.4)',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+              aria-label={`Slide ${i + 1}`}
+            />
           ))}
         </div>
       </div>
-
-      {/* Arrow indicator */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 18,
-          right: 20,
-          fontSize: 16,
-          color: theme.accent,
-          opacity: isHovered ? 0.8 : 0.4,
-          transition: 'opacity 0.3s, transform 0.3s',
-          transform: isHovered ? 'translateX(3px) translateY(-3px)' : 'none',
-        }}
-      >
-        ↗
-      </div>
-    </div>
+    </section>
   )
 }
 
@@ -264,88 +251,18 @@ export default function ProjectsPage() {
       style={{
         minHeight: '100vh',
         background: '#FDF6EE',
-        paddingTop: NAV_H,
+        paddingTop: 72,
         fontFamily: 'Barlow, sans-serif',
       }}
     >
-      {/* ════════════ HEADER ════════════ */}
-      <section style={{ padding: '56px 60px 0', textAlign: 'center' as const }}>
-        <div className="anim-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 18 }}>
-          <div className="gold-line" />
-          <span
-            style={{
-              fontSize: 11,
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase' as const,
-              color: '#B07050',
-              fontWeight: 500,
-            }}
-          >
-            Portfolio
-          </span>
-        </div>
-
-        <p className="anim-desc" style={{ fontSize: 14, color: '#B07050', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' as const }}>
-          Things I&apos;ve built — open source, side projects, client work, and experiments across different domains.
-        </p>
-      </section>
-
-      {/* ════════════ FEATURED — Overlap Stack ════════════ */}
-      <section style={{ padding: '44px 60px 0' }}>
-        <div className="anim-desc" style={{ marginBottom: 20 }}>
-          <span
-            style={{
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase' as const,
-              color: '#E8855A',
-              fontWeight: 600,
-            }}
-          >
-            Featured Work
-          </span>
-        </div>
-
-        <div style={{ position: 'relative', height: 280 }}>
-          {featuredProjects.map((project, i) => (
-            <FeaturedCard
-              key={project.id}
-              project={project}
-              theme={FEATURED_THEMES[i % FEATURED_THEMES.length]}
-              tiltOffset={i}
-              index={i}
-              onClick={() => handleProjectClick(project)}
-            />
-          ))}
-
-          {/* Ghost placeholder card when < 3 featured */}
-          {featuredProjects.length < 3 && (
-            <div
-              style={{
-                position: 'absolute',
-                left: `${featuredProjects.length * 38}px`,
-                top: `${featuredProjects.length * 22}px`,
-                width: 'calc(90% - 20px)',
-                height: 220,
-                borderRadius: 18,
-                border: '2px dashed #E8C9B0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#B07050',
-                fontSize: 13,
-                zIndex: 0,
-              }}
-            >
-              More coming soon...
-            </div>
-          )}
-        </div>
-      </section>
+      {/* ════════════ FEATURED — Cinema Carousel ════════════ */}
+      {featuredProjects.length > 0 && (
+        <CinemaCarousel projects={featuredProjects} onProjectClick={handleProjectClick} />
+      )}
 
       {/* ════════════ CATEGORY SECTIONS ════════════ */}
       {grouped.map((group, gi) => (
-        <section key={group.key} style={{ padding: '56px 60px 0' }}>
+        <section key={group.key} style={{ padding: '20px 60px 0' }}>
           {/* Category header */}
           <div
             className="category-header anim-cat"
@@ -412,7 +329,7 @@ export default function ProjectsPage() {
       ))}
 
       {/* ════════════ FOOTER ════════════ */}
-      <footer style={{ padding: '60px', textAlign: 'center' }}>
+      <footer style={{ padding: '36px 60px', textAlign: 'center' }}>
         <div style={{ width: '100%', height: 1, background: '#E8C9B0', marginBottom: 24 }} />
         <p style={{ fontSize: 12, color: '#B07050' }}>
           More projects in the works. Stay tuned. ✨
