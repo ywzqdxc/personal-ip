@@ -76,13 +76,7 @@ export function Navigation() {
       <nav className={navClass}>
         <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8" style={{ margin: '0 auto' }}>
           <div className="flex items-center justify-between h-16 md:h-20">
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
-              onClick={handleNavClick}
-            >
-              Portfolio
-            </Link>
+            <div />
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">

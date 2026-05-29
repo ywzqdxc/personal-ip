@@ -44,15 +44,13 @@ const BENTO_CARDS = [
 ]
 
 const SOCIAL = [
-  { label: 'GitHub',   href: 'https://github.com/ywzqdxc' },
   { label: 'LinkedIn', href: '#' },
-  { label: 'Email',    href: '#' },
+  { label: 'Email',    href: 'mailto:19270859916@163.com' },
 ]
 
-// 暖色系 Contribution Graph 主题
-const warmContribTheme = {
-  light: ['#F0E6DB', '#E8C9B0', '#C45A30', '#A04020', '#2E1A0E'],
-  dark:  ['#2E1A0E', '#5A3A2A', '#8B5E3C', '#C45A30', '#E8855A'],
+// 浅色透明版（嵌入 hero）
+const warmContribThemeLight = {
+  light: ['#EDE0D4', '#D4A882', '#C45A30', '#A04020', '#2E1A0E'],
 }
 
 const CSS_LINES = [
@@ -62,19 +60,17 @@ const CSS_LINES = [
   '.about-card-dark:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.4); }',
   '.about-card-blue:hover { box-shadow: 0 16px 48px rgba(43,58,94,0.2); }',
   '.about-card-warm:hover { box-shadow: 0 16px 48px rgba(196,90,48,0.15); }',
-  '.github-card:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.35) !important; transform: translateY(-2px); }',
   '.social-chip { transition: background 0.2s, color 0.2s; }',
   '.social-chip:hover { background: #2E1A0E !important; color: #FDF6EE !important; }',
   '@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }',
   '.fade-up { animation: fadeUp 0.6s ease both; }',
   '.hobby-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#E8855A; margin-right:6px; vertical-align:middle; }',
-  // GitHub Calendar 样式覆盖
-  '.github-card .react-github-calendar { width:100% !important; }',
-  '.github-card .react-github-calendar svg { width:100% !important; height:auto !important; }',
-  '.github-card .react-github-calendar text { fill:#B07050 !important; font-size:9px !important; }',
-  '.github-card .contrib-legend { display:flex; align-items:center; gap:4px; justify-content:flex-end; margin-top:8px; }',
-  '.github-card .contrib-legend span { font-size:9px; color:#8A6A50; }',
-  '.github-card .contrib-legend .legend-block { width:10px; height:10px; border-radius:2px; }',
+  // GitHub Calendar 内嵌样式
+  '.react-github-calendar { width:100% !important; }',
+  '.react-github-calendar svg { width:100% !important; height:auto !important; }',
+  '.react-github-calendar text { fill:#B07050 !important; font-size:9px !important; }',
+  // 隐藏全局背景动画 canvas（About 页不需要）
+  'canvas.pointer-events-none { display:none !important; }',
 ]
 const pageCss = CSS_LINES.join('\n')
 
@@ -129,11 +125,9 @@ export default function AboutPage() {
             Driven by curiosity, shaped by the journey.
           </p>
 
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const, marginBottom: 20 }}>
             {SOCIAL.map(s => (
               <a key={s.label} href={s.href}
-                target={s.label === 'GitHub' ? '_blank' : undefined}
-                rel={s.label === 'GitHub' ? 'noopener noreferrer' : undefined}
                 className="social-chip"
                 style={{
                   fontSize: 11, color: '#7A5A40',
@@ -145,6 +139,47 @@ export default function AboutPage() {
               >{s.label}</a>
             ))}
           </div>
+
+          {/* Contribution Graph — 透明内嵌版 */}
+          <div style={{ borderTop: '0.5px solid #E8C9B0', paddingTop: 16 }}>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between', marginBottom: 10,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B07050" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                  <path d="M9 18c-4.51 2-5-2-7-2" />
+                </svg>
+                <span style={{
+                  fontSize: 10, letterSpacing: '0.16em',
+                  textTransform: 'uppercase' as const, color: '#B07050',
+                }}>Contribution Graph</span>
+              </div>
+              <a
+                href="https://github.com/ywzqdxc"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 11, color: '#C45A30',
+                  textDecoration: 'none',
+                  display: 'flex', alignItems: 'center', gap: 3,
+                }}
+              >
+                github.com/ywzqdxc <span>↗</span>
+              </a>
+            </div>
+            <GitHubCalendar
+              username="ywzqdxc"
+              theme={warmContribThemeLight}
+              colorScheme="light"
+              blockSize={10}
+              blockMargin={3}
+              fontSize={11}
+              hideColorLegend
+              hideTotalCount
+            />
+          </div>
         </div>
 
         {/* Avatar */}
@@ -152,7 +187,7 @@ export default function AboutPage() {
           src="/images/cuixin.png"
           alt="Reginamy"
           style={{
-            height: 280,
+            height: 340,
             flexShrink: 0,
           }}
         />
@@ -163,7 +198,7 @@ export default function AboutPage() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr',
-          gridTemplateRows: '200px 160px auto',
+          gridTemplateRows: '200px 160px',
           gap: 12,
         }}>
 
@@ -380,108 +415,6 @@ export default function AboutPage() {
                   <span style={{ fontSize: 9, color: '#B07050' }}>{item.year}</span>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* ── GitHub Contribution Graph (row 3, col 1-3) ── */}
-          <div
-            className="github-card"
-            style={{
-              gridColumn: '1 / 4',
-              gridRow: '3',
-              background: '#2E1A0E',
-              borderRadius: 16,
-              padding: '28px 36px 24px',
-              display: 'flex',
-              flexDirection: 'column' as const,
-              gap: 16,
-              transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-            }}
-          >
-            {/* Header row */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                {/* GitHub icon */}
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8855A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                  <path d="M9 18c-4.51 2-5-2-7-2" />
-                </svg>
-                <div>
-                  <div style={{
-                    fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase' as const,
-                    color: '#E8855A', marginBottom: 2,
-                  }}>Open Source</div>
-                  <h2 style={{
-                    fontFamily: 'Barlow Condensed, sans-serif',
-                    fontSize: 22, fontWeight: 800, color: '#FDF6EE',
-                    lineHeight: 1.1, margin: 0,
-                    letterSpacing: '-0.02em',
-                  }}>Contribution Graph</h2>
-                </div>
-              </div>
-
-              <a
-                href="https://github.com/ywzqdxc"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  fontSize: 11, color: '#E8855A',
-                  textDecoration: 'none',
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  border: '0.5px solid rgba(232,133,90,0.3)',
-                  borderRadius: 99, padding: '5px 14px',
-                  transition: 'background 0.2s, color 0.2s',
-                }}
-                className="social-chip"
-              >
-                github.com/ywzqdxc
-                <span style={{ fontSize: 13 }}>↗</span>
-              </a>
-            </div>
-
-            {/* Calendar */}
-            <div style={{
-              background: 'rgba(20,14,10,0.5)',
-              borderRadius: 12,
-              padding: '18px 20px 14px',
-            }}>
-              <GitHubCalendar
-                username="ywzqdxc"
-                theme={warmContribTheme}
-                colorScheme="dark"
-                blockSize={13}
-                blockMargin={5}
-                fontSize={13}
-                hideColorLegend
-                hideTotalCount
-              />
-            </div>
-
-            {/* Legend row */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-              <p style={{
-                fontSize: 10, color: '#8A6A50', margin: 0,
-                lineHeight: 1.5,
-              }}>
-                GitHub contributions over the last year. Every square is a day of building, learning, or collaborating.
-              </p>
-              <div className="contrib-legend">
-                <span>Less</span>
-                <div className="legend-block" style={{ background: '#2E1A0E' }} />
-                <div className="legend-block" style={{ background: '#5A3A2A' }} />
-                <div className="legend-block" style={{ background: '#8B5E3C' }} />
-                <div className="legend-block" style={{ background: '#C45A30' }} />
-                <div className="legend-block" style={{ background: '#E8855A' }} />
-                <span>More</span>
-              </div>
             </div>
           </div>
 
