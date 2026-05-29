@@ -68,44 +68,50 @@ const CSS = `
 
 // ───── Tag Colors ─────
 const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  '3D Modeling':   { bg: '#EEF4FF', text: '#2B3A5E', border: '#C8D8F5' },
-  'SketchUp':      { bg: '#FFF0E8', text: '#C45A30', border: '#F0C8B0' },
-  'Agriculture':   { bg: '#F0F8F0', text: '#2E6A2E', border: '#C8E8C8' },
-  'Sustainability':{ bg: '#F0F8F4', text: '#3A7A4A', border: '#C0E0C8' },
-  'Supply Chain':  { bg: '#FFF8F0', text: '#8A5A30', border: '#E8D0B8' },
-  'Food Processing':{ bg: '#FFF4EE', text: '#9A5030', border: '#F0D0B8' },
-  'Marketing':     { bg: '#F8F0FF', text: '#5A3A8A', border: '#D8C8F0' },
-  'Horticulture':  { bg: '#F4F8F0', text: '#4A7A3A', border: '#D0E0C0' },
-  'Organic Farming':{ bg: '#F0F8EE', text: '#3A6A2A', border: '#C8E0B8' },
-  'Grafting':      { bg: '#F8F4F0', text: '#6A4A2A', border: '#E0D0B8' },
-  'WordPress':     { bg: '#EEF4FF', text: '#2A4A8A', border: '#C0D0F0' },
-  'Shopify':       { bg: '#F0FFF0', text: '#2A6A3A', border: '#C0E8C0' },
-  'E-Commerce':    { bg: '#FFF4EE', text: '#B05020', border: '#F0C8A8' },
-  'Web Development':{ bg: '#F4F0FF', text: '#4A3A8A', border: '#D0C8F0' },
-  'JavaScript':    { bg: '#FFFDE8', text: '#8A7A00', border: '#E0D8A0' },
-  'CSS':           { bg: '#F0F4FF', text: '#3A4A8A', border: '#C8D4F0' },
-  'HTML':          { bg: '#FFF0E8', text: '#B05020', border: '#F0C0A0' },
-  'Tailwind CSS':  { bg: '#F0F8FF', text: '#2A6A8A', border: '#C0E0F0' },
-  'Game Development':{ bg: '#FFF0F8', text: '#8A2A6A', border: '#E8C0D8' },
-  'Interactive':   { bg: '#F8F8F0', text: '#5A5A20', border: '#D8D8B0' },
-  'UI Design':     { bg: '#F4F0FF', text: '#4A3A8A', border: '#D0C8F0' },
-  'Authentication':{ bg: '#FFF4F0', text: '#8A3A2A', border: '#E8C8B0' },
-  'Frontend':      { bg: '#F0F4F8', text: '#3A5A8A', border: '#C0D0E8' },
-  'Blogging':      { bg: '#F8F4F0', text: '#6A4A2A', border: '#D8C8B0' },
-  'CMS':           { bg: '#F0F4F8', text: '#4A4A8A', border: '#C8D0E8' },
-  'SEO':           { bg: '#F8FFF0', text: '#4A7A2A', border: '#D0E8B8' },
-  'Social Media':  { bg: '#FFF0F8', text: '#8A2A5A', border: '#E8C0D8' },
-  'Content Marketing':{ bg: '#FFF8F0', text: '#8A5A2A', border: '#E8D0B0' },
-  'Fundraising':   { bg: '#F8F0FF', text: '#6A4A8A', border: '#E0D0F0' },
-  'Creative Writing':{ bg: '#FFF8F0', text: '#8A5A30', border: '#E8C8A8' },
-  'Storytelling':  { bg: '#F8F4F0', text: '#6A4A30', border: '#D8C8B0' },
-  'Award Winning': { bg: '#FFF8E0', text: '#8A6A00', border: '#E8D880' },
-  'Sales':         { bg: '#F4F8FF', text: '#3A4A8A', border: '#C8D8F0' },
-  'Brand Management':{ bg: '#F8F0FF', text: '#5A3A8A', border: '#D8C8F0' },
-  'Fintech':       { bg: '#F0F4F8', text: '#2A5A8A', border: '#C0D8F0' },
-  'CSS Animations':{ bg: '#FFF0F4', text: '#8A2A4A', border: '#E8C0D0' },
-  'Text Analysis': { bg: '#F4F8F0', text: '#4A6A2A', border: '#D0E0C0' },
-  'Digital Strategy':{ bg: '#F4F0FF', text: '#5A3A8A', border: '#D8C8F0' },
+  '3D 建模':        { bg: '#EEF4FF', text: '#2B3A5E', border: '#C8D8F5' },
+  'SketchUp':       { bg: '#FFF0E8', text: '#C45A30', border: '#F0C8B0' },
+  '农业':           { bg: '#F0F8F0', text: '#2E6A2E', border: '#C8E8C8' },
+  '可持续发展':     { bg: '#F0F8F4', text: '#3A7A4A', border: '#C0E0C8' },
+  '供应链':         { bg: '#FFF8F0', text: '#8A5A30', border: '#E8D0B8' },
+  '食品加工':       { bg: '#FFF4EE', text: '#9A5030', border: '#F0D0B8' },
+  '市场营销':       { bg: '#F8F0FF', text: '#5A3A8A', border: '#D8C8F0' },
+  '园艺':           { bg: '#F4F8F0', text: '#4A7A3A', border: '#D0E0C0' },
+  '有机种植':       { bg: '#F0F8EE', text: '#3A6A2A', border: '#C8E0B8' },
+  '嫁接技术':       { bg: '#F8F4F0', text: '#6A4A2A', border: '#E0D0B8' },
+  'WordPress':      { bg: '#EEF4FF', text: '#2A4A8A', border: '#C0D0F0' },
+  'Shopify':        { bg: '#F0FFF0', text: '#2A6A3A', border: '#C0E8C0' },
+  '电商':           { bg: '#FFF4EE', text: '#B05020', border: '#F0C8A8' },
+  'Web 开发':       { bg: '#F4F0FF', text: '#4A3A8A', border: '#D0C8F0' },
+  'JavaScript':     { bg: '#FFFDE8', text: '#8A7A00', border: '#E0D8A0' },
+  'CSS':            { bg: '#F0F4FF', text: '#3A4A8A', border: '#C8D4F0' },
+  'HTML':           { bg: '#FFF0E8', text: '#B05020', border: '#F0C0A0' },
+  'Tailwind CSS':   { bg: '#F0F8FF', text: '#2A6A8A', border: '#C0E0F0' },
+  '游戏开发':       { bg: '#FFF0F8', text: '#8A2A6A', border: '#E8C0D8' },
+  '交互':           { bg: '#F8F8F0', text: '#5A5A20', border: '#D8D8B0' },
+  'UI 设计':        { bg: '#F4F0FF', text: '#4A3A8A', border: '#D0C8F0' },
+  '认证':           { bg: '#FFF4F0', text: '#8A3A2A', border: '#E8C8B0' },
+  '前端':           { bg: '#F0F4F8', text: '#3A5A8A', border: '#C0D0E8' },
+  '博客':           { bg: '#F8F4F0', text: '#6A4A2A', border: '#D8C8B0' },
+  'CMS':            { bg: '#F0F4F8', text: '#4A4A8A', border: '#C8D0E8' },
+  'SEO':            { bg: '#F8FFF0', text: '#4A7A2A', border: '#D0E8B8' },
+  '社交媒体':       { bg: '#FFF0F8', text: '#8A2A5A', border: '#E8C0D8' },
+  '内容营销':       { bg: '#FFF8F0', text: '#8A5A2A', border: '#E8D0B0' },
+  '筹款':           { bg: '#F8F0FF', text: '#6A4A8A', border: '#E0D0F0' },
+  '数字策略':       { bg: '#F4F0FF', text: '#5A3A8A', border: '#D8C8F0' },
+  '创意写作':       { bg: '#FFF8F0', text: '#8A5A30', border: '#E8C8A8' },
+  '叙事':           { bg: '#F8F4F0', text: '#6A4A30', border: '#D8C8B0' },
+  '获奖作品':       { bg: '#FFF8E0', text: '#8A6A00', border: '#E8D880' },
+  '销售':           { bg: '#F4F8FF', text: '#3A4A8A', border: '#C8D8F0' },
+  '品牌管理':       { bg: '#F8F0FF', text: '#5A3A8A', border: '#D8C8F0' },
+  '金融科技':       { bg: '#F0F4F8', text: '#2A5A8A', border: '#C0D8F0' },
+  'CSS 动画':       { bg: '#FFF0F4', text: '#8A2A4A', border: '#E8C0D0' },
+  '文本分析':       { bg: '#F4F8F0', text: '#4A6A2A', border: '#D0E0C0' },
+  '土壤健康':       { bg: '#F0F8EE', text: '#3A6A2A', border: '#C8E0B8' },
+  '可持续农业':     { bg: '#F0F8F4', text: '#3A7A4A', border: '#C0E0C8' },
+  '乡村振兴':       { bg: '#F8F4F0', text: '#5A3A30', border: '#D8C0A8' },
+  '混作种植':       { bg: '#F4F8F0', text: '#4A7A3A', border: '#D0E0C0' },
+  '农场管理':       { bg: '#FFF8F0', text: '#8A5A30', border: '#E8D0B8' },
+  '轮作':           { bg: '#F0F8F4', text: '#3A7A4A', border: '#C0E0C8' },
 }
 
 function getTagColor(tag: string) {
@@ -127,9 +133,9 @@ export default function ProjectDetailPage({
     return (
       <main style={{ minHeight: '100vh', background: '#FDF6EE', paddingTop: NAV_H, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
         <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 48, color: '#2E1A0E' }}>404</h1>
-        <p style={{ color: '#B07050', marginBottom: 24 }}>Project not found.</p>
+        <p style={{ color: '#B07050', marginBottom: 24 }}>项目未找到。</p>
         <Link href="/projects" className="back-link" style={{ color: '#E8855A', textDecoration: 'none', fontSize: 13 }}>
-          ← Back to Projects
+          ← 返回项目列表
         </Link>
       </main>
     )
@@ -182,7 +188,7 @@ export default function ProjectDetailPage({
               border: '1px solid rgba(255,255,255,0.15)',
             }}
           >
-            ← All Projects
+            ← 所有项目
           </Link>
         </div>
 
@@ -267,7 +273,7 @@ export default function ProjectDetailPage({
                 textDecoration: 'none',
               }}
             >
-              Live Demo ↗
+              在线演示 ↗
             </a>
           )}
           <a
@@ -306,7 +312,7 @@ export default function ProjectDetailPage({
               marginBottom: 20,
               letterSpacing: '-0.02em',
             }}>
-              More in this category
+              同类项目推荐
             </h3>
             <div className="grid md:grid-cols-3 gap-3 sm:gap-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
               {relatedProjects.map(rp => (
@@ -355,7 +361,7 @@ export default function ProjectDetailPage({
       <footer style={{ padding: '40px 24px 60px', textAlign: 'center', maxWidth: 740, margin: '0 auto' }}>
         <div style={{ width: '100%', height: 1, background: '#E8C9B0', marginBottom: 24 }} />
         <p style={{ fontSize: 12, color: '#B07050' }}>
-          Back to <Link href="/projects" style={{ color: '#E8855A' }}>all projects</Link> ✨
+          返回 <Link href="/projects" style={{ color: '#E8855A' }}>所有项目</Link> ✨
         </p>
       </footer>
 
