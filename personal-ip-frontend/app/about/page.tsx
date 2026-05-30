@@ -2,10 +2,9 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { GitHubCalendar } from 'react-github-calendar'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { useLenis } from 'lenis/react'
 
 const NAV_H = 80
 
@@ -75,9 +74,8 @@ const CSS_LINES = [
 ]
 const pageCss = CSS_LINES.join('\n')
 
-/* ── 荣誉展示区：自动展开 + 滚轮驱动转盘轮转 ───────────────────── */
+/* ── 荣誉展示区：叠放 → 扇形入场 + 单向滚轮传送带 ───────────────── */
 
-// 证书对应的文字标签
 const AWARD_LABELS = [
   'Excellence in Innovation',
   'Outstanding Achievement',
@@ -90,118 +88,204 @@ const AWARD_LABELS = [
   'Distinguished Honor',
 ]
 
+// 扇形参数
+const VISIBLE   = 7          // 可见槽位数
+const CENTER_SLOT = 3        // (VISIBLE-1)/2
+const GAP_X     = 300        // 相邻槽水平间距 px
+const FADE_ZONE = 0.65       // 进/出淡出区宽度（槽单位）
+const SCROLL_TOTAL = 22      // 容器滚动对应的总 progress 量（~2.5 轮）
+
 function lerp(a: number, b: number, t: number) { return a + (b - a) * t }
 
-function buildSpread(count: number, gap: number) {
-  const positions: { x: number; y: number; rot: number }[] = []
-  const center = (count - 1) / 2
-  for (let i = 0; i < count; i++) {
-    const off = i - center
-    const a = off / (center || 1)
-    positions.push({ x: off * gap, y: Math.abs(off) * 16 + (count <= 5 ? 0 : Math.abs(off) * 4), rot: a * 12 })
+// 构建扇形 7 个槽位置
+const FAN: { x: number; y: number; rot: number }[] = Array.from({ length: VISIBLE }, (_, slot) => {
+  const off  = slot - CENTER_SLOT          // -3 … +3
+  const norm = off / CENTER_SLOT           // -1 … +1
+  return { x: off * GAP_X, y: Math.abs(off) * 20, rot: norm * 15 }
+})
+
+// 退出方向（左侧沉降）
+const EXIT_POS  = { x: FAN[0].x - 240,          y: FAN[0].y + 160,          rot: FAN[0].rot - 14 }
+// 进入方向（右侧升起）
+const ENTRY_POS = { x: FAN[VISIBLE-1].x + 240,  y: FAN[VISIBLE-1].y + 160,  rot: FAN[VISIBLE-1].rot + 14 }
+
+/** 根据 progress 计算单张卡片的变换参数 */
+function getCardState(i: number, N: number, progress: number) {
+  const rawRel = i - progress
+  const rel = ((rawRel % N) + N) % N
+  const centeredRel = rel > N / 2 ? rel - N : rel
+  const slot = centeredRel + CENTER_SLOT
+
+  let x: number, y: number, rot: number, opacity: number, zIndex: number
+
+  if (slot >= 0 && slot <= VISIBLE - 1) {
+    // ① 扇形内：相邻槽插值
+    const lo = Math.max(0, Math.min(VISIBLE - 2, Math.floor(slot)))
+    const t  = slot - lo
+    x   = lerp(FAN[lo].x,   FAN[lo+1].x,   t)
+    y   = lerp(FAN[lo].y,   FAN[lo+1].y,   t)
+    rot = lerp(FAN[lo].rot, FAN[lo+1].rot, t)
+    opacity = 1
+    zIndex  = 20 - Math.round(Math.abs(slot - CENTER_SLOT)) * 3
+  } else if (slot < 0 && slot >= -FADE_ZONE) {
+    // ② 正在退出（左侧沉降淡出）
+    const t = slot / -FADE_ZONE               // 0 @ slot=0 → 1 @ slot=-FADE_ZONE
+    x   = lerp(FAN[0].x,   EXIT_POS.x,   t)
+    y   = lerp(FAN[0].y,   EXIT_POS.y,   t)
+    rot = lerp(FAN[0].rot, EXIT_POS.rot, t)
+    opacity = 1 - t
+    zIndex  = 2                               // 低于所有扇形卡片
+  } else if (slot > VISIBLE - 1 && slot <= VISIBLE - 1 + FADE_ZONE) {
+    // ③ 正在进入（右侧升起淡入）
+    const t = (slot - (VISIBLE - 1)) / FADE_ZONE  // 0 @ rightmost → 1 @ rightmost+FADE
+    x   = lerp(FAN[VISIBLE-1].x,   ENTRY_POS.x,   t)
+    y   = lerp(FAN[VISIBLE-1].y,   ENTRY_POS.y,   t)
+    rot = lerp(FAN[VISIBLE-1].rot, ENTRY_POS.rot, t)
+    opacity = 1 - t
+    zIndex  = 2
+  } else {
+    // ④ 完全隐藏
+    opacity = 0
+    zIndex  = 1
+    if (slot < 0) { x = EXIT_POS.x;  y = EXIT_POS.y;  rot = EXIT_POS.rot }
+    else          { x = ENTRY_POS.x; y = ENTRY_POS.y; rot = ENTRY_POS.rot }
   }
-  return positions
+
+  return { x, y, rot, opacity, zIndex }
 }
 
-function RewardSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const stickyRef     = useRef<HTMLDivElement>(null)
-  const cardRefs      = useRef<(HTMLDivElement | null)[]>([])
-  const labelRefs     = useRef<(HTMLDivElement | null)[]>([])
-  const [cards, setCards] = useState<string[]>([])
-  const [expanded, setExpanded] = useState(false)
-  const spreadRef = useRef<{x:number;y:number;rot:number}[]>([])
+function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => void }) {
+  const cardRefs       = useRef<(HTMLDivElement | null)[]>([])
+  const [cards, setCards]           = useState<string[]>([])
+  const [expanded, setExpanded]     = useState(false)
+  const [carouselMode, setCarousel] = useState(false)
+  const progressRef    = useRef(0)
+  const expandedOnce   = useRef(false)
 
+  /* 拉取证书图片 */
   useEffect(() => {
     fetch('/api/rewards')
       .then(r => r.json())
-      .then(d => {
-        const list = d.images || []
-        setCards(list)
-        spreadRef.current = buildSpread(list.length, 340)
-      })
+      .then(d => setCards(d.images || []))
       .catch(() => setCards([]))
   }, [])
 
+  /* 首次显示时触发入场展开 */
   useEffect(() => {
-    const el = stickyRef.current
-    if (!el) return
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        const t = setTimeout(() => setExpanded(true), 200)
-        obs.disconnect()
-        return () => clearTimeout(t)
+    if (visible && !expandedOnce.current) {
+      expandedOnce.current = true
+      setTimeout(() => setExpanded(true), 200)
+    }
+  }, [visible])
+
+  /* 入场动画播完后切换 carousel 模式 */
+  useEffect(() => {
+    if (!expanded) return
+    const t = setTimeout(() => setCarousel(true), 1100)
+    return () => clearTimeout(t)
+  }, [expanded])
+
+  /* Wheel 拦截：visible 时完全接管滚轮
+     向下 → 旋转 carousel
+     向上 → 调用 onHide，覆盖层滑出 */
+  useEffect(() => {
+    if (!visible) return
+    const N     = cards.length
+    const SPEED = 0.007
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      if (e.deltaY > 0 && carouselMode && N > 0) {
+        progressRef.current += e.deltaY * SPEED
+        const prog = progressRef.current
+        cardRefs.current.forEach((card, i) => {
+          if (!card) return
+          const { x, y, rot, opacity, zIndex } = getCardState(i, N, prog)
+          card.style.transition = 'none'
+          card.style.transform  = `translateX(${x}px) translateY(${y}px) rotate(${rot}deg)`
+          card.style.opacity    = String(opacity)
+          card.style.zIndex     = String(zIndex)
+        })
+      } else if (e.deltaY < 0) {
+        onHide()
       }
-    }, { threshold: 0.3 })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [cards.length])
+    }
 
-  useLenis(() => {
-    const container = containerRef.current
-    const spread = spreadRef.current
-    if (!expanded || !container || spread.length === 0) return
-    const rect = container.getBoundingClientRect()
-    const scrollable = container.offsetHeight - window.innerHeight
-    if (scrollable <= 0) return
-    const raw = Math.max(0, Math.min(1, -rect.top / scrollable))
-    const N = cards.length
-    const offsetF = raw * N
-    const centerIdx = Math.floor(N / 2)
-    const visibleHalf = N <= 5 ? 2.5 : 3
-
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return
-      const posF = ((i + offsetF) % N + N) % N
-      const idxA = Math.floor(posF)
-      const idxB = (idxA + 1) % N
-      const frac = posF - idxA
-
-      const a = spread[idxA], b = spread[idxB]
-      if (!a || !b) return
-      const x   = a.x + (b.x - a.x) * frac
-      const y   = a.y + (b.y - a.y) * frac
-      const rot = a.rot + (b.rot - a.rot) * frac
-      card.style.transform = `translateX(${x}px) translateY(${y}px) rotate(${rot}deg)`
-    })
-
-    labelRefs.current.forEach((label, i) => {
-      if (!label) return
-      const posF = ((i + offsetF) % N + N) % N
-      const dist = Math.abs(posF - centerIdx)
-      const opacity = Math.max(0, Math.min(1, 1 - (dist - visibleHalf) / 1.2))
-      label.style.opacity = String(opacity)
-    })
-  })
+    window.addEventListener('wheel', onWheel, { passive: false, capture: true })
+    return () => window.removeEventListener('wheel', onWheel, true)
+  }, [visible, carouselMode, cards.length, onHide])
 
   if (cards.length === 0) return null
-  const centerIdx = Math.floor(cards.length / 2)
-  const spread = spreadRef.current
+
+  const N         = cards.length
+  const centerIdx = Math.floor(N / 2)
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', height: '200vh', marginTop: 16 }}>
-      <div ref={stickyRef} style={{ position: 'sticky', top: NAV_H, height: `calc(100vh - ${NAV_H}px)`, background: '#FDF6EE', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
-            <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
-            <span style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase' as const, color: '#B07050', fontWeight: 500 }}>Honors & Awards</span>
-            <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
-          </div>
-          <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 36, fontWeight: 800, color: '#2E1A0E', letterSpacing: '-0.02em', margin: 0 }}>Recognition</h2>
+    /* position:fixed 覆盖层，通过 translateY 控制进出 */
+    <div style={{
+      position: 'fixed',
+      top: NAV_H, left: 0, right: 0, bottom: 0,
+      background: '#FDF6EE',
+      zIndex: 40,
+      transform: visible ? 'translateY(0)' : 'translateY(100vh)',
+      transition: 'transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden',
+    }}>
+      {/* 标题 */}
+      <div style={{ textAlign: 'center', marginBottom: 52 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
+          <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
+          <span style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase' as const, color: '#B07050', fontWeight: 500 }}>Honors & Awards</span>
+          <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
         </div>
-        <div style={{ position: 'relative', width: '100%', height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {cards.map((src, i) => (
-            <div key={i} ref={el => { cardRefs.current[i] = el }} style={{ position: 'absolute', transition: expanded ? 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none', transform: expanded && spread[i] ? `translateX(${spread[i].x}px) translateY(${spread[i].y}px) rotate(${spread[i].rot}deg)` : `translateX(${(i - centerIdx) * 6}px) rotate(${(i - centerIdx) * 14}deg)`, zIndex: i === centerIdx ? 10 : (10 - Math.abs(i - centerIdx) * 2) } as React.CSSProperties}>
-              <img src={src} alt={`Award ${i + 1}`} style={{ width: 340, height: 220, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 28px rgba(46,26,14,0.16)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none', draggable: false } as React.CSSProperties} draggable={false} />
-              <div ref={el => { labelRefs.current[i] = el }} style={{ textAlign: 'center', marginTop: 8, fontSize: 12, fontFamily: 'Caveat, cursive', fontStyle: 'italic', color: '#B07050', opacity: expanded ? (i === centerIdx ? 1 : 0.5) : 0, transition: 'opacity 0.5s ease', whiteSpace: 'nowrap' }}>{AWARD_LABELS[i] || `Honor ${i + 1}`}</div>
+        <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 36, fontWeight: 800, color: '#2E1A0E', letterSpacing: '-0.02em', margin: 0 }}>Recognition</h2>
+      </div>
+
+      {/* 证书区 */}
+      <div style={{ position: 'relative', width: '100%', height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {cards.map((src, i) => {
+          const stackOff  = i - centerIdx
+          const initState = getCardState(i, N, 0)
+          let transform: string, opacity: number, zIndex: number, transition: string
+          if (!expanded) {
+            transform  = `translateX(${stackOff * 5}px) rotate(${stackOff * 13}deg)`
+            opacity    = 1
+            zIndex     = 10 - Math.abs(stackOff) * 2
+            transition = 'none'
+          } else if (!carouselMode) {
+            transform  = `translateX(${initState.x}px) translateY(${initState.y}px) rotate(${initState.rot}deg)`
+            opacity    = initState.opacity
+            zIndex     = initState.zIndex
+            transition = `transform 0.9s cubic-bezier(0.34,1.56,0.64,1) ${i * 55}ms, opacity 0.6s ease ${i * 55}ms`
+          } else {
+            transform  = `translateX(${initState.x}px) translateY(${initState.y}px) rotate(${initState.rot}deg)`
+            opacity    = initState.opacity
+            zIndex     = initState.zIndex
+            transition = 'none'
+          }
+          return (
+            <div key={i} ref={el => { cardRefs.current[i] = el }}
+              style={{ position: 'absolute', transform, opacity, zIndex, transition } as React.CSSProperties}>
+              <img src={src} alt={`Award ${i + 1}`}
+                style={{ width: 320, height: 210, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 28px rgba(46,26,14,0.16)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none' } as React.CSSProperties}
+                draggable={false} />
+              <div style={{ textAlign: 'center', marginTop: 8, fontSize: 12, fontFamily: 'Caveat, cursive', fontStyle: 'italic', color: '#B07050', opacity: expanded ? 0.7 : 0, transition: 'opacity 0.5s ease', whiteSpace: 'nowrap' }}>
+                {AWARD_LABELS[i] || `Honor ${i + 1}`}
+              </div>
             </div>
-          ))}
-        </div>
-        <div style={{ position: 'absolute', bottom: 24, display: 'flex', alignItems: 'center', gap: 10, fontSize: 10, letterSpacing: '0.18em', color: 'rgba(176,112,80,0.55)', textTransform: 'uppercase' as const, opacity: expanded ? 1 : 0, transition: 'opacity 0.5s ease 0.5s' }}>
-          <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
-          Scroll to rotate
-          <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
-        </div>
+          )
+        })}
+      </div>
+
+      {/* 底部提示 */}
+      <div style={{ position: 'absolute', bottom: 24, display: 'flex', alignItems: 'center', gap: 10, fontSize: 10, letterSpacing: '0.18em', color: 'rgba(176,112,80,0.55)', textTransform: 'uppercase' as const, opacity: expanded ? 1 : 0, transition: 'opacity 0.5s ease 0.8s' }}>
+        <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
+        Scroll to rotate
+        <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
       </div>
     </div>
   )
@@ -210,6 +294,33 @@ function RewardSection() {
 export default function AboutPage() {
   const router = useRouter()
   const [hovCard, setHovCard] = useState(null)
+
+  /* ── RewardSection 显示控制 ── */
+  const [rewardVisible, setRewardVisible] = useState(false)
+  const sentinelRef   = useRef<HTMLDivElement>(null)
+  const canShowRef    = useRef(true)          // 防止 hide 后立即重触发
+  const cooldownRef   = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  /* sentinel 进入视口 + 向下滚 → 弹出 RewardSection */
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      if (!sentinelRef.current || !canShowRef.current || e.deltaY <= 0) return
+      const rect = sentinelRef.current.getBoundingClientRect()
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        e.preventDefault()
+        canShowRef.current = false
+        setRewardVisible(true)
+      }
+    }
+    window.addEventListener('wheel', onWheel, { passive: false, capture: true })
+    return () => window.removeEventListener('wheel', onWheel, true)
+  }, [])
+
+  const handleRewardHide = useCallback(() => {
+    setRewardVisible(false)
+    if (cooldownRef.current) clearTimeout(cooldownRef.current)
+    cooldownRef.current = setTimeout(() => { canShowRef.current = true }, 600)
+  }, [])
 
   return (
     <main style={{
@@ -567,8 +678,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 荣誉展示滚动动画区 */}
-      <RewardSection />
+      {/* Sentinel：滚动到此处时触发 RewardSection 弹出 */}
+      <div ref={sentinelRef} style={{ height: 1, margin: 0 }} />
+
+      {/* 荣誉展示 — position:fixed 全屏覆盖层 */}
+      <RewardSection visible={rewardVisible} onHide={handleRewardHide} />
 
       <ReactTooltip id="react-tooltip" />
       <style>{pageCss}</style>
