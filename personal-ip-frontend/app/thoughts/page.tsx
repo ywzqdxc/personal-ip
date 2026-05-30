@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getPublishedThoughts, type Thought } from '@/lib/api/thoughts'
 import { MOCK_THOUGHTS } from './thought-utils'
 import { ThoughtCard, Lightbox } from './thought-card'
 import { Timeline } from './timeline'
+import { distributeToColumns, rebalanceColumns, tryDomRebalance, type ColumnData } from './column-distributor'
+import { preloadImages } from './image-preloader'
 import { pageCss } from './styles'
 
 /* ── Lightbox state type ── */
@@ -31,18 +33,53 @@ export default function ThoughtsPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  /* ── Show timeline after load ── */
+  /* ── Sort & distribute into columns ── */
+  const sorted = useMemo(
+    () =>
+      [...thoughts].sort(
+        (a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime(),
+      ),
+    [thoughts],
+  )
+
+  /* ── Image preload → accurate heights → build columns ── */
+  const [columns, setColumns] = useState<ColumnData[]>([])
+  const [aspectRatios, setAspectRatios] = useState<Map<string, number>>(new Map())
+
+  useEffect(() => {
+    if (sorted.length === 0) return
+    const imageUrls = sorted.filter((t) => t.imageUrl).map((t) => t.imageUrl!)
+    preloadImages(imageUrls).then((ratios) => {
+      setAspectRatios(ratios)
+    })
+  }, [sorted])
+
+  useEffect(() => {
+    if (sorted.length === 0) return
+    // Wait for aspect ratios to be ready (or use empty map as fallback)
+    const distributed = distributeToColumns(sorted, 3, aspectRatios.size > 0 ? aspectRatios : undefined)
+    setColumns(rebalanceColumns(distributed))
+  }, [sorted, aspectRatios])
+
+  /* ── Post-render DOM-height rebalance ── */
+  useEffect(() => {
+    if (loading || sorted.length === 0 || columns.length === 0) return
+    const t = setTimeout(() => {
+      const reb = tryDomRebalance(columns, '.thoughts-columns', 250, aspectRatios)
+      if (reb) setColumns(reb)
+    }, 1500) // wait for images to fully load
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, sorted.length, columns.length > 0 ? 1 : 0])
+
+  /* ── Show timeline after layout settles ── */
   useEffect(() => {
     if (!loading && thoughts.length > 0) {
-      const t = setTimeout(() => setTimelineVisible(true), 400)
+      // Give the columns time to paint, then show the timeline
+      const t = setTimeout(() => setTimelineVisible(true), 1200)
       return () => clearTimeout(t)
     }
   }, [loading, thoughts.length])
-
-  /* ── Sort: newest first ── */
-  const sorted = [...thoughts].sort(
-    (a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime(),
-  )
 
   /* ── Image click → lightbox ── */
   const handleImageClick = (url: string, imgEl: HTMLImageElement) => {
@@ -52,7 +89,6 @@ export default function ThoughtsPage() {
 
   return (
     <main style={{ minHeight: '100vh', background: '#FDF6EE', paddingTop: 100 }}>
-
       {/* Hero */}
       <div style={{ padding: '0 60px 36px' }}>
         <p style={{ fontFamily: 'Caveat, cursive', fontSize: 20, color: '#B07050', margin: '0 0 16px' }}>
@@ -60,13 +96,16 @@ export default function ThoughtsPage() {
         </p>
         <div
           className="divider-expand"
-          style={{ height: 1.5, background: 'linear-gradient(90deg, #E8855A 0%, #E8C9B0 60%, transparent 100%)', borderRadius: 1 }}
+          style={{
+            height: 1.5,
+            background: 'linear-gradient(90deg, #E8855A 0%, #E8C9B0 60%, transparent 100%)',
+            borderRadius: 1,
+          }}
         />
       </div>
 
       {/* Body */}
       <div ref={contentRef} style={{ padding: '0 60px 80px' }}>
-
         {/* Loading */}
         {loading && (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
@@ -77,23 +116,27 @@ export default function ThoughtsPage() {
         )}
 
         {/* Empty state */}
-        {!loading && thoughts.length === 0 && (
+        {!loading && sorted.length === 0 && (
           <div style={{ textAlign: 'center', padding: '80px 0', color: '#B07050', fontFamily: 'Barlow, sans-serif' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>🍃</div>
             <p style={{ fontSize: 16 }}>暂无随想，静待灵感。</p>
           </div>
         )}
 
-        {/* Masonry grid */}
+        {/* Distributed columns */}
         {!loading && sorted.length > 0 && (
-          <div className="thoughts-masonry">
-            {sorted.map((thought, i) => (
-              <ThoughtCard
-                key={thought.id}
-                thought={thought}
-                onImageClick={handleImageClick}
-                enterDelay={Math.min(i * 40, 400)}
-              />
+          <div className="thoughts-columns">
+            {columns.map((col, colIdx) => (
+              <div key={colIdx} className="thoughts-col" data-column-index={colIdx}>
+                {col.items.map((entry, i) => (
+                  <ThoughtCard
+                    key={entry.thought.id}
+                    thought={entry.thought}
+                    onImageClick={handleImageClick}
+                    enterDelay={colIdx * 40 + i * 60}
+                  />
+                ))}
+              </div>
             ))}
           </div>
         )}

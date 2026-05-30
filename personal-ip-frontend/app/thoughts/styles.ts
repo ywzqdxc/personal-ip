@@ -6,9 +6,9 @@ const CSS_LINES = [
   /* ── Fonts ── */
   "@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@300;400;500&family=Caveat:wght@600&family=Noto+Serif+SC:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');",
 
-  /* ── Masonry ── */
-  '.thoughts-masonry { columns: 3; column-gap: 16px; }',
-  '.thought-card { break-inside: avoid; margin-bottom: 16px; display: inline-block; width: 100%; }',
+  /* ── JS-distributed columns (shortest-column-first for time-linearity) ── */
+  '.thoughts-columns { display: flex; gap: 16px; align-items: flex-start; }',
+  '.thoughts-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }',
 
   /* ── Card hover ── */
   '.thought-card { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, border-color 0.4s ease; cursor: default; }',
@@ -56,8 +56,8 @@ const CSS_LINES = [
   '.code-pre::-webkit-scrollbar-thumb { background: #3A2A1A; border-radius: 2px; }',
 
   /* ── Responsive ── */
-  '@media (max-width: 900px) { .thoughts-masonry { columns: 2; } }',
-  '@media (max-width: 540px) { .thoughts-masonry { columns: 1; } }',
+  '@media (max-width: 900px) { .thoughts-columns { flex-wrap: wrap; } .thoughts-col { flex: 1 1 calc(50% - 8px); min-width: 260px; } }',
+  '@media (max-width: 540px) { .thoughts-columns { flex-direction: column; } .thoughts-col { flex: 1 1 100%; } }',
 ]
 
 export const pageCss = CSS_LINES.join('\n')

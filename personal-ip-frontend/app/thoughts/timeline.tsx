@@ -2,46 +2,32 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Thought } from '@/lib/api/thoughts'
+import {
+  playTick,
+  startRoll,
+  updateRollVelocity,
+  stopRoll,
+  playActivate,
+  playHover,
+  unlockAudio,
+} from './audio-engine'
 
-/* ── Gear-tick sound (Web Audio) ── */
+/* ═══════════════════════════════════════════════
+   Helpers
+   ═══════════════════════════════════════════════ */
 
-let _audioCtx: AudioContext | null = null
-function getCtx() {
-  if (!_audioCtx) _audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
-  return _audioCtx
-}
-
-function playTick() {
-  try {
-    const ctx = getCtx()
-    const now = ctx.currentTime
-    const o1 = ctx.createOscillator()
-    const g1 = ctx.createGain()
-    o1.type = 'sine'
-    o1.frequency.setValueAtTime(1400, now)
-    o1.frequency.exponentialRampToValueAtTime(800, now + 0.03)
-    g1.gain.setValueAtTime(0.08, now)
-    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.04)
-    o1.connect(g1).connect(ctx.destination)
-    o1.start(now); o1.stop(now + 0.04)
-    const o2 = ctx.createOscillator()
-    const g2 = ctx.createGain()
-    o2.type = 'triangle'
-    o2.frequency.setValueAtTime(600, now + 0.005)
-    o2.frequency.exponentialRampToValueAtTime(300, now + 0.04)
-    g2.gain.setValueAtTime(0.05, now + 0.005)
-    g2.gain.exponentialRampToValueAtTime(0.001, now + 0.05)
-    o2.connect(g2).connect(ctx.destination)
-    o2.start(now + 0.005); o2.stop(now + 0.05)
-  } catch (_) { /* silent */ }
-}
-
-/* ── Helpers ── */
-
-function dateLabel(iso: string): string {
+function dateLabel(iso: string) {
   const d = new Date(iso)
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
+
+/* ═══════════════════════════════════════════════
+   Timeline — Cinematic Memory Dial
+   ═══════════════════════════════════════════════ */
+
+const CONTAINER_VH = 80
+const LERP = 0.07
+const PARTICLE_COUNT = 6
 
 interface TimelineProps {
   thoughts: Thought[]
@@ -49,201 +35,408 @@ interface TimelineProps {
   visible: boolean
 }
 
-/* ═══════════════════════════════════════════════
-   Timeline — Stopwatch / Chronograph style
-   ═══════════════════════════════════════════════ */
-
 export function Timeline({ thoughts, contentRef, visible }: TimelineProps) {
-  const lineRef = useRef<HTMLDivElement>(null)
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
-  const [activeIdx, setActiveIdx] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerH, setContainerH] = useState(720)
+  const [activeId, setActiveId] = useState<number | null>(null)
+  const [hoverId, setHoverId] = useState<number | null>(null)
   const [cursorY, setCursorY] = useState<number | null>(null)
-  const lastTickIdx = useRef<number | null>(null)
+  const [particles, setParticles] = useState<Array<{ id: number; angle: number }>>([])
+  const [nodePositions, setNodePositions] = useState<Array<{ id: number; time: string; pct: number }>>([])
 
-  /* ── Build markers sorted oldest→newest (bottom→top on timeline) ── */
+  // Lerp
+  const currentY = useRef(0)
+  const targetY = useRef(0)
+  const rafId = useRef(0)
+  const lastActiveId = useRef<number | null>(null)
+  const pidCounter = useRef(0)
 
-  const markers = [...thoughts]
-    .sort((a, b) => new Date(a.createTime).getTime() - new Date(b.createTime).getTime())
-    .map((thought, i, arr) => ({
-      thought,
-      pct: arr.length <= 1 ? 50 : (i / (arr.length - 1)) * 100,
-    }))
+  // Velocity-driven tick scheduling
+  const scrollVelocity = useRef(0)       // 0–1, decayed each frame
+  const lastTickTime = useRef(0)         // performance.now() of last tick
+  const lastScrollY = useRef(0)
+  const lastScrollStamp = useRef(0)
+  const skipActivate = useRef(false)     // suppress activate sound during programmatic scroll
 
-  /* ── Generate minor ticks between majors ── */
+  /* ── Sorted thoughts (oldest → newest) ── */
+  const sorted = [...thoughts].sort(
+    (a, b) => new Date(a.createTime).getTime() - new Date(b.createTime).getTime(),
+  )
 
-  const minorTicks: number[] = []
-  for (let i = 0; i < markers.length - 1; i++) {
-    const gap = markers[i + 1].pct - markers[i].pct
-    const count = Math.max(1, Math.round(gap / 3))
-    for (let j = 1; j < count; j++) {
-      minorTicks.push(markers[i].pct + (gap * j) / count)
-    }
-  }
-
-  /* ── Hide browser scrollbar ── */
-
+  /* ── Container height ── */
   useEffect(() => {
-    const style = document.createElement('style')
-    style.id = 'thoughts-hide-scrollbar'
-    style.textContent = `
-      html { scrollbar-width: none; -ms-overflow-style: none; }
-      html::-webkit-scrollbar { display: none; }
-    `
-    document.head.appendChild(style)
-    return () => { style.remove() }
+    const u = () => { if (containerRef.current) setContainerH(containerRef.current.offsetHeight) }
+    u(); window.addEventListener('resize', u); return () => window.removeEventListener('resize', u)
   }, [])
 
-  /* ── Scroll-driven active marker ── */
+  /* ── Hide scrollbar ── */
+  useEffect(() => {
+    const s = document.createElement('style')
+    s.textContent = 'html{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar{display:none}'
+    document.head.appendChild(s)
+    return () => s.remove()
+  }, [])
+
+  /* ═══════════════════════════════════════════════
+     Measure actual DOM positions → node positions
+     ═══════════════════════════════════════════════ */
+
+  useEffect(() => {
+    if (!contentRef.current || thoughts.length === 0) return
+    const measure = () => {
+      const cards = contentRef.current!.querySelectorAll<HTMLElement>(
+        '[data-column-index="0"] [data-thought-id]',
+      )
+      if (cards.length === 0) return
+      const containerRect = contentRef.current!.getBoundingClientRect()
+      const positions: Array<{ id: number; time: string; top: number }> = []
+      cards.forEach((card) => {
+        const id = Number(card.getAttribute('data-thought-id'))
+        const t = sorted.find((x) => x.id === id)
+        if (t) {
+          const rect = card.getBoundingClientRect()
+          positions.push({ id, time: dateLabel(t.createTime), top: rect.top + rect.height / 2 - containerRect.top })
+        }
+      })
+      if (positions.length < 2) return
+      const minTop = positions[0].top
+      const maxTop = positions[positions.length - 1].top
+      const range = maxTop - minTop || 1
+      setNodePositions(
+        positions.map((p) => ({ id: p.id, time: p.time, pct: ((p.top - minTop) / range) * 100 })),
+      )
+    }
+
+    // Measure after layout settles, then on resize
+    const t1 = setTimeout(measure, 300)
+    const t2 = setTimeout(measure, 1200) // re-measure after images load
+    window.addEventListener('resize', measure)
+    return () => { clearTimeout(t1); clearTimeout(t2); window.removeEventListener('resize', measure) }
+  }, [contentRef, thoughts, sorted])
+
+  /* ═══════════════════════════════════════════════
+     Scroll → active node (column 0 only)
+     ═══════════════════════════════════════════════ */
 
   useEffect(() => {
     if (!contentRef.current) return
-    let prevIdx: number | null = null
     const onScroll = () => {
-      const cards = contentRef.current!.querySelectorAll('[data-thought-id]')
+      unlockAudio() // ensure AudioContext is running
+      // ── Compute scroll velocity ──
+      const now = performance.now()
+      const sy = window.scrollY
+      const dt = now - lastScrollStamp.current
+      if (dt > 0 && dt < 200) {
+        const dy = Math.abs(sy - lastScrollY.current)
+        const rawV = Math.min(1, dy / Math.max(dt, 8) / 3) // 3px/ms = max velocity
+        scrollVelocity.current = Math.max(scrollVelocity.current, rawV)
+      }
+      lastScrollY.current = sy
+      lastScrollStamp.current = now
+
+      const cards = contentRef.current!.querySelectorAll<HTMLElement>(
+        '[data-column-index="0"] [data-thought-id]',
+      )
+      if (cards.length === 0) return
       const vh = window.innerHeight
-      let closestIdx: number | null = null
-      let closestDist = Infinity
+      let bestId: number | null = null
+      let bestDist = Infinity
       cards.forEach((card) => {
         const rect = card.getBoundingClientRect()
         const mid = rect.top + rect.height / 2
         const dist = Math.abs(mid - vh / 2)
-        if (dist < closestDist) {
-          closestDist = dist
-          const id = Number(card.getAttribute('data-thought-id'))
-          const idx = markers.findIndex((m) => m.thought.id === id)
-          if (idx !== -1) closestIdx = idx
-        }
+        if (dist < bestDist) { bestDist = dist; bestId = Number(card.getAttribute('data-thought-id')) }
       })
-      if (closestIdx !== null && closestIdx !== prevIdx) {
-        prevIdx = closestIdx
-        setActiveIdx(closestIdx)
-        playTick()
+      if (bestId !== null && bestId !== lastActiveId.current) {
+        lastActiveId.current = bestId
+        setActiveId(bestId)
+        if (!skipActivate.current) playActivate()
+        // Spawn particles
+        const pids: Array<{ id: number; angle: number }> = []
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          pids.push({ id: pidCounter.current++, angle: (360 / PARTICLE_COUNT) * i })
+        }
+        setParticles((prev) => [...prev.slice(-12), ...pids])
+        setTimeout(() => setParticles((prev) => prev.filter((p) => !pids.includes(p))), 700)
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [contentRef, markers])
+  }, [contentRef])
 
-  /* ── Mouse interaction ── */
+  /* ═══════════════════════════════════════════════
+     rAF — Lerp dial motion + velocity-driven ticks
+     ═══════════════════════════════════════════════ */
 
+  useEffect(() => {
+    const anim = () => {
+      // ── Lerp track position ──
+      currentY.current += (targetY.current - currentY.current) * LERP
+      if (activeId !== null) {
+        const node = nodePositions.find((n) => n.id === activeId)
+        if (node) {
+          const h = containerRef.current?.offsetHeight || containerH
+          targetY.current = h / 2 - (node.pct / 100) * h
+        }
+      }
+
+      // ── Velocity decay (spring winding down) ──
+      const prevV = scrollVelocity.current
+      scrollVelocity.current *= 0.92
+      const v = scrollVelocity.current
+
+      const frameNow = performance.now()
+
+      // ── Mode switch: tick vs roll ──
+      const ROLL_THRESHOLD = 0.45
+      if (v > ROLL_THRESHOLD) {
+        if (prevV <= ROLL_THRESHOLD) startRoll(v)
+        else updateRollVelocity(v)
+      } else if (v > 0.006) {
+        stopRoll()
+        const interval = 50 + (1 - Math.min(v / ROLL_THRESHOLD, 1)) * 400
+        if (frameNow - lastTickTime.current >= interval) {
+          lastTickTime.current = frameNow
+          playTick(v)
+        }
+      } else {
+        stopRoll()
+      }
+
+      rafId.current = requestAnimationFrame(anim)
+    }
+    lastTickTime.current = performance.now()
+    rafId.current = requestAnimationFrame(anim)
+    return () => cancelAnimationFrame(rafId.current)
+  }, [activeId, nodePositions, containerH])
+
+  /* ═══════════════════════════════════════════════
+     Mouse → hover + cinematic scan line
+     ═══════════════════════════════════════════════ */
+
+  const prevHoverId = useRef<number | null>(null)
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     setCursorY(e.clientY)
-    if (!lineRef.current) return
-    const rect = lineRef.current.getBoundingClientRect()
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
     const relY = e.clientY - rect.top
     const pct = (relY / rect.height) * 100
-    let nearest = 0
-    let minDist = Infinity
-    markers.forEach((m, i) => {
-      const d = Math.abs(m.pct - pct)
-      if (d < minDist) { minDist = d; nearest = i }
+    let best: number | null = null
+    let bestDist = Infinity
+    nodePositions.forEach((n) => {
+      const d = Math.abs(n.pct - pct)
+      if (d < bestDist) { bestDist = d; best = n.id }
     })
-    setHoveredIdx(nearest)
-    if (nearest !== lastTickIdx.current) {
-      lastTickIdx.current = nearest
-      playTick()
+    if (best !== prevHoverId.current) {
+      prevHoverId.current = best
+      if (best !== null) playHover()
     }
-  }, [markers])
+    setHoverId(best)
+  }, [nodePositions])
 
-  const handleMouseLeave = useCallback(() => {
-    setHoveredIdx(null)
-    setCursorY(null)
-    lastTickIdx.current = null
-  }, [])
+  const handleMouseLeave = useCallback(() => { setHoverId(null); setCursorY(null) }, [])
 
+  /* ── Click → scroll (no activation sound) ── */
   const handleClick = useCallback(() => {
-    if (hoveredIdx === null) return
-    const thought = markers[hoveredIdx].thought
-    const el = document.querySelector(`[data-thought-id="${thought.id}"]`)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [hoveredIdx, markers])
+    unlockAudio()
+    if (hoverId === null) return
+    const el = document.querySelector(`[data-thought-id="${hoverId}"]`)
+    if (el) {
+      skipActivate.current = true
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setTimeout(() => { skipActivate.current = false }, 1500)
+    }
+  }, [hoverId])
 
-  /* ── Tooltip ── */
+  /* ── Date card ── */
+  const hoverNode = hoverId !== null ? nodePositions.find((n) => n.id === hoverId) : null
 
-  const tooltipThought = hoveredIdx !== null ? markers[hoveredIdx]?.thought : null
-
+  /* ── Render ── */
   return (
-    <div
-      ref={lineRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
-      style={{
-        position: 'fixed',
-        right: 20,
-        top: '50%',
-        transform: 'translateY(-50%)',
-        width: 56,
-        height: 'min(64vh, 520px)',
-        zIndex: 30,
-        cursor: 'pointer',
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 0.6s ease',
-        userSelect: 'none',
-      }}
-    >
-      {/* Top gradient fade */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 40, background: 'linear-gradient(to bottom, #FDF6EE 0%, transparent 100%)', zIndex: 2, pointerEvents: 'none' }} />
-      {/* Bottom gradient fade */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 40, background: 'linear-gradient(to top, #FDF6EE 0%, transparent 100%)', zIndex: 2, pointerEvents: 'none' }} />
+    <>
+      {/* ════════ Cinematic horizontal scan line ════════ */}
+      {cursorY !== null && (
+        <div
+          style={{
+            position: 'fixed',
+            left: 0,
+            top: cursorY,
+            width: '100vw',
+            height: 1,
+            zIndex: 44,
+            pointerEvents: 'none',
+            background:
+              'linear-gradient(90deg, transparent 0%, rgba(232,133,90,0.0) 40%, rgba(232,133,90,0.12) 60%, rgba(232,133,90,0.3) 85%, rgba(232,133,90,0.08) 100%)',
+          }}
+        />
+      )}
 
-      {/* Tooltip */}
-      {tooltipThought && hoveredIdx !== null && cursorY !== null && (
-        <div style={{
-          position: 'fixed', right: 88, top: cursorY - 11,
-          background: '#2E1A0E', color: '#FDF6EE',
-          fontSize: 11, fontFamily: 'Barlow Condensed, sans-serif',
-          fontWeight: 700, letterSpacing: '0.06em',
-          padding: '3px 10px', borderRadius: 4,
-          whiteSpace: 'nowrap', pointerEvents: 'none', zIndex: 31,
-          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
-        }}>
-          {dateLabel(tooltipThought.createTime)}
+      {/* ════════ Date card (hover tooltip) ════════ */}
+      {hoverNode && cursorY !== null && (
+        <div
+          style={{
+            position: 'fixed',
+            right: 60,
+            top: cursorY - 14,
+            zIndex: 46,
+            pointerEvents: 'none',
+            fontFamily: 'Barlow Condensed, sans-serif',
+            fontWeight: 700,
+            fontSize: 13,
+            letterSpacing: '0.08em',
+            color: '#FDF6EE',
+            background: '#2E1A0E',
+            padding: '5px 14px',
+            borderRadius: 6,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            animation: 'dateCardIn 0.25s cubic-bezier(0.22, 0.61, 0.36, 1) both',
+          }}
+        >
+          {hoverNode.time}
         </div>
       )}
 
-      {/* Track background */}
-      <div style={{ position: 'absolute', left: 14, top: 12, bottom: 12, width: 1, background: '#E8C9B0', borderRadius: 1 }} />
-
-      {/* Minor ticks */}
-      {minorTicks.map((pct, i) => (
-        <div key={'mn' + i} style={{
-          position: 'absolute', left: 12,
-          top: `calc(12px + (100% - 24px) * ${pct / 100})`,
-          width: 5, height: 1, background: '#E8C9B0', opacity: 0.5,
-        }} />
-      ))}
-
-      {/* Major ticks */}
-      {markers.map((m, i) => {
-        const isActive = activeIdx === i
-        const isHovered = hoveredIdx === i
-        const len = isHovered ? 22 : isActive ? 18 : 14
-        const thick = isHovered ? 2.5 : isActive ? 3 : 1
-        return (
-          <div key={m.thought.id} style={{
+      {/* ════════ Container ════════ */}
+      <div
+        ref={containerRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+        style={{
+          position: 'fixed',
+          right: 0,
+          top: `${(100 - CONTAINER_VH) / 2}vh`,
+          width: 36,
+          height: `${CONTAINER_VH}vh`,
+          zIndex: 45,
+          cursor: 'pointer',
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 0.8s ease',
+          userSelect: 'none',
+          overflow: 'hidden',
+          maskImage:
+            'linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%)',
+        }}
+      >
+        {/* ── Subtle track line ── */}
+        <div
+          style={{
             position: 'absolute',
-            left: isHovered ? 6 : 10,
-            top: `calc(12px + (100% - 24px) * ${m.pct / 100})`,
-            width: len, height: thick,
-            marginTop: thick === 3 ? -1.5 : thick === 2.5 ? -1.25 : -0.5,
-            background: isHovered ? '#C45A30' : isActive ? '#E8855A' : '#B07050',
-            boxShadow: isHovered ? '0 0 6px rgba(196,90,48,0.5)' : isActive ? '0 0 4px rgba(232,133,90,0.3)' : 'none',
-            borderRadius: 1,
-            transition: 'width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, box-shadow 0.25s ease',
-          }} />
-        )
-      })}
+            right: 8,
+            top: 0,
+            bottom: 0,
+            width: 1,
+            background: 'rgba(232,201,176,0.5)',
+          }}
+        />
 
-      {/* Horizontal scan line at cursor */}
-      {cursorY !== null && (
-        <div style={{
-          position: 'fixed', left: 0, top: cursorY,
-          width: '100vw', height: 1,
-          background: 'linear-gradient(90deg, transparent 0%, rgba(232,133,90,0.06) 40%, rgba(232,133,90,0.2) 80%, rgba(232,133,90,0.35) 100%)',
-          pointerEvents: 'none', zIndex: 29,
-        }} />
-      )}
-    </div>
+        {/* ── Nodes ── */}
+        {nodePositions.map((node) => {
+          const isActive = activeId === node.id
+          const isHovered = hoverId === node.id
+          const wave = isActive ? 1 : isHovered ? 0.85 : 0
+          const size = 4 + wave * 10
+          const ringSize = size + 8 + wave * 12
+          const opacity = isActive ? 1 : isHovered ? 0.8 : 0.55
+
+          return (
+            <div
+              key={node.id}
+              style={{
+                position: 'absolute',
+                right: 8,
+                top: `${node.pct}%`,
+                width: size,
+                height: size,
+                marginRight: -size / 2 + 0.5,
+                marginTop: -size / 2,
+                borderRadius: '50%',
+                background: isActive
+                  ? '#E8855A'
+                  : isHovered
+                    ? '#C45A30'
+                    : '#C4A882',
+                boxShadow: isActive
+                  ? '0 0 12px rgba(232,133,90,0.7), 0 0 28px rgba(232,133,90,0.3)'
+                  : isHovered
+                    ? '0 0 8px rgba(196,90,48,0.5)'
+                    : 'none',
+                opacity,
+                transition:
+                  'width 0.45s cubic-bezier(0.25, 1, 0.5, 1), height 0.45s cubic-bezier(0.25, 1, 0.5, 1), margin 0.45s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease',
+              }}
+            >
+              {/* ── Glow ring ── */}
+              {(isActive || isHovered) && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    width: ringSize,
+                    height: ringSize,
+                    marginLeft: -ringSize / 2,
+                    marginTop: -ringSize / 2,
+                    borderRadius: '50%',
+                    border: `1px solid rgba(232,133,90,${isActive ? 0.25 : 0.12})`,
+                    animation: `ringPulse ${isActive ? 2 : 3}s ease-in-out infinite`,
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
+
+              {/* ── Particles ── */}
+              {isActive &&
+                particles
+                  .filter((p) => p.id >= pidCounter.current - PARTICLE_COUNT)
+                  .map((p) => {
+                    const rad = (p.angle * Math.PI) / 180
+                    const px = Math.cos(rad) * 28
+                    const py = Math.sin(rad) * 28
+                    return (
+                      <div
+                        key={p.id}
+                        style={
+                          {
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            width: 2,
+                            height: 2,
+                            marginLeft: -1,
+                            marginTop: -1,
+                            borderRadius: '50%',
+                            background: '#E8855A',
+                            animation: 'particleBurst 0.7s ease-out forwards',
+                            '--px': px + 'px',
+                            '--py': py + 'px',
+                          } as React.CSSProperties
+                        }
+                      />
+                    )
+                  })}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* ════════ Keyframes ════════ */}
+      <style>{`
+        @keyframes dateCardIn {
+          from { opacity: 0; transform: translateX(12px); filter: blur(4px); }
+          to   { opacity: 1; transform: translateX(0);    filter: blur(0);   }
+        }
+        @keyframes ringPulse {
+          0%, 100% { transform: scale(1);   opacity: 1;   }
+          50%      { transform: scale(1.35); opacity: 0.4; }
+        }
+        @keyframes particleBurst {
+          0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+          100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0.3); }
+        }
+      `}</style>
+    </>
   )
 }
