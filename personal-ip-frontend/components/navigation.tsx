@@ -31,6 +31,7 @@ export function Navigation() {
   const isTransparentNav =
     /^\/travel\/[^/]+\/[^/]+/.test(pathname ?? '') ||
     /^\/about\/hobby\/.+/.test(pathname ?? '') ||
+    /^\/about\/hobby\/?$/.test(pathname ?? '') ||
     /^\/projects\/.+/.test(pathname ?? '')
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export function Navigation() {
   const allItems = [...navItems, { label: "About", href: "/about" }]
 
   // 统一的导航项样式
-  function navLinkStyle(href: string): React.CSSProperties {
+  function navLinkStyle(href: string, transparent: boolean): React.CSSProperties {
     const active = isActive(href, pathname ?? '')
     const hovered = hoveredHref === href
     if (active) {
@@ -62,7 +63,7 @@ export function Navigation() {
         lineHeight: 1, transition: 'background 0.2s',
       }
     }
-    return {
+    const style: React.CSSProperties = {
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       padding: '6px 10px', borderRadius: '8px',
       background: hovered ? 'rgba(196,90,48,0.10)' : 'transparent',
@@ -70,6 +71,12 @@ export function Navigation() {
       fontSize: '13px', fontWeight: 600, textDecoration: 'none',
       lineHeight: 1, transition: 'background 0.2s, color 0.2s',
     }
+    // 非活跃按钮加文字描边，提升不同背景下的可视度
+    if (transparent && !hovered) {
+      style.color = 'rgba(188, 188, 188, 0.92)'
+      // style.WebkitTextStroke = '0.5px rgba(0,0,0,0.35)'
+    }
+    return style
   }
 
   return (
@@ -86,7 +93,7 @@ export function Navigation() {
                   key={item.href}
                   href={item.href}
                   onClick={handleNavClick}
-                  style={navLinkStyle(item.href)}
+                  style={navLinkStyle(item.href, isTransparentNav)}
                   onMouseEnter={() => setHoveredHref(item.href)}
                   onMouseLeave={() => setHoveredHref(null)}
                 >
