@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type MutableRefObject } from 'react'
 import { useLenis } from 'lenis/react'
 import type { Thought } from '@/lib/api/thoughts'
 import {
@@ -92,16 +92,62 @@ function renderTags(tags: string | null, darkMode = false) {
    Card Type V: Video
    ═══════════════════════════════════════════════ */
 
+
+/* ═══════════════════════════════════════════════
+   Video Playback Context — only one video plays at a time
+   ═══════════════════════════════════════════════ */
+
+interface VideoPlaybackCtx {
+  requestPlay: (ref: MutableRefObject<HTMLVideoElement | null>) => void
+}
+
+const VideoPlaybackContext = createContext<VideoPlaybackCtx | null>(null)
+
+export function VideoPlaybackProvider({ children }: { children: React.ReactNode }) {
+  const currentRef = useRef<HTMLVideoElement | null>(null)
+
+  const requestPlay = useCallback((ref: MutableRefObject<HTMLVideoElement | null>) => {
+    const incoming = ref.current
+    if (!incoming) return
+    // Pause the previously playing video
+    if (currentRef.current && currentRef.current !== incoming) {
+      currentRef.current.pause()
+    }
+    currentRef.current = incoming
+    incoming.play()
+  }, [])
+
+  return (
+    <VideoPlaybackContext.Provider value={{ requestPlay }}>
+      {children}
+    </VideoPlaybackContext.Provider>
+  )
+}
+
+function useVideoPlayback() {
+  return useContext(VideoPlaybackContext)
+}
+
 function VideoCard({ thought, emoji }: { thought: Thought; emoji: string | null }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
+  const playback = useVideoPlayback()
 
   const toggle = useCallback(() => {
     const v = videoRef.current
     if (!v) return
-    if (v.paused) { v.play(); setPlaying(true) }
-    else { v.pause(); setPlaying(false) }
-  }, [])
+    if (v.paused) {
+      if (playback) {
+        playback.requestPlay(videoRef)
+      } else {
+        v.play()
+      }
+      setPlaying(true)
+    } else {
+      v.pause()
+      setPlaying(false)
+    }
+  }, [playback])
 
   return (
     <div className="thought-card thought-card-video" style={{ background: '#0D0806', borderRadius: 16, border: '0.5px solid rgba(200,160,110,0.15)', overflow: 'hidden' }}>
@@ -111,6 +157,8 @@ function VideoCard({ thought, emoji }: { thought: Thought; emoji: string | null 
           ref={videoRef}
           src={thought.videoUrl!}
           loop muted playsInline
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
           style={{ width: '100%', display: 'block', borderRadius: '14px 14px 0 0' }}
         />
         {/* Play overlay */}
@@ -179,6 +227,12 @@ function PhotoCard({ thought, emoji, onImageClick }: { thought: Thought; emoji: 
         <p style={{ fontFamily: 'Caveat, cursive', fontSize: 17, color: '#2E1A0E', lineHeight: 1.5, margin: '0 0 4px' }}>
           {thought.content}
         </p>
+        {thought.location && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, fontSize: 11, color: '#B07050', fontFamily: 'Barlow, sans-serif', opacity: 0.8 }}>
+            <span>📍</span>
+            <span>{thought.location}</span>
+          </div>
+        )}
         {emoji && thought.mood && <span style={{ fontSize: 12, color: '#B07050' }}>{emoji} {thought.mood}</span>}
         {renderTags(thought.tags)}
         <InteractionBar thought={thought} />

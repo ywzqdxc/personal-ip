@@ -9,6 +9,7 @@ import { Navigation } from "@/components/navigation"
 import { BackgroundAnimations } from "@/components/background-animations"
 import { PixarCharacter } from "@/components/pixar-character"
 import { WelcomeAudio } from "@/components/welcome-audio"
+import { IntroVideo } from "@/components/intro-video"
 
 export const metadata: Metadata = {
   title: "Personal IP — Portfolio & Travel",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <LenisProvider>
             <ClickSpark sparkColor="#E8855A" sparkCount={8} sparkRadius={20}>
+              <IntroVideo />
               <Navigation />
               <BackgroundAnimations />
               <PixarCharacter />

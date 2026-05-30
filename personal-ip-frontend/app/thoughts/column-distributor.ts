@@ -118,7 +118,7 @@ export function distributeToColumns(
    ═══════════════════════════════════════════════ */
 
 const BALANCE_THRESHOLD = 300 // px — max allowed gap between tallest & shortest
-const TOP_LOCK_COUNT = 6 // first N items across all columns are "pinned" for time-linearity
+const TOP_LOCK_COUNT = 9 // first N items across all columns are "pinned" (3 columns × 3 rows)
 
 /**
  * After initial distribution, if one column is dramatically taller than
@@ -203,6 +203,8 @@ export function measureColumnHeights(containerSelector: string): number[] {
 /**
  * Check if column imbalance exceeds threshold based on real DOM heights.
  * If so, return the rebalanced columns; otherwise return null.
+ * Uses the same gentle approach as rebalanceColumns — only moves
+ * bottom items to avoid visual jumps (no full redistribution).
  */
 export function tryDomRebalance(
   columns: ColumnData[],
@@ -217,12 +219,48 @@ export function tryDomRebalance(
   const min = Math.min(...heights)
   if (max - min <= threshold) return null
 
-  // Build fresh columns with these items and rebalance
-  const allItems = columns.flatMap((c) => c.items)
-  const fresh = distributeToColumns(
-    allItems.map((e) => e.thought),
-    columns.length,
-    aspectRatios,
-  )
-  return rebalanceColumns(fresh)
+  // Make a mutable copy with real DOM heights
+  const cols = columns.map((c, i) => ({
+    items: [...c.items],
+    totalHeight: heights[i] ?? c.totalHeight,
+  }))
+
+  // Lock the top N items globally (same as rebalanceColumns)
+  const locked = new Set<number>()
+  const colItemOrder: Array<{ col: number; idx: number; thought: Thought }> = []
+  for (let ci = 0; ci < cols.length; ci++) {
+    for (let ii = 0; ii < cols[ci].items.length; ii++) {
+      colItemOrder.push({ col: ci, idx: ii, thought: cols[ci].items[ii].thought })
+    }
+  }
+  for (let i = 0; i < Math.min(TOP_LOCK_COUNT, colItemOrder.length); i++) {
+    locked.add(colItemOrder[i].thought.id)
+  }
+
+  // Gently move bottom items from tallest to shortest
+  let iterations = 0
+  while (iterations < 10) {
+    let tallestIdx = 0, shortestIdx = 0
+    for (let i = 1; i < cols.length; i++) {
+      if (cols[i].totalHeight > cols[tallestIdx].totalHeight) tallestIdx = i
+      if (cols[i].totalHeight < cols[shortestIdx].totalHeight) shortestIdx = i
+    }
+    const gap = cols[tallestIdx].totalHeight - cols[shortestIdx].totalHeight
+    if (gap <= threshold) break
+
+    const tallItems = cols[tallestIdx].items
+    let moveIdx = -1
+    for (let i = tallItems.length - 1; i >= 0; i--) {
+      if (!locked.has(tallItems[i].thought.id)) { moveIdx = i; break }
+    }
+    if (moveIdx === -1) break
+
+    const [moved] = cols[tallestIdx].items.splice(moveIdx, 1)
+    cols[tallestIdx].totalHeight -= (heights[tallestIdx] ?? cols[tallestIdx].totalHeight) / cols[tallestIdx].items.length
+    cols[shortestIdx].items.push(moved)
+    cols[shortestIdx].totalHeight += moved.estimatedHeight
+    iterations++
+  }
+
+  return cols
 }

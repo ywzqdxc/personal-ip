@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getPublishedThoughts, type Thought } from '@/lib/api/thoughts'
 import { MOCK_THOUGHTS } from './thought-utils'
-import { ThoughtCard, Lightbox } from './thought-card'
+import { ThoughtCard, Lightbox, VideoPlaybackProvider } from './thought-card'
 import { Timeline } from './timeline'
 import { distributeToColumns, rebalanceColumns, tryDomRebalance, type ColumnData } from './column-distributor'
 import { preloadImages } from './image-preloader'
@@ -91,9 +91,6 @@ export default function ThoughtsPage() {
     <main style={{ minHeight: '100vh', background: '#FDF6EE', paddingTop: 100 }}>
       {/* Hero */}
       <div style={{ padding: '0 60px 36px' }}>
-        <p style={{ fontFamily: 'Caveat, cursive', fontSize: 20, color: '#B07050', margin: '0 0 16px' }}>
-          Fragmentos de la mente. 思绪的碎片。
-        </p>
         <div
           className="divider-expand"
           style={{
@@ -125,6 +122,7 @@ export default function ThoughtsPage() {
 
         {/* Distributed columns */}
         {!loading && sorted.length > 0 && (
+          <VideoPlaybackProvider>
           <div className="thoughts-columns">
             {columns.map((col, colIdx) => (
               <div key={colIdx} className="thoughts-col" data-column-index={colIdx}>
@@ -139,6 +137,7 @@ export default function ThoughtsPage() {
               </div>
             ))}
           </div>
+          </VideoPlaybackProvider>
         )}
       </div>
 

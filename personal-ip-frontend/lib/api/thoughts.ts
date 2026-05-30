@@ -7,6 +7,7 @@ export interface Thought {
   tags: string | null
   imageUrl: string | null
   videoUrl?: string | null
+  location?: string | null
   createTime: string
 }
 

@@ -22,6 +22,23 @@ export const MOCK_THOUGHTS: Thought[] = [
     videoUrl: '/videos/thoughts/2.mp4',
     createTime: '2026-05-28T02:15:00',
   },
+  {
+    id: -2,
+    content: '关于明天的事，后天就知道了',
+    mood: '平静',
+    tags: '旅行,南京',
+    imageUrl: '/images/kungfu.png',
+    location: '南京市 古鸡鸣寺',
+    createTime: '2026-05-30T08:00:00',
+  },
+  {
+    id: -3,
+    content: '你是这样的年轻，一切都才开始',
+    mood: '思考',
+    tags: '随想,生活',
+    imageUrl: '/images/three.png',
+    createTime: '2026-05-29T10:00:00',
+  },
   /* ── 图文帖子（32 条） ── */
   {
     id: 1,
