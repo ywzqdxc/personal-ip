@@ -63,6 +63,8 @@ const CSS_LINES = [
   '.social-chip { transition: background 0.2s, color 0.2s; }',
   '.social-chip:hover { background: #2E1A0E !important; color: #FDF6EE !important; }',
   '@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }',
+  /* fly.png 左右悠荡 */
+  '@keyframes flyOscillate { 0%,100%{transform:translateX(calc(-50% - 20px))} 50%{transform:translateX(calc(-50% + 20px))} }',
   '.fade-up { animation: fadeUp 0.6s ease both; }',
   '.hobby-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#E8855A; margin-right:6px; vertical-align:middle; }',
   // GitHub Calendar 内嵌样式
@@ -155,12 +157,13 @@ function getCardState(i: number, N: number, progress: number) {
 }
 
 function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => void }) {
-  const cardRefs       = useRef<(HTMLDivElement | null)[]>([])
+  const cardRefs     = useRef<(HTMLDivElement | null)[]>([])
+  const arcCanvasRef = useRef<HTMLCanvasElement>(null)
   const [cards, setCards]           = useState<string[]>([])
   const [expanded, setExpanded]     = useState(false)
   const [carouselMode, setCarousel] = useState(false)
-  const progressRef    = useRef(0)
-  const expandedOnce   = useRef(false)
+  const progressRef  = useRef(0)
+  const expandedOnce = useRef(false)
 
   /* 拉取证书图片 */
   useEffect(() => {
@@ -185,9 +188,43 @@ function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => vo
     return () => clearTimeout(t)
   }, [expanded])
 
-  /* Wheel 拦截：visible 时完全接管滚轮
-     向下 → 旋转 carousel
-     向上 → 调用 onHide，覆盖层滑出 */
+  /* 弧形粒子绘制（canvas）—— 粒子随 carousel 一同旋转 */
+  const drawArc = useCallback((progress: number, N: number) => {
+    const canvas = arcCanvasRef.current
+    if (!canvas || N === 0) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const W = canvas.width, H = canvas.height
+    ctx.clearRect(0, 0, W, H)
+    const cx      = W / 2
+    const spanX   = W * 0.94          // 更宽、更完整的弧线
+    const dip     = H - 10            // 更大下沉 → 弧线更饱满
+    const DOTS    = 80                // 更多粒子
+    const ARC_SPD = 2.5               // 粒子视觉旋转倍速
+    for (let d = 0; d < DOTS; d++) {
+      const dotProg = (d / DOTS) * N
+      const rawRel  = dotProg - progress * ARC_SPD   // 加速映射
+      const rel     = ((rawRel % N) + N) % N
+      const cRel    = rel > N / 2 ? rel - N : rel
+      const t       = cRel / (N / 2)                 // -1 … +1
+      if (Math.abs(t) > 0.988) continue              // 显示更多边缘粒子
+      if (Math.abs(t) < 0.065) continue              // 中心留空，fly.png 不被遮挡
+      const x    = cx + t * spanX / 2
+      const y    = dip * t * t + 6
+      const prox = 1 - Math.abs(t)
+      ctx.beginPath()
+      ctx.arc(x, y, 1.3 + prox * 2.1, 0, Math.PI * 2)
+      ctx.fillStyle = `rgba(196,90,48,${(0.12 + prox * 0.62).toFixed(2)})`
+      ctx.fill()
+    }
+  }, [])
+
+  /* carousel 就绪后绘制初始弧 */
+  useEffect(() => {
+    if (carouselMode && cards.length > 0) drawArc(0, cards.length)
+  }, [carouselMode, cards.length, drawArc])
+
+  /* Wheel 拦截：向下旋转 carousel，向上退出 */
   useEffect(() => {
     if (!visible) return
     const N     = cards.length
@@ -196,7 +233,6 @@ function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => vo
     const onWheel = (e: WheelEvent) => {
       e.preventDefault()
       e.stopPropagation()
-
       if (e.deltaY > 0 && carouselMode && N > 0) {
         progressRef.current += e.deltaY * SPEED
         const prog = progressRef.current
@@ -208,22 +244,19 @@ function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => vo
           card.style.opacity    = String(opacity)
           card.style.zIndex     = String(zIndex)
         })
+        drawArc(prog, N)
       } else if (e.deltaY < 0) {
         onHide()
       }
     }
-
     window.addEventListener('wheel', onWheel, { passive: false, capture: true })
     return () => window.removeEventListener('wheel', onWheel, true)
-  }, [visible, carouselMode, cards.length, onHide])
+  }, [visible, carouselMode, cards.length, onHide, drawArc])
 
   if (cards.length === 0) return null
-
-  const N         = cards.length
-  const centerIdx = Math.floor(N / 2)
+  const N = cards.length, centerIdx = Math.floor(N / 2)
 
   return (
-    /* position:fixed 覆盖层，通过 translateY 控制进出 */
     <div style={{
       position: 'fixed',
       top: NAV_H, left: 0, right: 0, bottom: 0,
@@ -232,11 +265,14 @@ function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => vo
       transform: visible ? 'translateY(0)' : 'translateY(100vh)',
       transition: 'transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      paddingTop: '5vh',
       overflow: 'hidden',
     }}>
-      {/* 标题 */}
-      <div style={{ textAlign: 'center', marginBottom: 52 }}>
+
+      {/* ── 标题 ── */}
+      <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
           <div style={{ width: 24, height: 1.5, background: '#B07050' }} />
           <span style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase' as const, color: '#B07050', fontWeight: 500 }}>Honors & Awards</span>
@@ -245,35 +281,30 @@ function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => vo
         <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 36, fontWeight: 800, color: '#2E1A0E', letterSpacing: '-0.02em', margin: 0 }}>Recognition</h2>
       </div>
 
-      {/* 证书区 */}
-      <div style={{ position: 'relative', width: '100%', height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* ── 证书卡片区 ── */}
+      <div style={{ position: 'relative', width: '100%', height: 268, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {cards.map((src, i) => {
           const stackOff  = i - centerIdx
           const initState = getCardState(i, N, 0)
           let transform: string, opacity: number, zIndex: number, transition: string
           if (!expanded) {
             transform  = `translateX(${stackOff * 5}px) rotate(${stackOff * 13}deg)`
-            opacity    = 1
-            zIndex     = 10 - Math.abs(stackOff) * 2
-            transition = 'none'
+            opacity    = 1;  zIndex = 10 - Math.abs(stackOff) * 2;  transition = 'none'
           } else if (!carouselMode) {
             transform  = `translateX(${initState.x}px) translateY(${initState.y}px) rotate(${initState.rot}deg)`
-            opacity    = initState.opacity
-            zIndex     = initState.zIndex
+            opacity    = initState.opacity;  zIndex = initState.zIndex
             transition = `transform 0.9s cubic-bezier(0.34,1.56,0.64,1) ${i * 55}ms, opacity 0.6s ease ${i * 55}ms`
           } else {
             transform  = `translateX(${initState.x}px) translateY(${initState.y}px) rotate(${initState.rot}deg)`
-            opacity    = initState.opacity
-            zIndex     = initState.zIndex
-            transition = 'none'
+            opacity    = initState.opacity;  zIndex = initState.zIndex;  transition = 'none'
           }
           return (
             <div key={i} ref={el => { cardRefs.current[i] = el }}
               style={{ position: 'absolute', transform, opacity, zIndex, transition } as React.CSSProperties}>
               <img src={src} alt={`Award ${i + 1}`}
-                style={{ width: 320, height: 210, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 28px rgba(46,26,14,0.16)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none' } as React.CSSProperties}
+                style={{ width: 300, height: 196, objectFit: 'contain', background: '#FFF8F0', borderRadius: 6, boxShadow: '0 4px 24px rgba(46,26,14,0.14)', display: 'block', userSelect: 'none' as const, pointerEvents: 'none' } as React.CSSProperties}
                 draggable={false} />
-              <div style={{ textAlign: 'center', marginTop: 8, fontSize: 12, fontFamily: 'Caveat, cursive', fontStyle: 'italic', color: '#B07050', opacity: expanded ? 0.7 : 0, transition: 'opacity 0.5s ease', whiteSpace: 'nowrap' }}>
+              <div style={{ textAlign: 'center', marginTop: 7, fontSize: 11, fontFamily: 'Caveat, cursive', fontStyle: 'italic', color: '#B07050', opacity: expanded ? 0.65 : 0, transition: 'opacity 0.5s ease', whiteSpace: 'nowrap' }}>
                 {AWARD_LABELS[i] || `Honor ${i + 1}`}
               </div>
             </div>
@@ -281,12 +312,41 @@ function RewardSection({ visible, onHide }: { visible: boolean; onHide: () => vo
         })}
       </div>
 
-      {/* 底部提示 */}
-      <div style={{ position: 'absolute', bottom: 24, display: 'flex', alignItems: 'center', gap: 10, fontSize: 10, letterSpacing: '0.18em', color: 'rgba(176,112,80,0.55)', textTransform: 'uppercase' as const, opacity: expanded ? 1 : 0, transition: 'opacity 0.5s ease 0.8s' }}>
-        <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
-        Scroll to rotate
-        <div style={{ width: 1, height: 24, background: '#E8C9B0' }} />
+      {/* ── 弧形粒子轨迹 + fly.png ── */}
+      {/* 整体下移（marginTop:24），canvas 更宽更高，fly.png 更大且在粒子上方留空区 */}
+      <div style={{ position: 'relative', width: '100%', height: 134, marginTop: 24 }}>
+        {/* 粒子 canvas — z-index:1，fly.png 在其上方 */}
+        <canvas
+          ref={arcCanvasRef}
+          width={1100}
+          height={106}
+          style={{
+            position: 'absolute', top: 28, left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1,
+            opacity: carouselMode ? 1 : 0,
+            transition: 'opacity 0.6s ease',
+          }}
+        />
+        {/* 飞翔角色 — 定位在弧线中央顶部（中心留空区），比粒子高，z-index:2 */}
+        <img
+          src="/images/fly.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            top: -18,          // 弧线顶点 ≈ top:28+6=34px，fly.png 底部 -18+68=50px，中心在 y=16
+            left: '50%',
+            width: 68,
+            height: 68,
+            objectFit: 'contain',
+            zIndex: 2,
+            opacity: expanded ? 1 : 0,
+            transition: 'opacity 0.6s ease 0.9s',
+            animation: expanded ? 'flyOscillate 3.6s ease-in-out infinite' : 'none',
+          } as React.CSSProperties}
+        />
       </div>
+
     </div>
   )
 }
