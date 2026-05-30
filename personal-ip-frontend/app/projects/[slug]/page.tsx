@@ -230,7 +230,7 @@ function VideoHero({ project }: { project: Project }) {
         onClick={toggle}
         className="play-btn"
         style={{
-          position: 'absolute', top: 20, right: 24, zIndex: 3,
+          position: 'absolute', bottom: 20, right: 24, zIndex: 3,
           width: 38, height: 38, borderRadius: '50%',
           background: 'rgba(255,255,255,0.15)',
           backdropFilter: 'blur(8px)',
