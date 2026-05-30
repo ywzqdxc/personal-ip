@@ -479,12 +479,6 @@ function ThoughtsLens() {
    LENS 5 — FOOTER
    ══════════════════════════════════════════════ */
 function FooterLens() {
-  const socialLinks = [
-    { label: "GitHub", href: "https://github.com/ywzqdxc" },
-    { label: "Email", href: "mailto:cuixin@example.com" },
-    { label: "Blog", href: "/blog" },
-  ]
-
   return (
     <motion.section
       {...lensReveal}
@@ -527,24 +521,6 @@ function FooterLens() {
           collaborations, and coffee.
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.65, duration: 0.5 }}
-          className="flex justify-center gap-6 flex-wrap"
-        >
-          {socialLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              target={link.href.startsWith("http") ? "_blank" : undefined}
-              className="text-[#E8C9B0]/70 hover:text-[#E8855A] transition-colors text-sm tracking-wider"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
