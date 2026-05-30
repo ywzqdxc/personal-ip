@@ -343,6 +343,7 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
               <div style={{
                 position: 'relative', zIndex: 1,
                 flex: 1, display: 'flex', flexDirection: 'column',
+                minHeight: 0,
               }}>
                 {/* meta top */}
                 {/* Big title */}
@@ -389,14 +390,15 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
                 {/* Tracklist */}
                 <div
                   ref={tracklistRef}
+                  className="cover-left-scroll"
                   data-lenis-prevent
                   data-lenis-prevent-wheel
                   style={{
                     flex: 1, display: 'flex', flexDirection: 'column',
                     borderTop: '1px solid #1e1e1e',
-                    overflowY: 'auto',
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#333 transparent',
+                    overflowY: 'scroll',
+                    minHeight: 0,
+                    position: 'relative',
                   }}
                 >
                   {chs.map((c, i) => (
@@ -458,7 +460,7 @@ function TripJournal({ trip, year }: { trip: TravelTrip; year: number }) {
               className="cover-right-scroll"
               data-lenis-prevent
               data-lenis-prevent-wheel
-              style={{ width: '50%', background: '#0d0d0d', overflowY: 'scroll' }}
+              style={{ width: '50%', background: '#0d0d0d', overflowY: 'scroll', position: 'relative' }}
             >
               {/* top perfs */}
               <div style={{
@@ -823,8 +825,9 @@ const journalCss = `
           display: inline-block;
         }
 
-        /* Cover right scrollbar hidden */
-        .cover-right-scroll::-webkit-scrollbar { display: none; }
+        /* Cover scrollbars hidden — always-show scroll for hover-wheel capture */
+        .cover-right-scroll::-webkit-scrollbar,
+        .cover-left-scroll::-webkit-scrollbar { display: none; }
 
         /* Cover thumbnail strip */
         .cover-thumb {
