@@ -39,74 +39,151 @@ const lensReveal = {
 function HeroLens() {
   return (
     <motion.section
-      {...lensReveal}
-      className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="relative min-h-screen flex flex-col overflow-hidden"
       style={{
         background:
-          "linear-gradient(160deg, #2E1A0E 0%, #5C3420 40%, #8B4A2E 70%, #C45A30 100%)",
+          "linear-gradient(145deg, #1A0C06 0%, #3D2010 35%, #7A3A1E 68%, #C45A30 100%)",
       }}
     >
+      {/* 噪点纹理 */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+          opacity: 0.045,
         }}
       />
 
-      <div className="relative z-10 text-center max-w-3xl">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.15, duration: 0.6 }}
-          className="text-[#E8C9B0] tracking-[0.35em] uppercase text-xs md:text-sm mb-8"
-        >
-          Personal Portfolio · 2026
-        </motion.p>
+      {/* 右下光晕 */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          right: "-10%",
+          bottom: "-5%",
+          width: "55vw",
+          height: "55vw",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(196,90,48,0.18) 0%, transparent 65%)",
+        }}
+      />
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.9] tracking-tight"
+      {/* ── 顶部元信息栏 ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.7 }}
+        className="relative z-10 flex items-center justify-between px-8 md:px-16 pt-32"
+      >
+        <span
+          className="text-[#E8C9B0]/40 text-[10px] tracking-[0.3em] uppercase"
           style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
         >
-          HELLO,
-          <br />
-          I&rsquo;M REGINAMY
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          className="mt-8 text-[#F5D0B8] text-lg md:text-xl max-w-md mx-auto leading-relaxed"
+          Personal Portfolio
+        </span>
+        <span
+          className="text-[#E8C9B0]/40 text-[10px] tracking-[0.3em] uppercase"
+          style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
         >
-          Developer · Traveler · Thinker
-          <br />
-          <span className="text-[#E8C9B0]/60 text-sm">
-            Building things that matter, exploring places that inspire.
-          </span>
+          2026
+        </span>
+      </motion.div>
+
+      {/* ── 主名称区 ── */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center px-8 md:px-16 pb-8">
+
+        {/* 小标签 */}
+        <motion.p
+          initial={{ opacity: 0, x: -16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="text-[#E8855A]/80 text-xs tracking-[0.25em] uppercase mb-6"
+          style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
+        >
+          ·&nbsp;&nbsp;Hello, I&rsquo;m
+        </motion.p>
+
+        {/* 姓名 — 主视觉 */}
+        <div className="overflow-hidden">
+          <motion.h1
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.55, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: "clamp(5rem, 15vw, 15rem)",
+              fontWeight: 700,
+              lineHeight: 0.88,
+              letterSpacing: "-0.01em",
+              color: "#FFFFFF",
+              whiteSpace: "nowrap",
+            }}
+          >
+            CUI XIN
+          </motion.h1>
+        </div>
+
+        {/* 分隔线 + 角色标签 */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.85, duration: 0.7 }}
+          className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-0"
+        >
+          {/* 左侧横线 */}
+          <div
+            className="hidden sm:block shrink-0 mr-6"
+            style={{ width: 48, height: 1, background: "rgba(232,197,176,0.35)" }}
+          />
+
+          {/* 角色 */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {["Developer", "Traveler", "Thinker"].map((role, i) => (
+              <span key={role} className="flex items-center gap-5">
+                <span
+                  className="text-[#F5D0B8]/85 text-sm md:text-base tracking-widest uppercase"
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.2em" }}
+                >
+                  {role}
+                </span>
+                {i < 2 && (
+                  <span className="text-[#C45A30]/50 text-xs">·</span>
+                )}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 简介句 */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1, duration: 0.7 }}
+          className="mt-5 text-[#E8C9B0]/45 text-sm max-w-sm leading-relaxed"
+          style={{ fontFamily: "system-ui, sans-serif" }}
+        >
+          Building things that matter,<br />exploring places that inspire.
         </motion.p>
       </div>
 
+      {/* ── 底部 Scroll 提示 ── */}
       <motion.div
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.4, duration: 0.8 }}
+        className="relative z-10 pb-10 flex justify-center"
       >
-        <div className="flex flex-col items-center gap-2 text-[#E8C9B0]/50 text-xs tracking-widest uppercase">
-          <span>Scroll</span>
+        <div className="flex flex-col items-center gap-3 text-[#E8C9B0]/40 text-[10px] tracking-[0.3em] uppercase"
+          style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
           <motion.div
             animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-px h-8 bg-[#E8C9B0]/30"
+            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+            className="w-px h-10 bg-gradient-to-b from-[#E8C9B0]/0 via-[#E8C9B0]/40 to-[#E8C9B0]/0"
           />
+          <span>Scroll</span>
         </div>
       </motion.div>
     </motion.section>
@@ -404,7 +481,7 @@ function ThoughtsLens() {
 function FooterLens() {
   const socialLinks = [
     { label: "GitHub", href: "https://github.com/ywzqdxc" },
-    { label: "Email", href: "mailto:reginamy@example.com" },
+    { label: "Email", href: "mailto:cuixin@example.com" },
     { label: "Blog", href: "/blog" },
   ]
 
@@ -476,7 +553,7 @@ function FooterLens() {
           transition={{ delay: 0.9, duration: 0.5 }}
           className="mt-16 text-[#E8C9B0]/30 text-xs"
         >
-          &copy; 2026 Reginamy. Made with passion.
+          &copy; 2026 Cui Xin. Made with passion.
         </motion.p>
       </div>
     </motion.section>

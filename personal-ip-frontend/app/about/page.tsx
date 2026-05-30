@@ -417,7 +417,7 @@ export default function AboutPage() {
             margin: '0 0 18px',
           }}>
             Hi, I am{' '}
-            <span style={{ color: '#C45A30' }}>Reginamy.</span>
+            <span style={{ color: '#C45A30' }}>Cui Xin.</span>
           </h1>
 
           <p style={{
@@ -502,7 +502,7 @@ export default function AboutPage() {
         {/* Avatar */}
         <img
           src="/images/cuixin.png"
-          alt="Reginamy"
+          alt="Cui Xin"
           style={{
             height: 340,
             flexShrink: 0,
