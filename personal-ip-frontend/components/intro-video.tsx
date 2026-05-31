@@ -48,7 +48,13 @@ export function IntroVideo() {
       })
     }, 400) // 等黑幕落下
 
-    return () => clearTimeout(t)
+    // 安全超时：25s 后无论如何退出（防止 onEnded/onError 都不触发）
+    const safety = setTimeout(handleLeave, 10_000)
+
+    return () => {
+      clearTimeout(t)
+      clearTimeout(safety)
+    }
   }, [phase])
 
   const handleLeave = () => {
@@ -114,6 +120,7 @@ export function IntroVideo() {
           playsInline
           preload="auto"
           onEnded={handleLeave}
+          onError={handleLeave}
           style={{
             width: '100%',
             height: '100%',

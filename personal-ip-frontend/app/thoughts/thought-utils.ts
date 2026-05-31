@@ -29,7 +29,15 @@ export const MOCK_THOUGHTS: Thought[] = [
     tags: '旅行,南京',
     imageUrl: '/images/kungfu.png',
     location: '南京市 古鸡鸣寺',
-    createTime: '2026-05-30T08:00:00',
+    createTime: '2026-05-29T22:00:00',
+  },
+  {
+    id: -5,
+    content: '好的人 会像一个小太阳一样温暖你',
+    mood: '温暖',
+    tags: '生活,感悟',
+    imageUrl: '/images/warm.jpg',
+    createTime: '2026-05-30T07:00:00',
   },
   {
     id: -3,
@@ -38,6 +46,14 @@ export const MOCK_THOUGHTS: Thought[] = [
     tags: '随想,生活',
     imageUrl: '/images/three.png',
     createTime: '2026-05-29T10:00:00',
+  },
+  {
+    id: -4,
+    content: '时间塑造我成为勇敢有力量的人',
+    mood: '平静',
+    tags: '成长,自省',
+    imageUrl: '/images/happy.jpg',
+    createTime: '2026-05-29T20:00:00',
   },
   /* ── 图文帖子（32 条） ── */
   {

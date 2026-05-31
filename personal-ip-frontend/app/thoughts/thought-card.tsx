@@ -220,7 +220,7 @@ function PhotoCard({ thought, emoji, onImageClick }: { thought: Thought; emoji: 
           alt=""
           className="thought-card-img"
           onClick={() => { if (imgRef.current) onImageClick?.(thought.imageUrl!, imgRef.current) }}
-          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '12px 12px 0 0', objectFit: 'cover', cursor: 'pointer' }}
+          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '12px 12px 0 0', objectFit: thought.imageUrl?.includes('kungfu') ? 'contain' : 'cover', cursor: 'pointer', background: thought.imageUrl?.includes('kungfu') ? '#FDF6EE' : undefined }}
         />
       )}
       <div style={{ padding: '14px 16px 16px' }}>
