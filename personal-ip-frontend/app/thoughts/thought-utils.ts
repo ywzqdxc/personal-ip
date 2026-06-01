@@ -11,7 +11,7 @@ export const MOCK_THOUGHTS: Thought[] = [
     tags: '深夜,情绪',
     imageUrl: null,
     videoUrl: '/videos/thoughts/1.mp4',
-    createTime: '2026-05-29T01:30:00',
+    createTime: '2025-01-01T00:00:00',
   },
   {
     id: -1,
@@ -30,6 +30,14 @@ export const MOCK_THOUGHTS: Thought[] = [
     imageUrl: '/images/kungfu.png',
     location: '南京市 古鸡鸣寺',
     createTime: '2026-05-29T22:00:00',
+  },
+  {
+    id: -8,
+    content: '天赋不会给你刀刻版的肌肉',
+    mood: '自律',
+    tags: '健身,成长',
+    imageUrl: '/images/ex.png',
+    createTime: '2026-05-29T20:00:00',
   },
   {
     id: -5,
@@ -53,17 +61,28 @@ export const MOCK_THOUGHTS: Thought[] = [
     mood: '平静',
     tags: '成长,自省',
     imageUrl: '/images/happy.jpg',
-    createTime: '2026-05-29T20:00:00',
+    createTime: '2026-06-01T12:00:00',
   },
-  /* ── 图文帖子（32 条） ── */
   {
-    id: 1,
-    content: '今天的光线很好，随手拍了几张。相机永远是最好的记忆装置。',
-    mood: '平静',
-    tags: 'Photography,Life',
-    imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&q=80',
-    createTime: '2026-05-28T15:30:00',
+    id: -6,
+    content: '你一句山水甲天下 我便到了真桂林',
+    mood: '旅行',
+    tags: '桂林,山水',
+    imageUrl: null,
+    videoUrl: '/videos/gl.mp4',
+    createTime: '2026-05-29T18:00:00',
   },
+
+  {
+    id: -7,
+    content: '总要咽下一些委屈 然后继续往前走',
+    mood: '成长',
+    tags: '生活,成长',
+    imageUrl: '/images/runner.png',
+    createTime: '2026-05-29T19:00:00',
+  },
+
+  /* ── 图文帖子（32 条） ── */
   {
     id: 2,
     content: '花了整个下午把工作台重新整理了一遍。Less is more — 这句话适用于代码，也适用于桌面。',
@@ -97,14 +116,6 @@ export const MOCK_THOUGHTS: Thought[] = [
     tags: '旅行,随想',
     imageUrl: null,
     createTime: '2026-05-24T09:15:00',
-  },
-  {
-    id: 6,
-    content: '极简主义设计研究。',
-    mood: '灵感',
-    tags: 'Minimalism,Design,WebDev',
-    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-    createTime: '2026-05-23T14:00:00',
   },
   {
     id: 7,
@@ -184,14 +195,6 @@ export const MOCK_THOUGHTS: Thought[] = [
     createTime: '2026-05-05T11:30:00',
   },
   {
-    id: 16,
-    content: '周末早晨，阳光穿过百叶窗在桌上画出条纹。手冲咖啡，巴赫大提琴组曲，一个没有 IDE 的上午。偶尔需要这样的空白。',
-    mood: '平静',
-    tags: 'Life,Weekend,Music',
-    imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80',
-    createTime: '2026-05-03T09:00:00',
-  },
-  {
     id: 17,
     content: '调试了两天的问题，最后发现是少了一个 await。异步编程教会我最多的是：顺序很重要，但有时候你需要学会等待。',
     mood: '调试中',
@@ -215,33 +218,7 @@ export const MOCK_THOUGHTS: Thought[] = [
     tags: 'TableTennis,Sports',
     imageUrl: null,
     createTime: '2026-04-22T20:30:00',
-  },
-  {
-    id: 20,
-    content: '设计系统的核心不是组件库，而是一套关于「什么是对的」的共同语言。当设计师和工程师用同一个词指代同一个东西的时候，沟通成本趋近于零。',
-    mood: '思考',
-    tags: 'Design,System,Engineering',
-    imageUrl: null,
-    createTime: '2026-04-18T15:00:00',
-  },
-  {
-    id: 21,
-    content: 'Cherry blossoms in full bloom.',
-    mood: '平静',
-    tags: 'Spring,Sakura,Photography',
-    imageUrl: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=600&q=80',
-    createTime: '2026-04-10T08:00:00',
-  },
-  {
-    id: 22,
-    content:
-      "Linux 命令行效率技巧：\n```bash\n# 用 fzf 模糊搜索并 cd\ncd $(find . -type d | fzf)\n\n# 用 rg 和 fzf 搜索文件内容\nrg -l \"pattern\" | fzf --preview 'rg -p {}'\n\n# 批量重命名（用 rename）\nrename 's/old/new/' *.txt\n```\n终端就是第二双手。",
-    mood: '灵感',
-    tags: 'Linux,CLI,Productivity',
-    imageUrl: null,
-    createTime: '2026-04-05T21:00:00',
-  },
-  {
+  },  {
     id: 23,
     content:
       '三月的尾巴，下了一场温柔的雨。\n\n窗外梧桐树的嫩芽被洗得发亮。突然想起小时候，下雨天总是搬个小板凳坐在门口看雨，一看就是一个下午。\n\n那时候时间很慢，慢到可以数清每一滴雨。',
@@ -275,14 +252,6 @@ export const MOCK_THOUGHTS: Thought[] = [
     createTime: '2026-03-08T18:30:00',
   },
   {
-    id: 27,
-    content: '连续加班两周，终于把新版本推上线了。团队四个人挤在屏幕前看着监控曲线从红色变成绿色，那一刻的成就感无法言喻。',
-    mood: '兴奋',
-    tags: 'Dev,Team,Launch',
-    imageUrl: null,
-    createTime: '2026-02-28T22:00:00',
-  },
-  {
     id: 28,
     content:
       "数据库索引优化笔记：\n```sql\n-- 复合索引列顺序很重要！\n-- 把选择性高的列放在前面\nCREATE INDEX idx_user_status ON orders(user_id, status);\n```\n一个索引顺序的改变，查询时间从 2.3s 降到 12ms。",
@@ -292,36 +261,12 @@ export const MOCK_THOUGHTS: Thought[] = [
     createTime: '2026-02-20T14:00:00',
   },
   {
-    id: 29,
-    content: '新年读到的最打动我的一段话：技术会过时，框架会换代，但你对问题的理解、对用户的共情、对优雅解决方案的追求——这些永远不会贬值。',
-    mood: '思考',
-    tags: 'Philosophy,Career,Growth',
-    imageUrl: null,
-    createTime: '2026-02-10T10:00:00',
-  },
-  {
-    id: 30,
-    content: 'Winter morning calm.',
-    mood: '平静',
-    tags: 'Winter,Morning,Photography',
-    imageUrl: 'https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=600&q=80',
-    createTime: '2026-01-25T08:00:00',
-  },
-  {
     id: 31,
     content: '开始学习 Go 语言。从 Java 转过来最大的感受：没有继承、没有注解、没有泛型（好吧现在有了），但写起来异常清爽。少即是多又一次被验证。',
     mood: '思考',
     tags: 'Go,Programming,Learning',
     imageUrl: null,
     createTime: '2026-01-18T20:00:00',
-  },
-  {
-    id: 32,
-    content: '新的一年，新的笔记本。第一页写着："今年要写更多的代码，读更多的书，去更多的地方。"合上本子的时候，窗外的雪正好停了。',
-    mood: '开心',
-    tags: 'NewYear,Life,Goals',
-    imageUrl: null,
-    createTime: '2026-01-02T12:00:00',
   },
 ]
 
