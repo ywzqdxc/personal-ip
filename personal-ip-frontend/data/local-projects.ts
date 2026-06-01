@@ -1,253 +1,38 @@
-export type ProjectCategory = 'agriculture' | 'web-dev' | 'creative'
+export type ProjectCategory = 'ai' | 'fullstack' | 'infra'
 
 export interface LocalProject {
-  id: number
-  name: string
-  slug: string
-  description: string | null
-  coverUrl: string | null
-  previewUrl: string | null
-  githubUrl: string | null
-  demoUrl: string | null
-  techStack: string | null
-  content: string | null
-  featured: boolean
-  createTime: string
-  category: ProjectCategory
+  id: number; name: string; slug: string; description: string | null
+  coverUrl: string | null; previewUrl: string | null; githubUrl: string | null
+  demoUrl: string | null; techStack: string | null; content: string | null
+  featured: boolean; createTime: string; category: ProjectCategory
 }
 
 export const CATEGORY_LABELS: Record<ProjectCategory, { label: string; emoji: string }> = {
-  agriculture: { label: 'Agriculture & Sustainability', emoji: '🌾' },
-  'web-dev': { label: 'Web Development', emoji: '💻' },
-  creative: { label: 'Creative & More', emoji: '🎨' },
+  ai:        { label: 'AI / Machine Learning', emoji: '🤖' },
+  fullstack: { label: 'Web / Full-Stack',     emoji: '💻' },
+  infra:     { label: '基础设施 / 工具',       emoji: '🛠️' },
 }
 
-export const localProjects: LocalProject[] = [
-  // ===== Featured: Agriculture =====
-  {
-    id: 1,
-    name: '3D Vertical Farm Model',
-    slug: '3d-vertical-farm-model',
-    description:
-      'Designed and modeled a comprehensive 3D vertical farm using Google SketchUp, showcasing sustainable agriculture practices and innovative farming techniques for urban environments.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: '3D Modeling,SketchUp,Agriculture,Sustainability',
-    content:
-      '## About the Project\n\nA detailed 3D vertical farm model designed to demonstrate sustainable urban agriculture. The model includes:\n\n- Multi-level growing platforms\n- Automated irrigation systems\n- LED lighting arrays\n- Climate control infrastructure\n\n## Tools Used\n\n- Google SketchUp for 3D modeling\n- Photorealistic rendering techniques\n- Scale modeling for architectural precision',
-    featured: true,
-    createTime: '2024-01-15',
-    category: 'agriculture',
-  },
-  {
-    id: 2,
-    name: 'Food Processing & Supply Chain',
-    slug: 'food-processing-supply-chain',
-    description:
-      'Led complete farm-to-market supply chain for apple industry. Produced jams, jellies, and squashes from pulp extraction to bottling. Successfully sold ₹40,000 worth of products in a single day.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'Supply Chain,Food Processing,Marketing,Agriculture',
-    content:
-      '## Project Overview\n\nEnd-to-end management of an apple processing supply chain:\n\n### Production\n- Pulp extraction and processing\n- Jam, jelly, and squash manufacturing\n- Quality control and bottling\n\n### Sales\n- Direct marketing to consumers\n- Strategic pricing and distribution\n- ₹40,000 in single-day sales\n\n### Impact\n- Reduced post-harvest waste\n- Created local employment\n- Established repeat customer base',
-    featured: true,
-    createTime: '2024-02-20',
-    category: 'agriculture',
-  },
-  {
-    id: 3,
-    name: 'Horticulture Farm Development',
-    slug: 'horticulture-farm-development',
-    description:
-      'Built and maintained large-scale farms from scratch. Grafted and planted 2000 apple seedlings, 1200 apricot seedlings, and 200 guava seedlings. Prepared organic fertilizers and managed complete crop lifecycle.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'Horticulture,Organic Farming,Grafting,Sustainability',
-    content:
-      '## Farm Development\n\nLarge-scale horticulture project:\n\n### Plantation\n- 2000 apple seedlings grafted\n- 1200 apricot seedlings\n- 200 guava seedlings\n\n### Organic Practices\n- JEEVAMRIT preparation and application\n- GHANJIVAMRIT organic fertilizer\n- Natural pest management\n\n### Crop Management\n- Full lifecycle monitoring\n- Irrigation scheduling\n- Harvest optimization',
-    featured: true,
-    createTime: '2024-03-10',
-    category: 'agriculture',
-  },
-
-  // ===== Web Dev =====
-  {
-    id: 4,
-    name: 'E-Commerce for Local Businesses',
-    slug: 'ecommerce-local-businesses',
-    description:
-      'Built professional websites for local shop owners to establish their online presence. Developed Shopify and WordPress-based e-commerce solutions with custom designs, payment integration, and inventory management.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'WordPress,Shopify,E-Commerce,Web Development',
-    content:
-      '## Project Summary\n\nCustom e-commerce solutions for local businesses:\n\n### Platforms\n- Shopify store development\n- WordPress WooCommerce sites\n- Custom theme design\n\n### Features\n- Payment gateway integration\n- Inventory management systems\n- Responsive mobile-first design\n- SEO optimization\n\n### Clients\n- Multiple local retailers\n- Restaurants and cafes\n- Service-based businesses',
-    featured: false,
-    createTime: '2024-04-05',
-    category: 'web-dev',
-  },
-  {
-    id: 5,
-    name: 'Grammarly Clone',
-    slug: 'grammarly-clone',
-    description:
-      'Developed a functional Grammarly clone with real-time text analysis, grammar checking capabilities, and an intuitive user interface for content editing.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: 'https://stackblitz.com/edit/web-platform-tww2qc?file=index.html',
-    techStack: 'HTML,CSS,JavaScript,Text Analysis',
-    content:
-      '## Text Editor & Grammar Checker\n\nA browser-based text editor with:\n\n- Real-time grammar checking\n- Spelling suggestions\n- Character and word count\n- Clean, minimal interface\n\n### Tech Stack\n- Pure HTML/CSS/JavaScript\n- Custom text analysis algorithms\n- Responsive design',
-    featured: false,
-    createTime: '2024-05-12',
-    category: 'web-dev',
-  },
-  {
-    id: 6,
-    name: 'React Logo with Speed Control',
-    slug: 'react-logo-speed-control',
-    description:
-      'Created an animated React logo using pure HTML, CSS, and JavaScript featuring dynamic speed controls and engaging hover effects for interactive user experience.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'JavaScript,CSS Animations,Interactive',
-    content:
-      '## Interactive Animation\n\nA dynamic React logo animation:\n\n- Smooth CSS-based rotation\n- Adjustable speed slider\n- Hover-based interaction effects\n- Pure frontend implementation\n\n### Learning Outcome\n- CSS animation keyframes\n- JavaScript DOM manipulation\n- Event-driven UI updates',
-    featured: false,
-    createTime: '2024-06-18',
-    category: 'creative',
-  },
-  {
-    id: 7,
-    name: 'Facebook Login Clone',
-    slug: 'facebook-login-clone',
-    description:
-      "Recreated Facebook's login page using Tailwind CSS with pixel-perfect design accuracy. Converted frontend into fully functional backend with authentication system.",
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'Tailwind CSS,UI Design,Authentication,Frontend',
-    content:
-      '## UI Clone & Full-Stack Conversion\n\n### Frontend\n- Pixel-perfect Facebook login UI\n- Tailwind CSS for styling\n- Responsive mobile layout\n\n### Backend Integration\n- User registration and login\n- Session management\n- Password hashing and security',
-    featured: false,
-    createTime: '2024-07-22',
-    category: 'web-dev',
-  },
-  {
-    id: 8,
-    name: 'Interactive Game Suite',
-    slug: 'interactive-game-suite',
-    description:
-      'Built collection of interactive games including Tic Tac Toe, Dinosaur Game, Calculator, and To-Do List using HTML, CSS, and JavaScript with responsive design and smooth gameplay.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'JavaScript,Game Development,Interactive,CSS',
-    content:
-      '## Game Collection\n\nA suite of browser-based games and tools:\n\n### Games\n- Tic Tac Toe (2-player)\n- Dinosaur Runner (endless runner)\n\n### Tools\n- Calculator\n- To-Do List application\n\n### Features\n- Responsive design\n- Touch-friendly controls\n- Score tracking\n- Local storage persistence',
-    featured: false,
-    createTime: '2024-08-14',
-    category: 'creative',
-  },
-  {
-    id: 9,
-    name: 'Client Blogging Platform',
-    slug: 'client-blogging-platform',
-    description:
-      'Developed and managed a custom WordPress blogging website for client with SEO optimization, content management system, custom themes, and responsive design for optimal user experience.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'WordPress,Blogging,CMS,SEO',
-    content:
-      '## WordPress Blog Development\n\n### Services Provided\n- Custom WordPress theme development\n- SEO optimization and meta management\n- Content strategy and migration\n- Performance optimization\n\n### Results\n- Improved search engine ranking\n- 40% faster page load times\n- Mobile-optimized reading experience',
-    featured: false,
-    createTime: '2024-09-01',
-    category: 'web-dev',
-  },
-  {
-    id: 10,
-    name: 'Social Media Marketing Campaigns',
-    slug: 'social-media-marketing-campaigns',
-    description:
-      'Led social media marketing and fundraising campaigns for Inamigos Foundation. Created engaging content, managed multiple platforms, and drove successful awareness and donation campaigns.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'Social Media,Content Marketing,Fundraising,Digital Strategy',
-    content:
-      '## Digital Marketing & Fundraising\n\n### Campaign Management\n- Multi-platform social media strategy\n- Content creation and scheduling\n- Community engagement\n\n### Fundraising\n- Donation campaign design\n- Donor outreach and communication\n- Impact reporting\n\n### Platforms\n- Instagram & Facebook\n- Twitter/X\n- LinkedIn',
-    featured: false,
-    createTime: '2024-10-05',
-    category: 'creative',
-  },
-  {
-    id: 11,
-    name: 'Horror Comedy Story',
-    slug: 'horror-comedy-story',
-    description:
-      'Authored an engaging horror comedy story that won district-level story writing competition, blending suspenseful horror elements with comedic timing for unique narrative experience.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'Creative Writing,Storytelling,Award Winning',
-    content:
-      '## Award-Winning Creative Writing\n\n### Story Overview\nA unique blend of horror and comedy:\n\n- Suspenseful narrative structure\n- Comedic relief and timing\n- Character-driven plot\n\n### Achievement\n- District-level competition winner\n- Recognized for originality\n- Published in local literary magazine',
-    featured: false,
-    createTime: '2024-11-10',
-    category: 'creative',
-  },
-  {
-    id: 12,
-    name: 'BharatPe Field Sales Initiative',
-    slug: 'bharatpe-field-sales',
-    description:
-      'Managed field sales operations for BharatPe, focusing on QR code applications and sound box distribution to retail and manufacturing workers. Executed brand management and marketing strategies.',
-    coverUrl: null,
-    previewUrl: '/placeholder.svg?height=400&width=600',
-    githubUrl: null,
-    demoUrl: null,
-    techStack: 'Sales,Brand Management,Fintech,Marketing',
-    content:
-      '## Field Sales & Brand Management\n\n### Role & Responsibilities\n- Field sales operations management\n- QR code application onboarding\n- Sound box device distribution\n\n### Target Audience\n- Retail shop owners\n- Manufacturing workers\n- Small business operators\n\n### Impact\n- Increased merchant onboarding\n- Brand awareness in target markets\n- Direct user feedback collection',
-    featured: false,
-    createTime: '2024-12-01',
-    category: 'agriculture',
-  },
+const L: LocalProject[] = [
+  { id:1, name:'智水先知', slug:'hydra', description:'融合物联网、YOLO 视觉与大语言模型的城市内涝智能预警平台。', coverUrl:'/images/hydra_logo.png', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:'http://47.95.8.224:9001/login', techStack:'IoT,YOLO,LLM,GIS,React', content:'城市内涝智能感知预警与协同服务平台，YOLO v12 高危车辆识别率 96%+。', featured:true, createTime:'2025-06-01', category:'ai' },
+  { id:2, name:'AI 对话助手', slug:'ai-chat', description:'多模型聚合 AI 对话平台，支持流式 Markdown 与 RAG 本地知识库。', coverUrl:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'Next.js,Node.js,DeepSeek,RAG,ChromaDB', content:'多模型 AI 对话平台，聚合 DeepSeek / OpenAI / 通义千问，支持流式 Markdown 渲染与 RAG 知识库问答。', featured:true, createTime:'2025-08-15', category:'ai' },
+  { id:3, name:'计算机视觉目标检测', slug:'cv-object-detection', description:'YOLOv8 自定义数据集微调，mAP@0.5 达 87.3%，Flask API 部署。', coverUrl:'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'PyTorch,YOLOv8,Python,Flask', content:'基于 YOLOv8 的目标检测项目，自定义数据集标注训练与 Flask API 部署。', featured:false, createTime:'2025-04-10', category:'ai' },
+  { id:4, name:'智能简历分析', slug:'ai-resume-parser', description:'spaCy + BERT 简历解析与岗位语义匹配系统。', coverUrl:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'NLP,BERT,spaCy,FastAPI', content:'NLP 简历信息抽取系统，BERT 语义匹配计算岗位契合度。', featured:false, createTime:'2025-03-22', category:'ai' },
+  { id:5, name:'情感分析微服务', slug:'sentiment-microservice', description:'BERT 中文情感分类 API，Docker 部署，500+ QPS。', coverUrl:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'BERT,Docker,FastAPI,Grafana', content:'中文评论情感分析微服务，三分类 + Grafana 监控面板。', featured:false, createTime:'2025-02-14', category:'ai' },
+  { id:6, name:'校园二手交易平台', slug:'campus-trade', description:'微信小程序 + Spring Boot 全栈二手交易平台。', coverUrl:'https://images.unsplash.com/photo-1555421689-d68471e189f2?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'微信小程序,Spring Boot,Redis,WebSocket', content:'高校二手交易平台，微信 OAuth 登录、即时聊天与信用体系。', featured:true, createTime:'2025-05-20', category:'fullstack' },
+  { id:7, name:'算法可视化平台', slug:'algo-viz', description:'React + D3.js 20+ 算法逐步动画演示。', coverUrl:'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'React,D3.js,TypeScript,Canvas', content:'数据结构与算法交互演示平台，支持排序、树、图等算法的逐步动画与双算法对比。', featured:false, createTime:'2025-01-08', category:'fullstack' },
+  { id:8, name:'实时协作白板', slug:'collab-whiteboard', description:'WebSocket + Canvas 多人实时协作绘图工具。', coverUrl:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'WebSocket,Canvas,CRDT,Node.js,Yjs', content:'多人实时协作白板，CRDT 冲突解决，支持图形绘制与便签拖拽。', featured:false, createTime:'2024-12-01', category:'fullstack' },
+  { id:9, name:'微服务电商 Demo', slug:'microservice-mall', description:'Spring Cloud Alibaba 微服务架构实战。', coverUrl:'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'Spring Cloud,Nacos,Sentinel,Seata,Docker', content:'Spring Cloud 微服务电商 Demo，Nacos 注册发现 + Sentinel 限流 + Seata 分布式事务。', featured:false, createTime:'2024-11-15', category:'fullstack' },
+  { id:10, name:'分布式任务调度', slug:'dist-scheduler', description:'仿 XXL-JOB 的高可用定时任务调度系统。', coverUrl:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'Java,ZooKeeper,MySQL,定时任务', content:'分布式任务调度平台，Cron 表达式、分片广播、DAG 编排与 ZooKeeper 选举。', featured:false, createTime:'2025-01-20', category:'infra' },
+  { id:11, name:'API 网关', slug:'api-gateway', description:'Netty 高性能 API 网关，12,000+ QPS。', coverUrl:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'Netty,Java,限流,熔断,高性能', content:'基于 Netty 的轻量 API 网关，动态路由、多维度限流与熔断降级。', featured:false, createTime:'2025-02-28', category:'infra' },
+  { id:12, name:'统一日志平台', slug:'log-platform', description:'ELK 技术栈日志采集分析流水线。', coverUrl:'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=600&q=80', previewUrl:null, githubUrl:'https://github.com/ywzqdxc', demoUrl:null, techStack:'ELK,Elasticsearch,Logstash,Filebeat', content:'Filebeat → Logstash → Elasticsearch → Kibana 日志采集分析流水线。', featured:false, createTime:'2025-03-10', category:'infra' },
 ]
 
-export function getLocalProjects(): LocalProject[] {
-  return localProjects
-}
-
-export function getLocalProjectBySlug(slug: string): LocalProject | null {
-  return localProjects.find((p) => p.slug === slug) ?? null
-}
-
+export const localProjects = L
+export function getLocalProjects() { return L }
+export function getLocalProjectBySlug(slug: string) { return L.find(p => p.slug === slug) ?? null }
 export function getProjectsByCategory(): Record<ProjectCategory, LocalProject[]> {
-  const grouped: Record<ProjectCategory, LocalProject[]> = {
-    agriculture: [],
-    'web-dev': [],
-    creative: [],
-  }
-  for (const p of localProjects) {
-    grouped[p.category].push(p)
-  }
-  return grouped
+  const g: Record<ProjectCategory, LocalProject[]> = { ai:[], fullstack:[], infra:[] }
+  for (const p of L) g[p.category].push(p)
+  return g
 }

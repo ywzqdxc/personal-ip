@@ -23,9 +23,9 @@ interface Project {
 const NAV_H = 80
 
 const CATEGORY_CONFIG: Record<string, { emoji: string; label: string; color: string }> = {
-  agriculture: { emoji: '🌾', label: 'Agriculture & Sustainability', color: '#4A9B8E' },
-  web: { emoji: '💻', label: 'Web Development', color: '#C45A30' },
-  creative: { emoji: '🎨', label: 'Creative & More', color: '#8B6BB1' },
+  ai: { emoji: '🤖', label: 'AI / Machine Learning', color: '#4A9B8E' },
+  fullstack: { emoji: '💻', label: 'Web / Full-Stack', color: '#C45A30' },
+  infra: { emoji: '🛠️', label: '基础设施 / 工具', color: '#8B6BB1' },
 }
 
 // ─────────────── CSS (inline style sheet) ───────────────
@@ -312,7 +312,7 @@ export default function ProjectsPage() {
   const nonFeatured = allProjects.filter(p => !p.featured)
 
   // Group non-featured by category
-  const categories = ['agriculture', 'web', 'creative']
+  const categories = ['ai', 'fullstack', 'infra']
   const grouped = categories.map(cat => ({
     key: cat,
     config: CATEGORY_CONFIG[cat],

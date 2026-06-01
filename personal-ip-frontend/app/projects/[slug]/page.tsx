@@ -200,7 +200,7 @@ function VideoHero({ project }: { project: Project }) {
       }}>
         <div style={{ textAlign: 'center', maxWidth: 720 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 14 }}>
-            智慧城市 · 防汛预警
+            {project.id === 'hydra' ? '智慧城市 · 防汛预警' : project.subtitle}
           </div>
           <h1 style={{
             fontFamily: "'Barlow Condensed', sans-serif",
@@ -397,8 +397,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
             <section style={{ marginBottom: 80 }}>
               <div style={{ marginBottom: 36, textAlign: 'center' }}>
                 <div className="section-label">行业痛点</div>
-                <h2 className="section-title">为什么需要智水先知？</h2>
-                <p className="section-sub" style={{ margin: '0 auto' }}>中国 62% 城市曾遭遇内涝，传统应对体系存在三大核心缺陷。</p>
+                <h2 className="section-title">
+                  {project.id === 'hydra' ? '为什么需要智水先知？' : `为什么需要${project.title}？`}
+                </h2>
+                <p className="section-sub" style={{ margin: '0 auto' }}>
+                  {project.id === 'hydra'
+                    ? '中国 62% 城市曾遭遇内涝，传统应对体系存在三大核心缺陷。'
+                    : '现有方案在效率、体验与成本上仍存在显著不足。'
+                  }
+                </p>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
                 {project.painPoints.map((p, i) => (
@@ -423,8 +430,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
             <section style={{ marginBottom: 80 }}>
               <div style={{ marginBottom: 36, textAlign: 'center' }}>
                 <div className="section-label">核心功能</div>
-                <h2 className="section-title">四层解决方案</h2>
-                <p className="section-sub" style={{ margin: '0 auto' }}>从感知到预警，从分析到协同，构建完整的防汛响应闭环。</p>
+                <h2 className="section-title">
+                  {project.id === 'hydra' ? '四层解决方案' : '核心能力'}
+                </h2>
+                <p className="section-sub" style={{ margin: '0 auto' }}>
+                  {project.id === 'hydra'
+                    ? '从感知到预警，从分析到协同，构建完整的防汛响应闭环。'
+                    : '多项技术能力协同配合，解决核心场景问题。'
+                  }
+                </p>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
                 {project.features.map((f, i) => (
@@ -478,7 +492,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
             <section style={{ marginBottom: 80 }}>
               <div style={{ marginBottom: 36 }}>
                 <div className="section-label">产品形态</div>
-                <h2 className="section-title">两端协同，覆盖全链路</h2>
+                <h2 className="section-title">
+                  {project.id === 'hydra' ? '两端协同，覆盖全链路' : '多端交付'}
+                </h2>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
                 {project.products.map((prod, i) => (

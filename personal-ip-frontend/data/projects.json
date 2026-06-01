@@ -7,7 +7,7 @@
     "image": "/images/hydra_logo.png",
     "video": "/videos/hydra.mp4",
     "tags": ["IoT", "YOLO v12", "大语言模型", "GIS", "React", "城市安全"],
-    "category": "tech",
+    "category": "ai",
     "featured": true,
     "link": "",
     "visitUrl": "http://47.95.8.224:9001/login",
@@ -39,209 +39,180 @@
     ]
   },
   {
-    "id": "project-1",
-    "title": "3D 垂直农场模型",
-    "subtitle": "农业创新与 3D 建模",
-    "description": "使用 Google SketchUp 设计并建造了一个完整的 3D 垂直农场，展示了可持续农业实践以及城市环境下的创新农业技术。",
-    "image": "https://picsum.photos/seed/verticalfarm/800/600",
-    "tags": [
-      "3D 建模",
-      "SketchUp",
-      "农业",
-      "可持续发展"
-    ],
-    "category": "agriculture",
+    "id": "ai-chat",
+    "title": "轻量 AI 对话助手",
+    "subtitle": "多模型聚合 · 流式响应 · 本地知识库",
+    "description": "基于 Next.js 构建的多模型 AI 对话平台，聚合 DeepSeek / OpenAI / 通义千问 API，支持流式 Markdown 渲染、会话持久化、自定义 System Prompt 与本地向量知识库检索增强生成。",
+    "image": "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80&fit=crop",
+    "tags": ["Next.js", "Node.js", "DeepSeek", "OpenAI", "RAG", "向量数据库"],
+    "category": "ai",
     "featured": true,
-    "link": ""
+    "link": "",
+    "visitUrl": "",
+    "stats": [
+      { "value": "3", "label": "模型后端接入" },
+      { "value": "<800ms", "label": "首字流式延迟" },
+      { "value": "10K+", "label": "知识库切片" }
+    ],
+    "painPoints": [
+      { "icon": "💸", "title": "多平台切换成本高", "desc": "日常使用 ChatGPT、DeepSeek、通义千问等多个 AI 工具，网页/客户端频繁切换，对话分散，体验割裂。" },
+      { "icon": "🔒", "title": "API Key 暴露风险", "desc": "前端直接调用大模型 API 会泄漏密钥，需要后端代理层做安全隔离与请求签名。" },
+      { "icon": "📚", "title": "长文档上下文不足", "desc": "大模型 token 窗口有限，本地知识库（论文、文档）无法直接注入对话，传统 copy-paste 效率低下。" }
+    ],
+    "features": [
+      { "icon": "🔄", "title": "多模型一键切换", "desc": "在同一对话中切换 DeepSeek-V4 / GPT-4o / Qwen-Max，保留上下文无缝过渡，对比不同模型回答质量。" },
+      { "icon": "📝", "title": "流式 Markdown 渲染", "desc": "SSE 流式传输 + 增量 Markdown 渲染，代码块语法高亮、数学公式 KaTeX 支持，打字机逐字呈现。" },
+      { "icon": "🗂️", "title": "RAG 本地知识库", "desc": "PDF / Markdown 文档自动切片与向量化，ChromaDB 存储，检索增强生成实现论文问答、代码库检索。" },
+      { "icon": "💬", "title": "会话云端持久化", "desc": "所有对话历史 IndexedDB 本地 + 云端双存储，支持会话搜索、收藏与导出 Markdown。" }
+    ],
+    "techHighlights": [
+      { "metric": "SSE", "label": "流式传输协议", "desc": "Server-Sent Events 实现服务器推送，前端 ReadableStream 逐 token 解析更新 DOM。" },
+      { "metric": "ChromaDB", "label": "向量检索", "desc": "Chroma 嵌入式向量数据库，本地运行零外部依赖，1024 维 embedding 毫秒级召回。" },
+      { "metric": "IndexedDB", "label": "离线优先架构", "desc": "全部会话本地缓存 IndexedDB，弱网 / 离线可查看历史，联网后增量同步。" },
+      { "metric": "BFF Proxy", "label": "安全代理层", "desc": "Node.js BFF 中间层，API Key 环境变量注入，HMAC 请求签名防重放攻击。" }
+    ],
+    "products": [
+      { "platform": "Web 对话端", "target": "开发者 & 知识工作者", "icon": "🌐", "features": ["多模型会话切换", "Markdown + 代码渲染", "知识库文档上传", "Prompt 模板库"] },
+      { "platform": "Node.js 代理服务", "target": "API 消费者", "icon": "⚙️", "features": ["统一 API 接入层", "多模型路由分发", "流式响应透传", "用量计费统计"] }
+    ]
   },
   {
-    "id": "project-2",
-    "title": "食品加工与供应链管理",
-    "subtitle": "农业与食品工程",
-    "description": "主导苹果产业从农场到市场的完整供应链。从果肉提取到装瓶，生产果酱、果冻、果汁，通过精准营销与分销实现单日销售额 ₹40,000。",
-    "image": "https://picsum.photos/seed/foodchain/800/600",
-    "tags": [
-      "供应链",
-      "食品加工",
-      "市场营销",
-      "农业"
-    ],
-    "category": "agriculture",
+    "id": "campus-trade",
+    "title": "校园二手交易平台",
+    "subtitle": "微信小程序 + Spring Boot 全栈",
+    "description": "面向高校师生的二手物品交易平台，支持商品发布、搜索筛选、即时聊天与校内配送预约，采用微信登录免注册，降低使用门槛。",
+    "image": "https://images.unsplash.com/photo-1555421689-d68471e189f2?w=800&q=80&fit=crop",
+    "tags": ["微信小程序", "Spring Boot", "MySQL", "Redis", "WebSocket"],
+    "category": "fullstack",
     "featured": true,
-    "link": ""
-  },
-  {
-    "id": "project-3",
-    "title": "园艺农场开发",
-    "subtitle": "可持续农业实践",
-    "description": "从零开始建设并维护大型农场。嫁接种植 2000 株苹果苗、1200 株杏苗、200 株番石榴苗。制备有机肥料（JEEVAMRIT、GHANJIVAMRIT）并管理完整作物生命周期。",
-    "image": "https://picsum.photos/seed/horticulture/800/600",
-    "tags": [
-      "园艺",
-      "有机种植",
-      "嫁接技术",
-      "可持续发展"
+    "link": "",
+    "visitUrl": "",
+    "stats": [
+      { "value": "500+", "label": "模拟用户注册" },
+      { "value": "<200ms", "label": "列表接口响应" },
+      { "value": "4", "label": "核心业务模块" }
     ],
-    "category": "agriculture",
-    "featured": true,
-    "link": ""
-  },
-  {
-    "id": "project-4",
-    "title": "本地商家电商网站",
-    "subtitle": "Web 开发与数字平台",
-    "description": "为本地店主搭建专业的电商网站，帮助他们建立线上存在。使用 Shopify 和 WordPress 开发电商解决方案，包含定制设计、支付集成和库存管理。",
-    "image": "https://picsum.photos/seed/ecommerce/800/600",
-    "tags": [
-      "WordPress",
-      "Shopify",
-      "电商",
-      "Web 开发"
+    "painPoints": [
+      { "icon": "💸", "title": "校内二手流通低效", "desc": "毕业季大量物品积压，现有渠道（群聊/贴吧）信息混乱，买卖双方匹配效率低。" },
+      { "icon": "🔐", "title": "交易安全顾虑", "desc": "陌生人交易缺乏信任机制，虚假商品与爽约现象频发。" },
+      { "icon": "📦", "title": "配送成本高", "desc": "线下自提不便，快递溢价明显，校内点对点配送缺乏协调平台。" }
     ],
-    "category": "web",
-    "featured": true,
-    "link": ""
-  },
-  {
-    "id": "project-5",
-    "title": "Grammarly 克隆版",
-    "subtitle": "文本编辑器与语法检查",
-    "description": "使用 HTML、CSS、JavaScript 开发了一个功能完整的 Grammarly 克隆版，具备实时文本分析、语法检查能力和简洁直观的用户界面。",
-    "image": "https://picsum.photos/seed/grammarly/800/600",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "文本分析"
+    "features": [
+      { "icon": "📱", "title": "微信一键登录", "desc": "OAuth 2.0 微信授权，无需注册即可发布与购买，大幅降低冷启动门槛。" },
+      { "icon": "💬", "title": "即时聊天", "desc": "WebSocket 实现买卖双方实时沟通，支持图片消息与商品卡片分享。" },
+      { "icon": "🔍", "title": "智能搜索", "desc": "Elasticsearch 全文检索，支持分类、价格区间、校区等多维筛选。" },
+      { "icon": "⭐", "title": "信用体系", "desc": "交易完成后双向评价，信用分影响搜索排名，构建校内信任生态。" }
     ],
-    "category": "web",
+    "techHighlights": [
+      { "metric": "WebSocket", "label": "实时通信", "desc": "基于 Netty 实现长连接消息推送，支持消息已读状态同步。" },
+      { "metric": "Redis", "label": "缓存与限流", "desc": "热门商品列表缓存，接口限流防刷，Session 分布式存储。" },
+      { "metric": "OSS", "label": "图片存储", "desc": "阿里云 OSS 存储商品图片，图片压缩与 CDN 加速提升加载体验。" },
+      { "metric": "微信支付", "label": "安全交易", "desc": "接入微信支付沙箱环境，资金托管后确认收货再放款。" }
+    ],
+    "products": [
+      { "platform": "微信小程序", "target": "学生买家 & 卖家", "icon": "📱", "features": ["商品发布与管理", "分类浏览与搜索", "即时聊天与议价", "订单跟踪与评价"] },
+      { "platform": "Spring Boot 后台", "target": "管理员", "icon": "🖥️", "features": ["违规商品审核", "用户信用管理", "交易数据统计", "举报处理工作流"] }
+    ]
+  },
+
+  {
+    "id": "cv-object-detection",
+    "title": "计算机视觉目标检测",
+    "subtitle": "PyTorch + YOLOv8 自定义数据集训练与部署",
+    "description": "基于 YOLOv8 在自定义数据集上进行目标检测微调，完成数据标注、模型训练、超参调优、评估与 Flask API 部署全流程，mAP@0.5 达到 87.3%。",
+    "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80&fit=crop",
+    "tags": ["PyTorch", "YOLOv8", "Python", "Flask", "计算机视觉"],
+    "category": "ai",
     "featured": false,
     "link": ""
   },
   {
-    "id": "project-6",
-    "title": "React Logo 速度控制动画",
-    "subtitle": "交互动画",
-    "description": "使用纯 HTML、CSS、JavaScript 创建了一个可动 React Logo，具备动态速度控制和丰富的悬停效果，提供交互式的用户体验。",
-    "image": "https://picsum.photos/seed/reactlogo/800/600",
-    "tags": [
-      "JavaScript",
-      "CSS 动画",
-      "交互"
-    ],
-    "category": "creative",
+    "id": "ai-resume-parser",
+    "title": "智能简历分析系统",
+    "subtitle": "NLP 信息抽取 + 岗位智能匹配",
+    "description": "基于 spaCy + Transformers 的简历解析与岗位推荐系统，自动提取教育背景、技能树与工作经历，结合 BERT 语义匹配计算简历-岗位契合度。",
+    "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80&fit=crop",
+    "tags": ["NLP", "BERT", "spaCy", "FastAPI", "命名实体识别"],
+    "category": "ai",
     "featured": false,
     "link": ""
   },
   {
-    "id": "project-7",
-    "title": "Facebook 登录页克隆",
-    "subtitle": "UI/UX 设计与开发",
-    "description": "使用 Tailwind CSS 高精度还原了 Facebook 登录页面。将前端转换为带有完整认证系统的全功能后端。",
-    "image": "https://picsum.photos/seed/fblogin/800/600",
-    "tags": [
-      "Tailwind CSS",
-      "UI 设计",
-      "认证",
-      "前端"
-    ],
-    "category": "web",
+    "id": "sentiment-microservice",
+    "title": "情感分析微服务",
+    "subtitle": "文本情感分类 API 服务",
+    "description": "基于 BERT 微调的中文评论情感分析 API，支持正面/负面/中性三分类，Docker 容器化部署，吞吐量 >500 QPS，附带 Grafana 实时监控面板。",
+    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&fit=crop",
+    "tags": ["BERT", "Docker", "FastAPI", "Grafana", "微服务"],
+    "category": "ai",
+    "featured": false,
+    "link": ""
+  },
+
+  {
+    "id": "algo-viz",
+    "title": "算法可视化平台",
+    "subtitle": "数据结构与算法交互演示系统",
+    "description": "基于 React + D3.js 的算法可视化工具，支持排序、树遍历、图搜索、动态规划等 20+ 算法的逐步动画演示，自定义数据集输入与双算法对比模式。",
+    "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&q=80&fit=crop",
+    "tags": ["React", "D3.js", "TypeScript", "Canvas", "算法"],
+    "category": "fullstack",
     "featured": false,
     "link": ""
   },
   {
-    "id": "project-8",
-    "title": "互动游戏合集",
-    "subtitle": "Web 游戏应用",
-    "description": "使用 HTML、CSS、JavaScript 构建了一组互动游戏，包括井字棋、恐龙游戏、计算器和待办事项清单，具备响应式设计和流畅的游戏体验。",
-    "image": "https://picsum.photos/seed/gamesuite/800/600",
-    "tags": [
-      "JavaScript",
-      "游戏开发",
-      "交互",
-      "CSS"
-    ],
-    "category": "creative",
+    "id": "collab-whiteboard",
+    "title": "实时协作白板",
+    "subtitle": "多人同步绘图与脑暴工具",
+    "description": "基于 WebSocket + Canvas 的实时协作白板，支持多人同时绘制图形、拖拽便签与文字批注，CRDT 冲突解决算法保证各端数据最终一致。",
+    "image": "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80&fit=crop",
+    "tags": ["WebSocket", "Canvas", "CRDT", "Node.js", "Yjs"],
+    "category": "fullstack",
     "featured": false,
     "link": ""
   },
   {
-    "id": "project-9",
-    "title": "客户博客平台",
-    "subtitle": "WordPress 内容管理",
-    "description": "为客户开发并管理了一个定制 WordPress 博客网站，包含 SEO 优化、内容管理系统、自定义主题和响应式设计。",
-    "image": "https://picsum.photos/seed/blogging/800/600",
-    "tags": [
-      "WordPress",
-      "博客",
-      "CMS",
-      "SEO"
-    ],
-    "category": "web",
+    "id": "microservice-mall",
+    "title": "微服务电商 Demo",
+    "subtitle": "Spring Cloud 微服务架构实践",
+    "description": "基于 Spring Cloud Alibaba 的电商系统 Demo，涵盖 Nacos 服务注册、Sentinel 限流降级、Seata 分布式事务、Gateway 统一网关与 ELK 日志收集。",
+    "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80&fit=crop",
+    "tags": ["Spring Cloud", "Nacos", "Sentinel", "Seata", "Docker"],
+    "category": "fullstack",
+    "featured": false,
+    "link": ""
+  },
+
+  {
+    "id": "dist-scheduler",
+    "title": "分布式定时任务调度平台",
+    "subtitle": "高可用任务编排与监控",
+    "description": "仿 XXL-JOB 架构的分布式任务调度系统，支持 Cron 表达式配置、分片广播、失败重试与可视化 DAG 编排，ZooKeeper 选举 + MySQL 持久化保障高可用。",
+    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80&fit=crop",
+    "tags": ["Java", "ZooKeeper", "MySQL", "定时任务", "分布式"],
+    "category": "infra",
     "featured": false,
     "link": ""
   },
   {
-    "id": "project-10",
-    "title": "社交媒体营销活动",
-    "subtitle": "内容创作与筹款",
-    "description": "主导 Inamigos 基金会的社交媒体营销和筹款活动。创作优质内容，多平台运营管理，成功推动品牌曝光与捐赠增长。",
-    "image": "https://picsum.photos/seed/socialmedia/800/600",
-    "tags": [
-      "社交媒体",
-      "内容营销",
-      "筹款",
-      "数字策略"
-    ],
-    "category": "creative",
+    "id": "api-gateway",
+    "title": "API 网关与流量控制",
+    "subtitle": "高性能反向代理与限流中间件",
+    "description": "基于 Netty 实现的轻量 API 网关，支持动态路由、IP/Token 多维度限流、熔断降级与实时流量监控，兼容 OpenResty 配置格式，QPS 达 12,000+。",
+    "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fit=crop",
+    "tags": ["Netty", "Java", "限流", "熔断", "高性能"],
+    "category": "infra",
     "featured": false,
     "link": ""
   },
   {
-    "id": "project-12",
-    "title": "BharatPe 线下销售推广",
-    "subtitle": "品牌管理与销售",
-    "description": "负责 BharatPe 的线下销售业务，专注于向零售和制造业客户推广二维码支付与收款语音播报设备。主导品牌管理和市场营销策略的执行。",
-    "image": "https://picsum.photos/seed/bharatpe/800/600",
-    "tags": [
-      "销售",
-      "品牌管理",
-      "金融科技",
-      "市场营销"
-    ],
-    "category": "agriculture",
-    "featured": false,
-    "link": ""
-  },
-  {
-    "id": "project-13",
-    "title": "有机肥料生产",
-    "subtitle": "JEEVAMRIT 与 GHANJIVAMRIT 制造",
-    "description": "运用印度传统农业技术，规模化生产和推广有机肥料 JEEVAMRIT 和 GHANJIVAMRIT，为多个农场改善土壤健康，自然提升作物产量。",
-    "image": "https://picsum.photos/seed/organicfert/800/600",
-    "tags": [
-      "有机种植",
-      "土壤健康",
-      "可持续农业",
-      "乡村振兴"
-    ],
-    "category": "agriculture",
-    "featured": false,
-    "link": ""
-  },
-  {
-    "id": "project-14",
-    "title": "作物多样化种植计划",
-    "subtitle": "多品种农业策略",
-    "description": "在 50 多英亩土地上规划并实施作物多样化种植，引入苹果、杏、番石榴和季节性蔬菜。通过混作降低风险，年农场收入提升 40%。",
-    "image": "https://picsum.photos/seed/cropdiverse/800/600",
-    "tags": [
-      "混作种植",
-      "农场管理",
-      "农业",
-      "轮作"
-    ],
-    "category": "agriculture",
+    "id": "log-platform",
+    "title": "统一日志采集分析系统",
+    "subtitle": "ELK 技术栈实战部署",
+    "description": "基于 Filebeat → Logstash → Elasticsearch → Kibana 的日志采集分析流水线，支持多服务日志汇聚、自定义 Grok 解析规则与异常告警钉钉推送。",
+    "image": "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800&q=80&fit=crop",
+    "tags": ["ELK", "Elasticsearch", "Logstash", "Filebeat", "Kibana"],
+    "category": "infra",
     "featured": false,
     "link": ""
   }

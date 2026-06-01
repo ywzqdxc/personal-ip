@@ -16,15 +16,15 @@ interface Props {
 }
 
 const GRADIENT_MAP: Record<string, string> = {
-  agriculture: 'linear-gradient(135deg, #2E1A0E 0%, #4A2A1A 100%)',
-  'web-dev': 'linear-gradient(135deg, #C45A30 0%, #E8855A 100%)',
-  creative: 'linear-gradient(135deg, #4A9B8E 0%, #6EC4B8 100%)',
+  ai: 'linear-gradient(135deg, #2E1A0E 0%, #4A2A1A 100%)',
+  fullstack: 'linear-gradient(135deg, #C45A30 0%, #E8855A 100%)',
+  infra: 'linear-gradient(135deg, #4A9B8E 0%, #6EC4B8 100%)',
 }
 
 export function ProjectCard({ project, variant = 'grid', offset, gradient }: Props) {
   const [isHovered, setIsHovered] = useState(false)
   const techList = project.techStack ? project.techStack.split(',') : []
-  const bgGradient = gradient ?? GRADIENT_MAP[project.category] ?? GRADIENT_MAP.creative
+  const bgGradient = gradient ?? GRADIENT_MAP[project.category] ?? GRADIENT_MAP.ai
 
   if (variant === 'featured') {
     return (
@@ -51,8 +51,8 @@ export function ProjectCard({ project, variant = 'grid', offset, gradient }: Pro
               className="absolute top-5 left-6 text-[10px] tracking-[0.16em] uppercase font-medium"
               style={{ color: 'rgba(255,255,255,0.6)' }}
             >
-              {project.category === 'agriculture' ? '🌾 Agriculture' :
-               project.category === 'web-dev' ? '💻 Web Dev' : '🎨 Creative'}
+              {project.category === 'ai' ? '🤖 AI / ML' :
+               project.category === 'fullstack' ? '💻 Full-Stack' : '🛠️ 基础设施'}
             </span>
 
             {/* 箭头 */}
@@ -132,7 +132,7 @@ export function ProjectCard({ project, variant = 'grid', offset, gradient }: Pro
               />
             ) : (
               <span className="text-xs" style={{ color: '#B07050' }}>
-                {project.category === 'agriculture' ? '🌾' : project.category === 'web-dev' ? '💻' : '🎨'}
+                {project.category === 'ai' ? '🤖' : project.category === 'fullstack' ? '💻' : '🛠️'}
               </span>
             )}
           </div>

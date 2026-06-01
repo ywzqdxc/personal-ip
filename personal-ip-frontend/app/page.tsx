@@ -4,6 +4,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import projectsData from "@/data/projects.json"
 import { getTravelYears } from "@/lib/travel/mock-data"
+import { HeroGallery } from "@/components/hero-gallery"
 
 /* ── Types ─────────────────────────────────── */
 interface Project {
@@ -37,6 +38,10 @@ const lensReveal = {
    LENS 1 — HERO
    ══════════════════════════════════════════════ */
 function HeroLens() {
+  return <HeroGallery />
+}
+
+function _HeroLensOld() {
   return (
     <motion.section
       initial={{ opacity: 0 }}

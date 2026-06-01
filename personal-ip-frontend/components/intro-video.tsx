@@ -42,13 +42,6 @@ export function IntroVideo() {
         },
       })
 
-      // 初始状态
-      gsap.set('.intro-corner', { opacity: 0, scale: 0.6 })
-      gsap.set('.intro-line', { scaleX: 0, opacity: 0 })
-      gsap.set('.intro-char', { opacity: 0, y: 40 })
-      gsap.set('.intro-sub', { opacity: 0, y: 12 })
-      gsap.set('.intro-skip', { opacity: 0 })
-
       tl
         // 四角线条展开
         .to('.intro-corner', {
@@ -116,7 +109,7 @@ export function IntroVideo() {
         { bottom: 32, left: 32, borderBottom: '1px solid rgba(196,90,48,0.7)', borderLeft: '1px solid rgba(196,90,48,0.7)', transformOrigin: 'bottom left' },
         { bottom: 32, right: 32, borderBottom: '1px solid rgba(196,90,48,0.7)', borderRight: '1px solid rgba(196,90,48,0.7)', transformOrigin: 'bottom right' },
       ].map((s, i) => (
-        <div key={i} className="intro-corner" style={{ position: 'absolute', width: 44, height: 44, ...s }} />
+        <div key={i} className="intro-corner" style={{ position: 'absolute', width: 44, height: 44, opacity: 0, transform: 'scale(0.6)', ...s }} />
       ))}
 
       {/* 中央内容 */}
@@ -130,6 +123,8 @@ export function IntroVideo() {
             background: 'rgba(196,90,48,0.5)',
             margin: '0 auto 28px',
             transformOrigin: 'center',
+            transform: 'scaleX(0)',
+            opacity: 0,
           }}
         />
 
@@ -148,6 +143,8 @@ export function IntroVideo() {
                 color: '#EDE0D4',
                 lineHeight: 1,
                 width: ch === ' ' ? 20 : 'auto',
+                opacity: 0,
+                transform: 'translateY(40px)',
               }}
             >
               {ch === ' ' ? ' ' : ch}
@@ -165,6 +162,8 @@ export function IntroVideo() {
             textTransform: 'uppercase',
             color: 'rgba(196,90,48,0.7)',
             marginBottom: 8,
+            opacity: 0,
+            transform: 'translateY(12px)',
           }}
         >
           Developer · Traveler · Creator
@@ -179,6 +178,8 @@ export function IntroVideo() {
             background: 'rgba(196,90,48,0.5)',
             margin: '20px auto 0',
             transformOrigin: 'center',
+            transform: 'scaleX(0)',
+            opacity: 0,
           }}
         />
       </div>
@@ -207,6 +208,7 @@ export function IntroVideo() {
           fontFamily: 'system-ui, sans-serif',
           padding: '8px 0',
           transition: 'color 0.3s',
+          opacity: 0,
         }}
         onMouseEnter={e => (e.currentTarget.style.color = 'rgba(232,197,176,1)')}
         onMouseLeave={e => (e.currentTarget.style.color = 'rgba(232,197,176,0.5)')}
